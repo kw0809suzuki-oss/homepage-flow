@@ -123,3 +123,81 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
   .flow-signal b{display:none}
   .flow-signal{width:46px;height:46px;justify-content:center;padding:0}
 }
+
+
+/* Flow World v0.3 — a room with no objective */
+.flow-room{
+  min-height:100svh;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  background:#f0f4f8;
+  border-top:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.room-visual{
+  position:relative;
+  min-height:100svh;
+  overflow:hidden;
+  background:#dfe8f2;
+}
+.room-visual img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .7s ease;
+}
+.room-visual:hover img{transform:scale(1.035);filter:saturate(1.05) contrast(1.02)}
+.room-glass{
+  position:absolute;left:26px;right:26px;bottom:26px;
+  padding:18px 20px;
+  display:flex;align-items:end;justify-content:space-between;gap:18px;
+  background:rgba(9,23,39,.42);color:white;
+  border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(14px);
+}
+.room-glass span{font:10px monospace;letter-spacing:.16em;opacity:.7}
+.room-glass strong{font:24px/1.4 Georgia,"Noto Serif JP",serif;font-weight:500;text-align:right}
+.room-copy{
+  position:relative;align-self:center;padding:11vw 8vw 10vw 7vw;
+}
+.room-copy h2{
+  font-family:Georgia,"Noto Serif JP",serif;font-weight:500;
+  font-size:clamp(46px,6vw,82px);line-height:1.06;letter-spacing:-.04em;
+  margin:12px 0 30px;
+}
+.room-text{font-size:17px;line-height:1.9;color:#526477;max-width:540px}
+.room-button{
+  margin-top:34px;padding:14px 18px;border:1px solid #50677f;background:transparent;
+  color:#23384d;font:11px monospace;letter-spacing:.13em;cursor:pointer;
+  transition:.25s ease;
+}
+.room-button:hover,.room-button:focus-visible{
+  background:#17314d;color:white;outline:none;transform:translateY(-2px);
+}
+.room-response{
+  min-height:3.5em;margin-top:26px;max-width:480px;
+  font:italic 24px/1.55 Georgia,"Noto Serif JP",serif;color:#2f4a65;
+  transition:opacity .24s ease,transform .24s ease;
+}
+.room-response.swap{opacity:0;transform:translateY(8px)}
+.flow-room.dreaming .room-visual img{filter:saturate(1.18) hue-rotate(6deg) brightness(.92)}
+.flow-room.dreaming{
+  background:
+    radial-gradient(circle at 72% 18%,rgba(122,166,255,.22),transparent 26%),
+    linear-gradient(135deg,#e8edf7,#dbe7f6);
+}
+.room-spark{
+  position:absolute;width:5px;height:5px;border-radius:50%;
+  background:#fff;box-shadow:0 0 14px 4px rgba(121,177,255,.55);
+  pointer-events:none;animation:roomFloat 4.5s ease-in forwards;
+}
+@keyframes roomFloat{
+  0%{opacity:0;transform:translateY(12px) scale(.4)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translateY(-120px) scale(1.3)}
+}
+@media(max-width:820px){
+  .flow-room{grid-template-columns:1fr}
+  .room-visual{min-height:64svh}
+  .room-copy{padding:82px 24px 96px}
+  .room-glass{left:16px;right:16px;bottom:16px;display:block}
+  .room-glass strong{display:block;text-align:left;margin-top:8px;font-size:20px}
+}
