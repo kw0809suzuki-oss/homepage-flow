@@ -15,6 +15,7 @@
       <a href="#loop">Loop</a>
       <a href="#flow">Flow</a>
       <a href="#states">States</a>
+      <a href="#play">Play</a>
     </div>
   </header>
 
@@ -56,7 +57,8 @@
         <div class="node n2"><span>02</span><b>AI</b><small>探索 / 比較 / 生成</small></div>
         <div class="node n3"><span>03</span><b>Result</b><small>観測 / 差 / 気づき</small></div>
         <div class="node n4"><span>04</span><b>Next</b><small>次の問いへ</small></div>
-        <div class="orb-core">×</div>
+        <button class="orb-core" type="button" aria-label="Flowの状態を切り替える">×</button>
+        <span class="orbit-hint">touch ×</span>
       </div>
       <p class="loop-note">最初から正解を決めず、結果によって次の一手を変える。</p>
     </section>
@@ -98,8 +100,21 @@
       </div>
     </section>
 
-    <section class="discoveries">
+
+    <section class="playground" id="play">
       <div class="no">05</div>
+      <div class="play-copy">
+        <p class="eyebrow">FLOW PLAYGROUND</p>
+        <h2>余白に、<br>星を置いていく。</h2>
+        <p>ここは説明のための場所ではない。触れた場所に、小さな発見を残していく。</p>
+      </div>
+      <div class="constellation" id="constellation" aria-label="触れると星が生まれる遊び場">
+        <span class="constellation-note">TAP / CLICK ANYWHERE</span>
+      </div>
+    </section>
+
+    <section class="discoveries">
+      <div class="no">06</div>
       <p class="eyebrow">WHAT EMERGES</p>
       <h2>ここから何が生まれるかは、まだ決まっていない。</h2>
       <div class="cards">
@@ -120,8 +135,11 @@
 
   <footer>
     <span>HUMAN × AI</span>
-    <span>Flow World Prototype v1</span>
+    <span>Flow World Prototype v0.2</span>
   </footer>
+
+  <button class="flow-signal" type="button" aria-expanded="false"><span>✦</span><b>Flow signal</b></button>
+  <aside class="flow-whisper" aria-live="polite">まだ決まっていないものは、そのままでいい。</aside>
 
   <script src="script.js"></script>
 </body>
