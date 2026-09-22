@@ -1,0 +1,2 @@
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+document.querySelectorAll('.panel>*:not(.no),.loop>*:not(.no),.flow-copy>*:not(.no),.discoveries>*:not(.no),.end>*').forEach(el=>{el.classList.add('reveal');io.observe(el)});
