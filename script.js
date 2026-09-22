@@ -78,3 +78,40 @@ if(signal&&whisper){
     signal.setAttribute('aria-expanded',whisper.classList.contains('open'));
   });
 }
+
+
+// Flow's room has no goal. Each door only changes the mood a little.
+const room=document.querySelector('.flow-room');
+const roomButton=document.querySelector('.room-button');
+const roomResponse=document.querySelector('.room-response');
+const roomLines=[
+  '扉の向こうは、まだ未定。',
+  '今日は本棚の裏に、空がある。',
+  '猫は何も説明しない。それでいい。',
+  'ひとつ選ばなかったから、三つ残った。',
+  'この部屋では、寄り道が正規ルート。',
+  '窓の外の街は、見るたび少し違う。',
+  '答えは置いてない。代わりに余白がある。'
+];
+let roomIndex=0;
+if(room&&roomButton&&roomResponse){
+  roomButton.addEventListener('click',()=>{
+    roomIndex=(roomIndex+1)%roomLines.length;
+    room.classList.toggle('dreaming',roomIndex%2===1);
+    roomResponse.classList.add('swap');
+    setTimeout(()=>{
+      roomResponse.textContent=roomLines[roomIndex];
+      roomResponse.classList.remove('swap');
+    },180);
+
+    for(let i=0;i<9;i++){
+      const s=document.createElement('i');
+      s.className='room-spark';
+      s.style.left=(8+Math.random()*84)+'%';
+      s.style.top=(38+Math.random()*48)+'%';
+      s.style.animationDelay=(Math.random()*.7)+'s';
+      room.appendChild(s);
+      setTimeout(()=>s.remove(),5600);
+    }
+  });
+}
