@@ -115,3 +115,72 @@ if(room&&roomButton&&roomResponse){
     }
   });
 }
+
+
+// Sky Garden: traces persist in this browser via localStorage.
+const garden=document.querySelector('#garden-field');
+const gardenCount=document.querySelector('.garden-count');
+const gardenSeed=document.querySelector('.garden-seed');
+const gardenClear=document.querySelector('.garden-clear');
+const GARDEN_KEY='flow-world-sky-garden-v1';
+let gardenTraces=[];
+
+const loadGarden=()=>{
+  try{
+    const saved=JSON.parse(localStorage.getItem(GARDEN_KEY)||'[]');
+    if(Array.isArray(saved)) gardenTraces=saved.slice(-60);
+  }catch(e){ gardenTraces=[]; }
+};
+const saveGarden=()=>{
+  try{ localStorage.setItem(GARDEN_KEY,JSON.stringify(gardenTraces.slice(-60))); }catch(e){}
+};
+const updateGardenCount=()=>{
+  if(gardenCount) gardenCount.textContent=`${gardenTraces.length} trace${gardenTraces.length===1?'':'s'} remain here.`;
+};
+const renderGardenTrace=(trace,animate=true)=>{
+  if(!garden)return;
+  const el=document.createElement('i');
+  el.className=`garden-trace ${trace.type}`;
+  el.style.left=(trace.x*100)+'%';
+  el.style.top=(trace.y*100)+'%';
+  if(!animate) el.style.animation='none';
+  garden.appendChild(el);
+};
+const addGardenTrace=(x,y,type)=>{
+  if(!garden)return;
+  const r=garden.getBoundingClientRect();
+  const nx=Math.min(1,Math.max(0,(x-r.left)/r.width));
+  const ny=Math.min(1,Math.max(0,(y-r.top)/r.height));
+  const t=type||(['light','flower','island'][Math.floor(Math.random()*3)]);
+  const trace={x:nx,y:ny,type:t};
+  gardenTraces.push(trace);
+  if(gardenTraces.length>60) gardenTraces.shift();
+  renderGardenTrace(trace,true);
+  saveGarden();
+  updateGardenCount();
+};
+if(garden){
+  loadGarden();
+  gardenTraces.forEach(t=>renderGardenTrace(t,false));
+  updateGardenCount();
+
+  garden.addEventListener('pointerdown',e=>addGardenTrace(e.clientX,e.clientY));
+
+  if(gardenSeed){
+    gardenSeed.addEventListener('click',()=>{
+      const r=garden.getBoundingClientRect();
+      const x=r.left+r.width*(.18+Math.random()*.64);
+      const y=r.top+r.height*(.18+Math.random()*.62);
+      addGardenTrace(x,y);
+    });
+  }
+
+  if(gardenClear){
+    gardenClear.addEventListener('click',()=>{
+      gardenTraces=[];
+      garden.querySelectorAll('.garden-trace').forEach(el=>el.remove());
+      saveGarden();
+      updateGardenCount();
+    });
+  }
+}
