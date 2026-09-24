@@ -184,3 +184,31 @@ if(garden){
     });
   }
 }
+
+
+// The Desk: principles are lenses, not commandments. The selected lens persists locally.
+const deskCards=[...document.querySelectorAll('.desk-card')];
+const deskTitle=document.querySelector('.desk-lens-title');
+const deskCopy=document.querySelector('.desk-lens-copy');
+const DESK_KEY='flow-world-desk-lens-v1';
+
+const selectDeskLens=(index)=>{
+  if(!deskCards.length||!deskTitle||!deskCopy)return;
+  const safe=Math.max(0,Math.min(deskCards.length-1,index));
+  deskCards.forEach((card,i)=>card.classList.toggle('active',i===safe));
+  const card=deskCards[safe];
+  deskTitle.textContent=card.dataset.title||'';
+  deskCopy.textContent=card.dataset.copy||'';
+  try{ localStorage.setItem(DESK_KEY,String(safe)); }catch(e){}
+};
+if(deskCards.length){
+  let saved=0;
+  try{
+    const raw=Number(localStorage.getItem(DESK_KEY));
+    if(Number.isInteger(raw))saved=raw;
+  }catch(e){}
+  selectDeskLens(saved);
+  deskCards.forEach((card,i)=>{
+    card.addEventListener('click',()=>selectDeskLens(i));
+  });
+}
