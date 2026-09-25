@@ -93,10 +93,25 @@ const roomLines=[
   '窓の外の街は、見るたび少し違う。',
   '答えは置いてない。代わりに余白がある。'
 ];
-let roomIndex=0;
+const ROOM_VISITS_KEY='flow-world-room-door-count-v1';
+let roomDoorCount=0;
+try{
+  const saved=Number(localStorage.getItem(ROOM_VISITS_KEY));
+  if(Number.isInteger(saved)&&saved>=0)roomDoorCount=saved;
+}catch(e){}
+let roomIndex=roomDoorCount%roomLines.length;
 if(room&&roomButton&&roomResponse){
+  // Remember only an observed action: how many times this browser opened the door.
+  // We do not infer preference, mood, or meaning from that count.
+  if(roomDoorCount>0){
+    roomResponse.textContent=roomLines[roomIndex];
+    roomButton.title=`This browser has opened the small door ${roomDoorCount} time${roomDoorCount===1?'':'s'}.`;
+  }
   roomButton.addEventListener('click',()=>{
-    roomIndex=(roomIndex+1)%roomLines.length;
+    roomDoorCount+=1;
+    try{localStorage.setItem(ROOM_VISITS_KEY,String(roomDoorCount));}catch(e){}
+    roomIndex=roomDoorCount%roomLines.length;
+    roomButton.title=`This browser has opened the small door ${roomDoorCount} time${roomDoorCount===1?'':'s'}.`;
     room.classList.toggle('dreaming',roomIndex%2===1);
     roomResponse.classList.add('swap');
     setTimeout(()=>{
