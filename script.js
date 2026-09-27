@@ -69,11 +69,34 @@ const lines=[
   'ひとつ星を置くと、次の星の場所が少しだけ見える。',
   '今日はこの世界を、昨日と同じにしなくていい。'
 ];
+const SIGNAL_COUNT_KEY='flow-world-signal-count-v1';
 let lineIndex=0;
+let signalCount=0;
+try{
+  const saved=Number(localStorage.getItem(SIGNAL_COUNT_KEY));
+  if(Number.isInteger(saved)&&saved>=0)signalCount=saved;
+}catch(e){}
+
+const observedWhisper=()=>{
+  let roomCount=0;
+  let gardenCount=0;
+  try{
+    const savedRoom=Number(localStorage.getItem('flow-world-room-door-count-v1'));
+    if(Number.isInteger(savedRoom)&&savedRoom>=0)roomCount=savedRoom;
+  }catch(e){}
+  try{
+    const savedGarden=JSON.parse(localStorage.getItem('flow-world-sky-garden-v1')||'[]');
+    if(Array.isArray(savedGarden))gardenCount=savedGarden.length;
+  }catch(e){}
+  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。`;
+};
+
 if(signal&&whisper){
   signal.addEventListener('click',()=>{
+    signalCount+=1;
+    try{localStorage.setItem(SIGNAL_COUNT_KEY,String(signalCount));}catch(e){}
     lineIndex=(lineIndex+1)%lines.length;
-    whisper.textContent=lines[lineIndex];
+    whisper.textContent=signalCount%4===0?observedWhisper():lines[lineIndex];
     whisper.classList.toggle('open');
     signal.setAttribute('aria-expanded',whisper.classList.contains('open'));
   });
