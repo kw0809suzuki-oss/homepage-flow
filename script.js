@@ -16,14 +16,25 @@ if(hero&&heroImg){
 }
 
 // The center of the loop is now a small state switch.
+// Remember only the last observed selection in this browser.
 const core=document.querySelector('.orb-core');
 const stateWords=['observe','discover','expand'];
+const FLOW_STATE_KEY='flow-world-loop-state-v1';
 let stateIndex=0;
+try{
+  const saved=localStorage.getItem(FLOW_STATE_KEY);
+  const found=stateWords.indexOf(saved);
+  if(found>=0)stateIndex=found;
+}catch(e){}
 if(core){
+  document.body.dataset.flowState=stateWords[stateIndex];
+  core.textContent=stateIndex===0?'×':stateIndex===1?'✦':'◎';
   core.addEventListener('click',()=>{
     stateIndex=(stateIndex+1)%stateWords.length;
-    document.body.dataset.flowState=stateWords[stateIndex];
+    const nextState=stateWords[stateIndex];
+    document.body.dataset.flowState=nextState;
     core.textContent=stateIndex===0?'×':stateIndex===1?'✦':'◎';
+    try{localStorage.setItem(FLOW_STATE_KEY,nextState);}catch(e){}
   });
 }
 
