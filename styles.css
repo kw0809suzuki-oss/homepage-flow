@@ -551,3 +551,31 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
   .desk-card{min-height:145px}
   .desk-footnote{text-align:left}
 }
+
+
+/* Flow World — small persistent return trace */
+.flow-return-mark{
+  position:fixed;
+  left:18px;
+  bottom:18px;
+  z-index:40;
+  border:1px solid rgba(37,63,86,.24);
+  background:rgba(245,249,252,.82);
+  color:#29465f;
+  padding:10px 12px;
+  font:9px monospace;
+  letter-spacing:.12em;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+  box-shadow:0 8px 24px rgba(22,45,65,.08);
+  transition:.2s ease;
+}
+.flow-return-mark:hover,.flow-return-mark:focus-visible{
+  transform:translateY(-2px);
+  background:#17314d;
+  color:#fff;
+  outline:none;
+}
+@media(max-width:620px){
+  .flow-return-mark{left:12px;bottom:12px;padding:9px 10px}
+}
