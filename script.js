@@ -261,3 +261,33 @@ if(deskCards.length){
     card.addEventListener('click',()=>selectDeskLens(i));
   });
 }
+
+
+// A tiny return trace: remember only where this browser last left the world.
+// It does not infer intent or importance; it simply offers the observed coordinate back.
+const LAST_PLACE_KEY='flow-world-last-place-v1';
+const worldSections=[...document.querySelectorAll('main section[id]')];
+let lastPlace=null;
+try{lastPlace=localStorage.getItem(LAST_PLACE_KEY);}catch(e){}
+if(lastPlace&&document.getElementById(lastPlace)){
+  const returnMark=document.createElement('button');
+  returnMark.type='button';
+  returnMark.className='flow-return-mark';
+  returnMark.textContent='↩ LAST PLACE';
+  returnMark.title=`Return to #${lastPlace}`;
+  returnMark.addEventListener('click',()=>{
+    document.getElementById(lastPlace)?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  document.body.appendChild(returnMark);
+}
+if(worldSections.length&&'IntersectionObserver' in window){
+  const placeObserver=new IntersectionObserver(entries=>{
+    const visible=entries
+      .filter(entry=>entry.isIntersecting)
+      .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible)return;
+    lastPlace=visible.target.id;
+    try{localStorage.setItem(LAST_PLACE_KEY,lastPlace);}catch(e){}
+  },{threshold:[.35,.55,.75]});
+  worldSections.forEach(section=>placeObserver.observe(section));
+}
