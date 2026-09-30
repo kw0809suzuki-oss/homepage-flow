@@ -263,7 +263,8 @@ if(deskCards.length){
     if(Number.isInteger(raw))saved=raw;
   }catch(e){}
   selectDeskLens(saved);
-  deskCards.forEach((card,i)=>{    card.addEventListener('click',()=>selectDeskLens(i));
+  deskCards.forEach((card,i)=>{
+    card.addEventListener('click',()=>selectDeskLens(i));
   });
 }
 
