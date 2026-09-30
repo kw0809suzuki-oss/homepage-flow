@@ -91,6 +91,7 @@ try{
 const observedWhisper=()=>{
   let roomCount=0;
   let gardenCount=0;
+  let lastObservedPlace='';
   try{
     const savedRoom=Number(localStorage.getItem('flow-world-room-door-count-v1'));
     if(Number.isInteger(savedRoom)&&savedRoom>=0)roomCount=savedRoom;
@@ -99,7 +100,12 @@ const observedWhisper=()=>{
     const savedGarden=JSON.parse(localStorage.getItem('flow-world-sky-garden-v1')||'[]');
     if(Array.isArray(savedGarden))gardenCount=savedGarden.length;
   }catch(e){}
-  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。`;
+  try{
+    const savedPlace=localStorage.getItem('flow-world-last-place-v1');
+    if(savedPlace&&document.getElementById(savedPlace))lastObservedPlace=savedPlace;
+  }catch(e){}
+  const placeNote=lastObservedPlace?` 最後に観測された場所は #${lastObservedPlace}。`:'';
+  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。${placeNote}`;
 };
 
 if(signal&&whisper){
@@ -257,8 +263,7 @@ if(deskCards.length){
     if(Number.isInteger(raw))saved=raw;
   }catch(e){}
   selectDeskLens(saved);
-  deskCards.forEach((card,i)=>{
-    card.addEventListener('click',()=>selectDeskLens(i));
+  deskCards.forEach((card,i)=>{    card.addEventListener('click',()=>selectDeskLens(i));
   });
 }
 
