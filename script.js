@@ -93,6 +93,7 @@ const observedWhisper=()=>{
   let gardenCount=0;
   let lastObservedPlace='';
   let selectedLens='';
+  let loopState='';
   try{
     const savedRoom=Number(localStorage.getItem('flow-world-room-door-count-v1'));
     if(Number.isInteger(savedRoom)&&savedRoom>=0)roomCount=savedRoom;
@@ -110,9 +111,14 @@ const observedWhisper=()=>{
     const lenses=[...document.querySelectorAll('.desk-card')];
     if(Number.isInteger(savedLens)&&lenses[savedLens])selectedLens=lenses[savedLens].dataset.title||'';
   }catch(e){}
+  try{
+    const savedState=localStorage.getItem('flow-world-loop-state-v1');
+    if(['observe','discover','expand'].includes(savedState))loopState=savedState;
+  }catch(e){}
+  const stateNote=loopState?` Loopに残っているstateは「${loopState}」。`:'';
   const placeNote=lastObservedPlace?` 最後に観測された場所は #${lastObservedPlace}。`:'';
   const lensNote=selectedLens?` Deskに残っているlensは「${selectedLens}」。`:'';
-  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。${placeNote}${lensNote}`;
+  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。${stateNote}${placeNote}${lensNote}`;
 };
 
 if(signal&&whisper){
