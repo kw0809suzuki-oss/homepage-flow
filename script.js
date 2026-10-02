@@ -38,32 +38,50 @@ if(core){
   });
 }
 
-// A tiny constellation sandbox. Nothing to achieve: touches simply remain as traces.
+// A tiny constellation sandbox. Remember only stars the visitor actually placed.
 const field=document.querySelector('#constellation');
+const CONSTELLATION_KEY='flow-world-constellation-v1';
+let constellationTraces=[];
 let previous=null;
 if(field){
-  const addStar=(x,y)=>{
+  try{
+    const saved=JSON.parse(localStorage.getItem(CONSTELLATION_KEY)||'[]');
+    if(Array.isArray(saved))constellationTraces=saved.slice(-26);
+  }catch(e){constellationTraces=[];}
+
+  const renderStar=(trace)=>{
     const r=field.getBoundingClientRect();
-    const px=x-r.left, py=y-r.top;
-    if(px<0||py<0||px>r.width||py>r.height)return;
+    const px=trace.x*r.width,py=trace.y*r.height;
     if(previous){
       const dx=px-previous.x,dy=py-previous.y;
-      const d=Math.hypot(dx,dy);
       const line=document.createElement('i');
       line.className='star-line';
       line.style.left=previous.x+'px';
       line.style.top=previous.y+'px';
-      line.style.width=d+'px';
+      line.style.width=Math.hypot(dx,dy)+'px';
       line.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
       field.appendChild(line);
     }
     const star=document.createElement('i');
-    star.className='star'+(Math.random()>.72?' gold':'');
+    star.className='star'+(trace.gold?' gold':'');
     star.style.left=px+'px';star.style.top=py+'px';
     field.appendChild(star);
     previous={x:px,y:py};
-    const all=field.querySelectorAll('.star,.star-line');
-    if(all.length>52){all[0].remove();if(all[1])all[1].remove();}
+  };
+
+  constellationTraces.forEach(renderStar);
+
+  const addStar=(x,y)=>{
+    const r=field.getBoundingClientRect();
+    const px=x-r.left, py=y-r.top;
+    if(px<0||py<0||px>r.width||py>r.height)return;
+    const trace={x:px/r.width,y:py/r.height,gold:Math.random()>.72};
+    constellationTraces.push(trace);
+    if(constellationTraces.length>26)constellationTraces.shift();
+    try{localStorage.setItem(CONSTELLATION_KEY,JSON.stringify(constellationTraces));}catch(e){}
+    field.querySelectorAll('.star,.star-line').forEach(el=>el.remove());
+    previous=null;
+    constellationTraces.forEach(renderStar);
   };
   field.addEventListener('pointerdown',e=>addStar(e.clientX,e.clientY));
 }
