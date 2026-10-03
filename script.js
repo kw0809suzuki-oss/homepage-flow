@@ -71,6 +71,14 @@ if(field){
 
   constellationTraces.forEach(renderStar);
 
+  // Make persistence legible without assigning meaning to the trace.
+  // We only report the stars this browser actually placed and restored.
+  const note=field.querySelector('.constellation-note');
+  if(note&&constellationTraces.length){
+    note.textContent=`${constellationTraces.length} STAR${constellationTraces.length===1?'':'S'} RETURNED WITH YOU`;
+    note.title='Observed from this browser\'s saved constellation.';
+  }
+
   const addStar=(x,y)=>{
     const r=field.getBoundingClientRect();
     const px=x-r.left, py=y-r.top;
