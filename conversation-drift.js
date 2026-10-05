@@ -81,12 +81,13 @@
     const text=source.value.trim();
     lastObservation=text ? analyze(text) : '';
     output.textContent=lastObservation || 'Paste a conversation first.';
-    if(copy) copy.disabled=!lastObservation;
-    if(copyStatus) copyStatus.textContent='';
+    if(copy){ copy.disabled=false; copy.removeAttribute('disabled'); }
+    if(copyStatus) copyStatus.textContent='Ready to copy.';
   });
   if(copy) copy.addEventListener('click',async()=>{
-    if(!lastObservation)return;
-    const packet=['この会話を継続します。以下は外部の非AIツールによる会話構造の観測です。','',lastObservation,'','RE-ENTRY','- 上記は意味判断ではなく、語彙・構造上の候補です。','- 観測をEvidence以上に昇格させないでください。','- 元の会話の親目的を確認し、変更せずに現在地から続けてください。','- Unknownを推測で埋めないでください。'].join('\n');
+    const observation=lastObservation || (output.textContent && output.textContent !== 'waiting' ? output.textContent.trim() : '');
+    if(!observation){if(copyStatus)copyStatus.textContent='Run OBSERVE first.';return;}
+    const packet=['この会話を継続します。以下は外部の非AIツールによる会話構造の観測です。','',observation,'','RE-ENTRY','- 上記は意味判断ではなく、語彙・構造上の候補です。','- 観測をEvidence以上に昇格させないでください。','- 元の会話の親目的を確認し、変更せずに現在地から続けてください。','- Unknownを推測で埋めないでください。'].join('\n');
     try{await navigator.clipboard.writeText(packet);if(copyStatus)copyStatus.textContent='Copied. Paste this back into your AI.';}
     catch(e){if(copyStatus)copyStatus.textContent='Copy failed. Browser permission may be blocked.';}
   });
