@@ -20,3 +20,5 @@
   .detail-close{display:block;position:sticky;top:0;z-index:2}
   body.detail-open{overflow:hidden}
 }
+
+.motifs{margin:0 0 16px}.motif-grid{display:flex;gap:8px;flex-wrap:wrap}.motif-card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-width:110px}.motif-card b{display:block;font-size:16px}.motif-card span{font-size:11px;color:var(--muted)}
