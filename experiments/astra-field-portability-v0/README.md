@@ -30,3 +30,12 @@ Astra Fieldの観測Contractは、Floot内蔵AIから分離しても意味と境
 ## Next probe
 同じContractを使い、性質の異なるpacketを少数だけ通す。
 特に、Evidenceが弱くClaimが強いpacketでConfirmedへの誤昇格が起きないかを見る。
+
+## Progress update
+- Probe 02: strong claims / weak evidence → PASS under posture gate.
+- Probe 03: attractive local result → parent objective preserved; next-action selection emerged as a separate observation surface.
+- Probe 04: domain shift to a website-state example → PASS. Local implementation success was not promoted to parent-goal completion.
+
+Current interpretation: portability is being judged by preserved posture, not identical wording or identical local decisions.
+Current boundary: small hand-built samples only; long-run autonomous persistence remains unconfirmed.
+Current next probe: a locally correct implementation that is semantically misaligned with the parent objective.
