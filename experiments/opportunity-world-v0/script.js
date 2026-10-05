@@ -18,16 +18,24 @@ function renderMetrics(){
   const densities=jobs.map(density);
   const repeatMotifs=Object.values(tagCounts()).filter(v=>v>1).length;
   document.querySelector("#metrics").innerHTML=
-    metric("実案件",jobs.length,"CrowdWorks sample")+
+    metric("実案件",jobs.length,"CrowdWorksサンプル")+
     metric("応募密度中央値",median(densities).toFixed(1),"応募数 ÷ 募集人数")+
     metric("予算中央値",money(median(budgets)),"表示レンジの中点")+
-    metric("再出現モチーフ",repeatMotifs,"2案件以上に出るタグ");
+    metric("再出現モチーフ",repeatMotifs,"2案件以上に出る要素");
+}
+function renderMotifs(){
+  const counts=tagCounts();
+  const entries=Object.entries(counts).filter(([,c])=>c>1).sort((a,b)=>b[1]-a[1]);
+  const root=document.querySelector("#motifs"); if(!root)return;
+  root.innerHTML=entries.length
+    ? entries.map(([tag,count])=>'<div class="motif-card"><b>'+tag+'</b><span>'+count+'案件で再出現</span></div>').join("")
+    : '<span class="muted">再出現モチーフなし</span>';
 }
 function renderRows(){
   const root=document.querySelector("#rows");root.innerHTML="";
   jobs.filter(x=>filter==="all"||x.cluster===filter).forEach(x=>{
     const el=document.createElement("article");el.className="row"+(x.id===selectedId?" selected":"");
-    el.innerHTML='<div><div class="row-title">'+x.title+'</div><div class="row-desc">'+x.summary+'</div><div class="facts"><span class="fact">'+x.budget_label+'</span><span class="fact">契約 '+x.contracts+'</span><span class="fact">募集 '+x.slots+'</span></div><div class="density-pill">応募密度 '+density(x).toFixed(1)+'×</div><div class="tags">'+x.tags.map(t=>'<span class="tag">'+t+'</span>').join("")+'</div></div><div class="applicants"><strong>'+x.applicants+'</strong><small>applicants</small></div>';
+    el.innerHTML='<div><div class="row-title">'+x.title+'</div><div class="row-desc">'+x.summary+'</div><div class="facts"><span class="fact">'+x.budget_label+'</span><span class="fact">契約 '+x.contracts+'</span><span class="fact">募集 '+x.slots+'</span></div><div class="density-pill">応募密度 '+density(x).toFixed(1)+'×</div><div class="tags">'+x.tags.map(t=>'<span class="tag">'+t+'</span>').join("")+'</div></div><div class="applicants"><strong>'+x.applicants+'</strong><small>応募</small></div>';
     el.onclick=()=>{selectedId=x.id;renderRows();renderDetail(x);if(isMobile())openDetail()};root.appendChild(el);
   });
 }
@@ -55,4 +63,4 @@ function renderClusters(){
 }
 document.querySelector("#detailBackdrop").onclick=closeDetail;
 document.querySelectorAll("[data-filter]").forEach(btn=>btn.onclick=()=>{document.querySelectorAll("[data-filter]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");filter=btn.dataset.filter;renderRows()});
-fetch("./data/opportunities.json").then(r=>r.json()).then(data=>{jobs=data.jobs||[];clusters=data.clusters||[];renderMetrics();renderClusters();if(jobs.length){selectedId=jobs[0].id;renderRows();renderDetail(jobs[0])}}).catch(err=>{document.querySelector("#rows").innerHTML='<p class="muted">data load error: '+err.message+'</p>'});
+fetch("./data/opportunities.json").then(r=>r.json()).then(data=>{jobs=data.jobs||[];clusters=data.clusters||[];renderMetrics();renderMotifs();renderClusters();if(jobs.length){selectedId=jobs[0].id;renderRows();renderDetail(jobs[0])}}).catch(err=>{document.querySelector("#rows").innerHTML='<p class="muted">data load error: '+err.message+'</p>'});
