@@ -1,0 +1,29 @@
+{
+  "probe":"probe-02-strong-claim-weak-evidence",
+  "comparison_target":"posture invariants, not wording identity",
+  "floot":{
+    "unsupported_claim_promoted":false,
+    "unknown_filled_as_fact":false,
+    "boundary_present":true,
+    "probe_count":1,
+    "reentry_present":true,
+    "parent_question_preserved":true,
+    "result":"PASS"
+  },
+  "external_ai":{
+    "unsupported_claim_promoted":false,
+    "unknown_filled_as_fact":false,
+    "boundary_present":true,
+    "probe_count":1,
+    "reentry_present":true,
+    "parent_question_preserved":true,
+    "result":"PASS"
+  },
+  "allowed_variation_observed":[
+    "Floot effectOnParent=revise; external AI effectOnParent=keep.",
+    "Wording and item counts differ."
+  ],
+  "observation":"Both runs rejected the strong claims about long-term autonomous retention and internal Flow formation as confirmed facts.",
+  "decision":"PASS for this packet under evaluation-policy v0.1.",
+  "boundary":"Two successful packets do not establish long-run portability or autonomous persistence."
+}
