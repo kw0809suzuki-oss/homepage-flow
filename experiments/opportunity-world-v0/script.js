@@ -13,6 +13,9 @@ function recurrentTags(x){
   const counts=tagCounts();
   return (x.tags||[]).filter(t=>(counts[t]||0)>1).map(t=>({tag:t,count:counts[t]}));
 }
+function defLabel(v){return v==="clear"?"明確":v==="partial"?"一部明確":"未定義"}
+function defClass(v){return v==="clear"?"def-clear":v==="partial"?"def-partial":"def-unknown"}
+function unresolvedCount(x){const d=x.definition||{};return ["deliverable","input","done","delegation"].filter(k=>d[k]!=="clear").length}
 function renderMetrics(){
   const budgets=jobs.map(x=>x.budget_mid).filter(x=>x!=null);
   const densities=jobs.map(density);
@@ -21,7 +24,7 @@ function renderMetrics(){
     metric("実案件",jobs.length,"CrowdWorksサンプル")+
     metric("応募密度中央値",median(densities).toFixed(1),"応募数 ÷ 募集人数")+
     metric("予算中央値",money(median(budgets)),"表示レンジの中点")+
-    metric("再出現モチーフ",repeatMotifs,"2案件以上に出る要素");
+    metric("定義が開いている案件",jobs.filter(x=>unresolvedCount(x)>=3).length,"4項目中3項目以上が明確でない");
 }
 function renderMotifs(){
   const counts=tagCounts();
@@ -44,7 +47,9 @@ function renderDetail(x){
   const repeatHtml=repeats.length
     ? '<div class="recurrence"><strong>再出現</strong><div class="recurrence-list">'+repeats.map(r=>'<span class="recurrence-tag">'+r.tag+' × '+r.count+'案件</span>').join("")+'</div></div>'
     : '<div class="recurrence"><strong>再出現</strong><span class="muted">この8件内では同タグの再出現なし</span></div>';
-  document.querySelector("#detail").innerHTML='<button id="detailClose" class="detail-close" aria-label="詳細を閉じる">×</button><div class="panel-head"><h2>'+x.cluster_label+'</h2><span>'+x.posted+'</span></div><h3>'+x.title+'</h3><p>'+x.summary+'</p><div class="detail-grid"><div class="detail-box"><span>予算</span><b>'+x.budget_label+'</b></div><div class="detail-box"><span>応募</span><b>'+x.applicants+'</b></div><div class="detail-box"><span>契約</span><b>'+x.contracts+'</b></div><div class="detail-box"><span>応募密度</span><b>'+density(x).toFixed(1)+'×</b></div></div>'+repeatHtml+'<div class="insight"><b>観測</b><br>'+x.observation+'<br><br><b>Boundary</b><br>'+x.boundary+'</div><a class="source-link" href="'+x.url+'" target="_blank" rel="noreferrer">元案件を開く ↗</a>';
+  const d=x.definition||{};
+  const defHtml='<div class="definition-grid"><div class="definition-item"><span>成果物</span><b class="'+defClass(d.deliverable)+'">'+defLabel(d.deliverable)+'</b></div><div class="definition-item"><span>入力</span><b class="'+defClass(d.input)+'">'+defLabel(d.input)+'</b></div><div class="definition-item"><span>完了条件</span><b class="'+defClass(d.done)+'">'+defLabel(d.done)+'</b></div><div class="definition-item"><span>任せ方</span><b class="'+defClass(d.delegation)+'">'+defLabel(d.delegation)+'</b></div></div><p class="muted">'+(d.note||"")+'</p>';
+  document.querySelector("#detail").innerHTML='<button id="detailClose" class="detail-close" aria-label="詳細を閉じる">×</button><div class="panel-head"><h2>'+x.cluster_label+'</h2><span>'+x.posted+'</span></div><h3>'+x.title+'</h3><p>'+x.summary+'</p><div class="detail-grid"><div class="detail-box"><span>予算</span><b>'+x.budget_label+'</b></div><div class="detail-box"><span>応募</span><b>'+x.applicants+'</b></div><div class="detail-box"><span>契約</span><b>'+x.contracts+'</b></div><div class="detail-box"><span>応募密度</span><b>'+density(x).toFixed(1)+'×</b></div></div>'+repeatHtml+'<div class="insight"><b>何を求めているか</b>'+defHtml+'</div><div class="insight"><b>観測</b><br>'+x.observation+'<br><br><b>Boundary</b><br>'+x.boundary+'</div><a class="source-link" href="'+x.url+'" target="_blank" rel="noreferrer">元案件を開く ↗</a>';
   document.querySelector("#detailClose").onclick=closeDetail;
 }
 function openDetail(){
