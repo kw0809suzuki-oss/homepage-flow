@@ -10,29 +10,42 @@
   <main class="wrap">
     <header class="hero">
       <div>
-        <p class="eyebrow">SECOND WORLD / MARKET OBSERVATORY</p>
-        <h1>Opportunity World <span>v0</span></h1>
-        <p class="lead">案件を並べるのではなく、既存市場の中にある「金は出ているのに供給・競争・解決が薄い場所」を観測する。</p>
+        <p class="eyebrow">SECOND WORLD / REAL MARKET SAMPLE</p>
+        <h1>Opportunity World <span>v0.1</span></h1>
+        <p class="lead">CrowdWorks の業務自動化系案件を、案件一覧ではなく「予算・応募密度・具体性・継続性」の観測面で見る。</p>
       </div>
-      <div class="status">sample data / prototype</div>
+      <div class="status">real sample / 8 jobs</div>
     </header>
+
     <section class="metrics" id="metrics"></section>
+
     <section class="toolbar">
       <button class="active" data-filter="all">すべて</button>
-      <button data-filter="high">高Opportunity</button>
-      <button data-filter="thin">供給薄</button>
-      <button data-filter="rising">需要上昇</button>
+      <button data-filter="micro">小型GAS</button>
+      <button data-filter="vertical">縦型自動化</button>
+      <button data-filter="broad">広域業務改善</button>
+      <button data-filter="agent">AIエージェント</button>
     </section>
+
     <section class="world">
       <div class="panel">
-        <div class="panel-head"><h2>市場の歪み</h2><span>click to inspect</span></div>
+        <div class="panel-head"><h2>実案件</h2><span>budget / applicants / contracts</span></div>
         <div id="rows" class="rows"></div>
       </div>
-      <aside class="panel detail" id="detail"><p class="muted">左の観測対象を選択してください。</p></aside>
+
+      <aside class="panel detail" id="detail">
+        <p class="muted">左の案件を選択してください。</p>
+      </aside>
     </section>
+
+    <section class="panel cluster-panel">
+      <div class="panel-head"><h2>需要クラスタ</h2><span>derived from this small sample</span></div>
+      <div id="clusters" class="cluster-grid"></div>
+    </section>
+
     <section class="principle">
-      <strong>観測単位</strong>
-      <p>案件そのものではなく、需要圧 / 供給薄さ / 支払強度 / 継続性 / 実装可能性。ここから「未充足需要」「価格歪み」「参加可能性」のような第二市場を立ち上げる。</p>
+      <strong>Boundary</strong>
+      <p>これは CrowdWorks 全体を代表する統計ではない。公開ページから取得できた少量サンプルを、第二世界の観測単位に変換したもの。Opportunity の意味は「儲かる」ではなく、「市場の形に差が見えるか」。</p>
     </section>
   </main>
   <script src="./script.js"></script>
