@@ -579,3 +579,21 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 @media(max-width:620px){
   .flow-return-mark{left:12px;bottom:12px;padding:9px 10px}
 }
+
+
+/* Flow World v0.7 — Workbench */
+.workbench{position:relative;padding:130px 7vw 120px;background:#eef2f5;border-top:1px solid var(--line)}
+.workbench-head{display:grid;grid-template-columns:1.05fr .95fr;gap:7vw;align-items:end}
+.workbench-head h2{font:500 clamp(46px,6.3vw,86px)/1.05 Georgia,"Noto Serif JP",serif;letter-spacing:-.04em;margin:12px 0 0}
+.workbench-head>p{max-width:600px;color:#526476;line-height:1.9}
+.workbench-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:58px}
+.tool-card{border:1px solid var(--line);background:rgba(255,255,255,.62);padding:22px;min-height:560px;display:flex;flex-direction:column}
+.tool-card>span{font:10px monospace;letter-spacing:.14em;color:#728499}
+.tool-card h3{font:30px/1.15 Georgia,serif;font-weight:500;margin:16px 0 8px}
+.tool-card p{font-size:13px;line-height:1.7;color:#607084;min-height:66px}
+.tool-card textarea{width:100%;min-height:74px;resize:vertical;border:1px solid rgba(13,27,42,.16);background:#fff;color:var(--ink);padding:11px 12px;font:12px/1.55 monospace;margin-top:8px}
+.tool-card button{margin-top:10px;border:0;background:#17314d;color:white;padding:12px 14px;font:10px monospace;letter-spacing:.1em;cursor:pointer}
+.tool-card pre{margin-top:12px;min-height:128px;white-space:pre-wrap;word-break:break-word;background:#0f1d2b;color:#dce9f5;padding:14px;font:11px/1.6 monospace}
+.workbench-foot{text-align:right;margin-top:28px;color:#7a8997;font:10px/1.7 monospace;letter-spacing:.08em}
+@media(max-width:980px){.workbench-grid{grid-template-columns:1fr}.workbench-head{grid-template-columns:1fr;gap:22px}.tool-card{min-height:0}}
+@media(max-width:620px){.workbench{padding:100px 24px 90px}}
