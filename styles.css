@@ -614,3 +614,5 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 .drift-foot{text-align:right;margin-top:24px;color:#7a8997;font:10px/1.7 monospace;letter-spacing:.08em}
 @media(max-width:900px){.drift-head,.drift-board{grid-template-columns:1fr}.drift-head{gap:22px}}
 @media(max-width:620px){.conversation-drift{padding:100px 24px 90px}.drift-input textarea{min-height:300px}.drift-actions{flex-direction:column}.drift-foot{text-align:left}}
+
+.drift-copy{width:100%;margin-top:18px;border:1px solid rgba(220,233,245,.35);background:#dce9f5;color:#17314d;padding:13px 14px;font:10px monospace;letter-spacing:.11em;cursor:pointer}.drift-copy:disabled{opacity:.35;cursor:not-allowed}.drift-copy-status{display:block;margin-top:10px;color:#9fb9d0;font:10px/1.6 monospace}
