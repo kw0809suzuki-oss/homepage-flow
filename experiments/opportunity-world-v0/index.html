@@ -10,14 +10,16 @@
   <main class="wrap">
     <header class="hero">
       <div>
-        <p class="eyebrow">SECOND WORLD / REAL MARKET SAMPLE</p>
-        <h1>Opportunity World <span>v0.2</span></h1>
+        <p class="eyebrow">第二世界 / 実市場サンプル</p>
+        <h1>Opportunity World <span>v0.3</span></h1>
         <p class="lead">CrowdWorks の業務自動化系案件を、案件一覧ではなく「予算・応募密度・具体性・継続性」の観測面で見る。</p>
       </div>
-      <div class="status">real sample / 8 jobs</div>
+      <div class="status">実データ / 8案件</div>
     </header>
 
     <section class="metrics" id="metrics"></section>
+
+    <section class="motifs panel"><div class="panel-head"><h2>再出現モチーフ</h2><span>2案件以上に現れる要素</span></div><div id="motifs" class="motif-grid"></div></section>
 
     <section class="toolbar">
       <button class="active" data-filter="all">すべて</button>
@@ -29,7 +31,7 @@
 
     <section class="world">
       <div class="panel">
-        <div class="panel-head"><h2>実案件</h2><span>budget / applicants / contracts</span></div>
+        <div class="panel-head"><h2>実案件</h2><span>予算 / 応募 / 契約</span></div>
         <div id="rows" class="rows"></div>
       </div>
 
@@ -41,7 +43,7 @@
     </section>
 
     <section class="panel cluster-panel">
-      <div class="panel-head"><h2>需要クラスタ</h2><span>derived from this small sample</span></div>
+      <div class="panel-head"><h2>需要クラスタ</h2><span>この少量サンプルから算出</span></div>
       <div id="clusters" class="cluster-grid"></div>
     </section>
 
