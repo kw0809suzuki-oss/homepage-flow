@@ -616,3 +616,7 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 @media(max-width:620px){.conversation-drift{padding:100px 24px 90px}.drift-input textarea{min-height:300px}.drift-actions{flex-direction:column}.drift-foot{text-align:left}}
 
 .drift-copy{width:100%;margin-top:18px;border:1px solid rgba(220,233,245,.35);background:#dce9f5;color:#17314d;padding:13px 14px;font:10px monospace;letter-spacing:.11em;cursor:pointer}.drift-copy:disabled{opacity:.35;cursor:not-allowed}.drift-copy-status{display:block;margin-top:10px;color:#9fb9d0;font:10px/1.6 monospace}
+
+/* Drift mobile usability: action first, observation compact. */
+.drift-copy-top{position:sticky;top:10px;z-index:2;background:#0d2030;padding:0 0 12px}.drift-copy-top .drift-copy{margin-top:8px}.drift-output pre{max-height:520px;overflow:auto}
+@media(max-width:700px){.drift-copy-top{top:6px}.drift-output pre{max-height:360px;font-size:12px;line-height:1.55}.drift-output{padding:18px}.drift-copy{padding:14px}}
