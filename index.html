@@ -18,6 +18,7 @@
       <a href="#room">Room</a>
       <a href="#garden">Garden</a>
       <a href="#desk">Desk</a>
+      <a href="#workbench">Workbench</a>
       <a href="#astra">Astra</a>
       <a href="#states">States</a>
       <a href="#play">Play</a>
@@ -165,6 +166,53 @@
     </section>
 
 
+    <section class="workbench" id="workbench">
+      <div class="workbench-head">
+        <div>
+          <div class="no">07</div>
+          <p class="eyebrow">FLOW WORKBENCH v0 / REUSABLE ASSETS</p>
+          <h2>使った道具を、<br>もう一度使える形に。</h2>
+        </div>
+        <p>過去の実戦で使った操作だけを置く。新しい理論を作る場所ではなく、比較・差分・境界確認をすぐ試すための作業台。</p>
+      </div>
+
+      <div class="workbench-grid">
+        <article class="tool-card" data-tool="ab">
+          <span>01 / COMPARE</span>
+          <h3>A/B Comparator</h3>
+          <p>同じ長さの数値列を比較し、平均差と各地点の差を返す。</p>
+          <textarea data-input="a" placeholder="A: 10, 12, 9"></textarea>
+          <textarea data-input="b" placeholder="B: 8, 13, 7"></textarea>
+          <button type="button" data-run="ab">RUN A/B</button>
+          <pre data-output="ab">waiting</pre>
+        </article>
+
+        <article class="tool-card" data-tool="divergence">
+          <span>02 / TRACE</span>
+          <h3>First Divergence</h3>
+          <p>2系列が最初に異なる地点だけを返す。原因は推定しない。</p>
+          <textarea data-input="seq-a" placeholder="A: plant, water, sell"></textarea>
+          <textarea data-input="seq-b" placeholder="B: plant, wait, sell"></textarea>
+          <button type="button" data-run="divergence">FIND FIRST DIFFERENCE</button>
+          <pre data-output="divergence">waiting</pre>
+        </article>
+
+        <article class="tool-card" data-tool="astra-lens">
+          <span>03 / LENS</span>
+          <h3>Astra Lens</h3>
+          <p>材料を結論に変えず、観測・解釈・境界・不足へ分けるための手動レンズ。</p>
+          <textarea data-input="observation" placeholder="Observed fact"></textarea>
+          <textarea data-input="interpretation" placeholder="Interpretation / hypothesis"></textarea>
+          <textarea data-input="boundary" placeholder="Evidence boundary"></textarea>
+          <textarea data-input="missing" placeholder="Missing / unknown"></textarea>
+          <button type="button" data-run="astra-lens">BUILD LENS</button>
+          <pre data-output="astra-lens">waiting</pre>
+        </article>
+      </div>
+
+      <p class="workbench-foot">v0 keeps the tools small. No automatic tool selection, no hidden inference, no workflow builder.</p>
+    </section>
+
     <section class="astra-lab" id="astra">
       <div class="astra-head">
         <div>
@@ -295,7 +343,7 @@
 
   <footer>
     <span>HUMAN × AI</span>
-    <span>Flow World Prototype v0.6</span>
+    <span>Flow World Prototype v0.7</span>
   </footer>
 
   <button class="flow-signal" type="button" aria-expanded="false"><span>✦</span><b>Flow signal</b></button>
