@@ -1,0 +1,31 @@
+{
+  "objective": "AIは、人間が保持している意味と既存世界の構造を壊さずに、継続的に世界へ介入できるか。",
+  "currentQuestion": "Astra Fieldの観測Contractは、Floot内蔵AIから分離しても意味と境界を保持できるか。",
+  "currentPosition": "Floot版Astra Fieldの依存境界を観測し、AI・DB・Storageが交換点であることを確認した段階。",
+  "deskContext": {
+    "observations": [
+      "Astra FieldにはObjective/Current Question/Confirmed/Interpretations/Boundary/Missing/Probe/Re-entryの入出力Contractがある。",
+      "中心のastraProbeは現在@floot/aiのflootAi.chatを直接呼ぶ。",
+      "Condition Field等の永続化はPostgres、ArchiveはブラウザlocalStorageを使う。",
+      "外部machine-facing routeとしてordinary JSONの/_api/astra_probeが既に設計されている。"
+    ],
+    "claims": [
+      "Astra FieldはFlootから独立した観測Engineとして扱える可能性がある。",
+      "専用AIを常駐させず、外部AIが必要時だけFieldへ入る構成にできる可能性がある。"
+    ],
+    "evidence": [
+      "helpers/astraProbe.tsxとruntime-gateway.mdの現行コードを直接確認した。",
+      "ask_astraは@floot/ai、画像は@floot/storage、DB接続はFLOOT_DATABASE_URLに依存している。"
+    ],
+    "openQuestions": [
+      "同じ入力packetをFloot版と外部AI版へ渡した時、Confirmed/Interpretation/Boundary/Missing/one Probe/Re-entryの分離は保持されるか。"
+    ],
+    "constraints": [
+      "Floot版は変更しない。",
+      "生成案をEvidenceへ昇格させない。",
+      "未知は未知のまま残す。",
+      "Probeは結果が親問いまたは次選択を変え得る場合のみ1件。"
+    ]
+  },
+  "previousBoundary": "脱Floot可能性はコード構造から示唆されるが、外部AIで同Contractが保持されることは未検証。"
+}
