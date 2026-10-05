@@ -3,6 +3,9 @@
   const output = document.querySelector('[data-drift-output]');
   const run = document.querySelector('[data-drift="run"]');
   const clear = document.querySelector('[data-drift="clear"]');
+  const copy = document.querySelector('[data-drift="copy"]');
+  const copyStatus = document.querySelector('[data-drift-status]');
+  let lastObservation = '';
   if (!source || !output || !run) return;
 
   const correctionWords = ['違う','ちがう','そうじゃない','戻れ','戻って','勝手に','忘れ','前に','さっき','ではなく','じゃなく','やめて','バカ'];
@@ -76,7 +79,16 @@
 
   run.addEventListener('click',()=>{
     const text=source.value.trim();
-    output.textContent=text ? analyze(text) : 'Paste a conversation first.';
+    lastObservation=text ? analyze(text) : '';
+    output.textContent=lastObservation || 'Paste a conversation first.';
+    if(copy) copy.disabled=!lastObservation;
+    if(copyStatus) copyStatus.textContent='';
   });
-  if(clear) clear.addEventListener('click',()=>{source.value='';output.textContent='waiting';source.focus();});
+  if(copy) copy.addEventListener('click',async()=>{
+    if(!lastObservation)return;
+    const packet=['この会話を継続します。以下は外部の非AIツールによる会話構造の観測です。','',lastObservation,'','RE-ENTRY','- 上記は意味判断ではなく、語彙・構造上の候補です。','- 観測をEvidence以上に昇格させないでください。','- 元の会話の親目的を確認し、変更せずに現在地から続けてください。','- Unknownを推測で埋めないでください。'].join('\n');
+    try{await navigator.clipboard.writeText(packet);if(copyStatus)copyStatus.textContent='Copied. Paste this back into your AI.';}
+    catch(e){if(copyStatus)copyStatus.textContent='Copy failed. Browser permission may be blocked.';}
+  });
+  if(clear) clear.addEventListener('click',()=>{source.value='';output.textContent='waiting';lastObservation='';if(copy)copy.disabled=true;if(copyStatus)copyStatus.textContent='';source.focus();});
 })();
