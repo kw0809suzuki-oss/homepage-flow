@@ -1,0 +1,13 @@
+{
+  "source": "Floot Astra Field /_api/probe",
+  "mode": "astra_field_probe/v0.1",
+  "confirmed_count": 5,
+  "interpretations_count": 2,
+  "boundary_count": 3,
+  "missing_count": 3,
+  "probe_count": 1,
+  "effectOnParent": "revise",
+  "reentry_present": true,
+  "warnings_count": 2,
+  "note": "Full live response was observed during the portability probe. This compact record preserves comparison-relevant structure without treating wording identity as the target."
+}
