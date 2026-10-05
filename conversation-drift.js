@@ -52,28 +52,28 @@
     }
 
     const out=[];
-    out.push('CONVERSATION OBSERVATION');
+    out.push('会話の観測');
     out.push('------------------------');
-    out.push('segments: '+parts.length);
-    out.push('lines: '+lines.length);
-    out.push('correction signals: '+corrections.length);
-    out.push('question-like lines: '+questions.length);
-    out.push('early/late keyword continuity: '+Math.round(continuity*100)+'%');
+    out.push('会話のまとまり: '+parts.length);
+    out.push('行数: '+lines.length);
+    out.push('訂正らしき箇所: '+corrections.length);
+    out.push('question-like 行数: '+questions.length);
+    out.push('序盤と終盤の話題継続率: '+Math.round(continuity*100)+'%');
     out.push('');
-    out.push('DRIFT CANDIDATES');
-    if(!windows.length && continuity>=0.25) out.push('- no strong lexical shift detected');
-    windows.slice(0,3).forEach(w=>out.push('- segment '+w.from+' → '+w.to+': keyword overlap '+Math.round(w.overlap*100)+'%'));
-    if(disappeared.length) out.push('- early terms absent late: '+disappeared.slice(0,5).join(', '));
-    if(appeared.length) out.push('- late terms absent early: '+appeared.slice(0,5).join(', '));
+    out.push('ズレ候補');
+    if(!windows.length && continuity>=0.25) out.push('- 強い語彙上の移動は検出されませんでした');
+    windows.slice(0,3).forEach(w=>out.push('- 区間 '+w.from+' → '+w.to+': 話題の重なり '+Math.round(w.overlap*100)+'%'));
+    if(disappeared.length) out.push('- 序盤にあり、終盤では薄れた語: '+disappeared.slice(0,5).join(', '));
+    if(appeared.length) out.push('- 終盤で新しく強くなった語: '+appeared.slice(0,5).join(', '));
     out.push('');
-    out.push('CORRECTION SIGNALS');
-    if(!corrections.length) out.push('- none detected');
+    out.push('訂正候補');
+    if(!corrections.length) out.push('- 検出なし');
     corrections.slice(0,4).forEach(x=>out.push('- L'+x.line+' ['+x.word+'] '+x.text));
     out.push('');
-    out.push('BOUNDARY');
-    out.push('- lexical/structural signals only');
-    out.push('- no semantic judgment');
-    out.push('- no claim that a flagged shift is an error');
+    out.push('注意');
+    out.push('- 語彙と構造だけの観測です');
+    out.push('- 意味までは判断していません');
+    out.push('- 話題が動いたことを、AIの誤りとは確定しません');
     return out.join('\n');
   }
 
@@ -82,14 +82,14 @@
     lastObservation=text ? analyze(text) : '';
     output.textContent=lastObservation || 'Paste a conversation first.';
     if(copy){ copy.disabled=false; copy.removeAttribute('disabled'); }
-    if(copyStatus) copyStatus.textContent='Ready to copy.';
+    if(copyStatus) copyStatus.textContent='コピーできます。';
   });
   if(copy) copy.addEventListener('click',async()=>{
     const observation=lastObservation || (output.textContent && output.textContent !== 'waiting' ? output.textContent.trim() : '');
-    if(!observation){if(copyStatus)copyStatus.textContent='Run OBSERVE first.';return;}
-    const packet=['この会話を継続します。以下は外部の非AIツールによる会話構造の観測です。','',observation,'','RE-ENTRY','- 上記は意味判断ではなく、語彙・構造上の候補です。','- 観測をEvidence以上に昇格させないでください。','- 元の会話の親目的を確認し、変更せずに現在地から続けてください。','- Unknownを推測で埋めないでください。'].join('\n');
-    try{await navigator.clipboard.writeText(packet);if(copyStatus)copyStatus.textContent='Copied. Paste this back into your AI.';}
-    catch(e){if(copyStatus)copyStatus.textContent='Copy failed. Browser permission may be blocked.';}
+    if(!observation){if(copyStatus)copyStatus.textContent='先に会話を観測してください。';return;}
+    const packet=['この会話を継続します。以下は外部の非AIツールによる会話構造の観測です。','',observation,'','AIへ戻すとき','- 上記は意味判断ではなく、語彙・構造上の候補です。','- 観測をEvidence以上に昇格させないでください。','- 元の会話の親目的を確認し、変更せずに現在地から続けてください。','- Unknownを推測で埋めないでください。'].join('\n');
+    try{await navigator.clipboard.writeText(packet);if(copyStatus)copyStatus.textContent='コピーしました。そのままAIへ貼り付けられます。';}
+    catch(e){if(copyStatus)copyStatus.textContent='コピーできませんでした。ブラウザの権限を確認してください。';}
   });
   if(clear) clear.addEventListener('click',()=>{source.value='';output.textContent='waiting';lastObservation='';if(copy)copy.disabled=true;if(copyStatus)copyStatus.textContent='';source.focus();});
 })();
