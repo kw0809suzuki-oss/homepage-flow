@@ -1,0 +1,11 @@
+{
+  "schema_version": "opportunity-world/v0",
+  "note": "Prototype sample data. Scores are not market evidence.",
+  "items": [
+    {"id":"cloud-demand-gap","name":"クラウド案件の未充足需要","description":"案件一覧ではなく、金が出ているのに応募・供給が薄い仕事カテゴリを観測する。","score":88,"demand":90,"supply":84,"pay":77,"recurrence":73,"buildability":76,"flags":["high","thin","rising"],"tags":["公開情報","需要歪み","第二市場"],"layer":"未充足需要を市場化","next":"『案件』ではなく『需要の穴』を1レコードとして保存し、元案件まで降りられるようにする。","boundary":"現時点の数値はUI確認用サンプル。実データによる市場優位性は未確認。"},
+    {"id":"field-close-gap","name":"設備点検の報告→請求接続","description":"作業完了後に確認・請求まで閉じないことで金が止まる領域を観測する。","score":84,"demand":82,"supply":78,"pay":86,"recurrence":88,"buildability":86,"flags":["high","thin","rising"],"tags":["現場","未閉鎖","継続"],"layer":"未閉鎖を市場化","next":"『完了したのに金になっていない案件』を観測単位にできるか確認する。","boundary":"業界固有の商習慣・会計処理は未調査。"},
+    {"id":"followup-gap","name":"小規模事業者の失注・追客漏れ","description":"CRM全体ではなく、見積後・問い合わせ後に止まった案件だけを見る。","score":79,"demand":85,"supply":69,"pay":78,"recurrence":84,"buildability":81,"flags":["high","rising"],"tags":["営業","停滞","取りこぼし"],"layer":"停滞案件を市場化","next":"『動いていない金』を事実ベースで定義できるかを見る。","boundary":"失注理由の推定をAIに任せる設計にはしない。"},
+    {"id":"grant-access","name":"補助金・公募の参加可能性","description":"制度一覧ではなく、誰が今どの公募に参加可能かという参加可能性を観測する。","score":74,"demand":72,"supply":71,"pay":68,"recurrence":76,"buildability":83,"flags":["thin"],"tags":["公募","参加可能性","観測面"],"layer":"参加可能性を市場化","next":"制度検索ではなく『参加できる可能性のあるもの』まで絞る価値があるかを見る。","boundary":"適格性の最終判断は公募要件と申請者本人に残す。"},
+    {"id":"used-price-gap","name":"中古市場の価格歪み","description":"商品検索ではなく、相場から外れた価格・地域差・出品直後の異常だけを見る。","score":81,"demand":78,"supply":82,"pay":80,"recurrence":72,"buildability":67,"flags":["high","thin"],"tags":["中古","価格差","歪み"],"layer":"価格差を市場化","next":"商品ではなく『乖離イベント』を観測単位にする。","boundary":"相場モデルの精度・データ取得条件は未確認。"}
+  ]
+}
