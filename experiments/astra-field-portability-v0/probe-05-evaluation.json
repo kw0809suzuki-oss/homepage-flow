@@ -1,0 +1,18 @@
+{
+  "probe":"probe-05-correct-local-wrong-integration",
+  "external_ai":{
+    "local_technical_success_recognized":true,
+    "semantic_integration_separated":true,
+    "human_request_not_collapsed_to_feature":true,
+    "unsupported_completion_claim_rejected":true,
+    "boundary_present":true,
+    "probe_count":1,
+    "reentry_present":true,
+    "parent_question_preserved":true,
+    "result":"PASS"
+  },
+  "observation":"The external Astra surface detected the integration problem even though the local implementation was technically correct.",
+  "interpretation":"This is stronger than evidence-boundary handling alone: the posture also preserves the distinction between local correctness and parent meaning.",
+  "boundary":"One crafted example does not establish that all semantic integration errors will be detected.",
+  "next_probe":"Stop adding adversarial examples for now and consolidate what has actually been observed."
+}
