@@ -1,11 +1,78 @@
 {
-  "schema_version": "opportunity-world/v0",
-  "note": "Prototype sample data. Scores are not market evidence.",
-  "items": [
-    {"id":"cloud-demand-gap","name":"クラウド案件の未充足需要","description":"案件一覧ではなく、金が出ているのに応募・供給が薄い仕事カテゴリを観測する。","score":88,"demand":90,"supply":84,"pay":77,"recurrence":73,"buildability":76,"flags":["high","thin","rising"],"tags":["公開情報","需要歪み","第二市場"],"layer":"未充足需要を市場化","next":"『案件』ではなく『需要の穴』を1レコードとして保存し、元案件まで降りられるようにする。","boundary":"現時点の数値はUI確認用サンプル。実データによる市場優位性は未確認。"},
-    {"id":"field-close-gap","name":"設備点検の報告→請求接続","description":"作業完了後に確認・請求まで閉じないことで金が止まる領域を観測する。","score":84,"demand":82,"supply":78,"pay":86,"recurrence":88,"buildability":86,"flags":["high","thin","rising"],"tags":["現場","未閉鎖","継続"],"layer":"未閉鎖を市場化","next":"『完了したのに金になっていない案件』を観測単位にできるか確認する。","boundary":"業界固有の商習慣・会計処理は未調査。"},
-    {"id":"followup-gap","name":"小規模事業者の失注・追客漏れ","description":"CRM全体ではなく、見積後・問い合わせ後に止まった案件だけを見る。","score":79,"demand":85,"supply":69,"pay":78,"recurrence":84,"buildability":81,"flags":["high","rising"],"tags":["営業","停滞","取りこぼし"],"layer":"停滞案件を市場化","next":"『動いていない金』を事実ベースで定義できるかを見る。","boundary":"失注理由の推定をAIに任せる設計にはしない。"},
-    {"id":"grant-access","name":"補助金・公募の参加可能性","description":"制度一覧ではなく、誰が今どの公募に参加可能かという参加可能性を観測する。","score":74,"demand":72,"supply":71,"pay":68,"recurrence":76,"buildability":83,"flags":["thin"],"tags":["公募","参加可能性","観測面"],"layer":"参加可能性を市場化","next":"制度検索ではなく『参加できる可能性のあるもの』まで絞る価値があるかを見る。","boundary":"適格性の最終判断は公募要件と申請者本人に残す。"},
-    {"id":"used-price-gap","name":"中古市場の価格歪み","description":"商品検索ではなく、相場から外れた価格・地域差・出品直後の異常だけを見る。","score":81,"demand":78,"supply":82,"pay":80,"recurrence":72,"buildability":67,"flags":["high","thin"],"tags":["中古","価格差","歪み"],"layer":"価格差を市場化","next":"商品ではなく『乖離イベント』を観測単位にする。","boundary":"相場モデルの精度・データ取得条件は未確認。"}
+  "schema_version": "opportunity-world/crowdworks-sample-v0.1",
+  "source": "CrowdWorks public job pages",
+  "observed_at": "2026-10-05",
+  "boundary": "Small hand-collected sample. Not representative of the full market.",
+  "jobs": [
+    {
+      "id":"13237968","title":"Googleフォーム×GASによる 出張報告書自動化","posted":"2026-06-13",
+      "cluster":"micro","cluster_label":"小型GAS","budget_label":"¥5,500","budget_mid":5500,
+      "applicants":167,"contracts":1,"slots":3,"tags":["フォーム","GAS","報告書","単発"],
+      "summary":"フォーム入力→スプレッドシート→報告書を自動化するシンプル案件。",
+      "observation":"小さく説明しやすい自動化でも応募が非常に多い。このサンプルでは『簡単なGAS』は競争が強い側に見える。",
+      "boundary":"1案件だけで小型GAS市場全体を代表しない。","url":"https://crowdworks.jp/public/jobs/13237968"
+    },
+    {
+      "id":"13037133","title":"スプレッドシート関数・GASの継続改善","posted":"2026-04-03",
+      "cluster":"micro","cluster_label":"小型GAS","budget_label":"〜¥5,000 / 1件¥1,000","budget_mid":2500,
+      "applicants":2,"contracts":1,"slots":1,"tags":["GAS","関数","広告連携","継続"],
+      "summary":"日々のスプレッドシート作業、広告媒体連携、エラー修正などを継続的に改善。",
+      "observation":"同じ小型GASでも応募2人。仕事内容が継続保守寄りで、単発テンプレ案件とは競争の形が違う。",
+      "boundary":"掲載期間や発注者条件の影響を分離できていない。","url":"https://crowdworks.jp/public/jobs/13037133"
+    },
+    {
+      "id":"13330197","title":"Amazon輸出用スプレッドシート改善・自動化","posted":"2026-07-24",
+      "cluster":"micro","cluster_label":"小型GAS","budget_label":"¥800","budget_mid":800,
+      "applicants":10,"contracts":1,"slots":1,"tags":["EC","GAS","為替","継続候補"],
+      "summary":"為替取得、SKUコピーなど小さな改善。良ければ今後も自動化相談あり。",
+      "observation":"報酬800円でも応募10人。価格の低さだけでは供給を抑えきれていない。",
+      "boundary":"評価5件以上という応募条件がある。","url":"https://crowdworks.jp/public/jobs/13330197"
+    },
+    {
+      "id":"13076165","title":"中古車オークションPDF→原価管理表","posted":"2026-04-22",
+      "cluster":"vertical","cluster_label":"縦型自動化","budget_label":"¥5,000〜¥10,000","budget_mid":7500,
+      "applicants":23,"contracts":2,"slots":1,"tags":["中古車","OCR","外部照会","PDF"],
+      "summary":"精算書OCR、車台番号による外部照会、原価表転記、契約書PDF生成までを繋ぐ。",
+      "observation":"業界固有の複数工程を含む縦型案件。単純GASより要件が深いが、応募は23人。",
+      "boundary":"予算と要件量の釣り合いは評価していない。","url":"https://crowdworks.jp/public/jobs/13076165"
+    },
+    {
+      "id":"13042512","title":"AIを活用した求人管理スプレッドシート","posted":"2026-04-06",
+      "cluster":"vertical","cluster_label":"縦型自動化","budget_label":"¥5,000〜¥10,000","budget_mid":7500,
+      "applicants":17,"contracts":1,"slots":1,"tags":["求人","AI","GAS","既存組込"],
+      "summary":"既存の求人管理スプレッドシートへAI機能を組み込む小型開発。",
+      "observation":"用途が求人管理に限定されると、応募数は17人。このサンプルでは超汎用案件より競争がやや薄い。",
+      "boundary":"公開情報だけではAI機能の難易度を十分評価できない。","url":"https://crowdworks.jp/public/jobs/13042512"
+    },
+    {
+      "id":"13166769","title":"GAS・VBA・RPA・AIによる業務自動化","posted":"2026-05-12",
+      "cluster":"broad","cluster_label":"広域業務改善","budget_label":"¥50,000〜¥100,000","budget_mid":75000,
+      "applicants":112,"contracts":1,"slots":3,"tags":["業務整理","要件定義","GAS","RPA"],
+      "summary":"Excel集計、受注入力、CSV加工、Web入力など、業務を見ながら自動化する広い案件。",
+      "observation":"10万円前後でも応募112人。『業務改善できます』という広い入口は高単価でも競争が強い。",
+      "boundary":"3名募集なので単純な応募数比較には注意。","url":"https://crowdworks.jp/public/jobs/13166769"
+    },
+    {
+      "id":"13230840","title":"AI業務改善エンジニア","posted":"2026-06-11",
+      "cluster":"broad","cluster_label":"広域業務改善","budget_label":"¥100,000〜¥150,000","budget_mid":125000,
+      "applicants":55,"contracts":2,"slots":5,"tags":["LLM","RAG","n8n","継続"],
+      "summary":"業務フロー分析からAI導入設計、RAG/エージェント、自動化、改善まで担当。",
+      "observation":"単価は高いが専門実績要求も高い。応募/募集枠は11で、広域業務改善の中でも入口条件が競争を絞っている可能性がある。",
+      "boundary":"応募者の適合率は分からない。","url":"https://crowdworks.jp/public/jobs/13230840"
+    },
+    {
+      "id":"13056568","title":"EC在庫管理AIエージェントの相談・試作","posted":"2026-04-13",
+      "cluster":"agent","cluster_label":"AIエージェント","budget_label":"¥3,300（相談）","budget_mid":3300,
+      "applicants":20,"contracts":3,"slots":1,"tags":["EC","AIエージェント","GAS","本開発候補"],
+      "summary":"既存在庫管理システムにAIを接続し、発注・発送の提案と承認後実行を想定。最初は設計相談。",
+      "observation":"本開発ではなく低額の『設計相談』を入口にして3契約。完成品ではなく、次の大型開発への入口そのものが取引単位になっている。",
+      "boundary":"本開発に何件つながったかは不明。","url":"https://crowdworks.jp/public/jobs/13056568"
+    }
+  ],
+  "clusters":[
+    {"id":"micro","label":"小型GAS","jobs":3,"median_applicants":10,"median_budget_label":"¥2,500","observation":"応募数のばらつきが大きい。単純さだけでは競争密度を説明できない。"},
+    {"id":"vertical","label":"縦型自動化","jobs":2,"median_applicants":20,"median_budget_label":"¥7,500","observation":"用途が具体化されると競争は残るが、案件の中身が比較しやすくなる。"},
+    {"id":"broad","label":"広域業務改善","jobs":2,"median_applicants":83.5,"median_budget_label":"¥100,000","observation":"高単価だが応募も多い。『何でも改善』は市場として既に混んでいる可能性。"},
+    {"id":"agent","label":"AIエージェント","jobs":1,"median_applicants":20,"median_budget_label":"¥3,300","observation":"設計相談→本開発という二段階取引が見える。"}
   ]
 }
