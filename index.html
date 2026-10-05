@@ -19,7 +19,7 @@
       <a href="#garden">Garden</a>
       <a href="#desk">Desk</a>
       <a href="#workbench">Workbench</a>
-      <a href="#astra">Astra</a>
+      <a href="#drift">Drift</a>\n      <a href="#astra">Astra</a>
       <a href="#states">States</a>
       <a href="#play">Play</a>
     </div>
@@ -213,6 +213,24 @@
       <p class="workbench-foot">v0 keeps the tools small. No automatic tool selection, no hidden inference, no workflow builder.</p>
     </section>
 
+
+    <section class="conversation-drift" id="drift">
+      <div class="drift-head">
+        <div><div class="no">08</div><p class="eyebrow">CONVERSATION DRIFT DETECTOR v0 / LOCAL ONLY</p><h2>AIとの会話を、<br>外から一度見る。</h2></div>
+        <p>会話全文を貼ると、ブラウザ内だけで訂正・未回収の問い・話題の移動を機械的に観測する。AI/APIは使わず、意味や原因を断定しない。</p>
+      </div>
+      <div class="drift-board">
+        <div class="drift-input">
+          <label for="drift-source">PASTE CONVERSATION</label>
+          <textarea id="drift-source" placeholder="User: ...&#10;Assistant: ...&#10;&#10;または、そのまま会話全文を貼り付け"></textarea>
+          <div class="drift-actions"><button type="button" data-drift="run">OBSERVE CONVERSATION</button><button type="button" data-drift="clear">CLEAR</button></div>
+          <small>入力内容は送信・保存しません。このページ内のJavaScriptだけで処理します。</small>
+        </div>
+        <div class="drift-output" aria-live="polite"><span class="drift-kicker">OBSERVATION</span><pre data-drift-output>waiting</pre></div>
+      </div>
+      <p class="drift-foot">v0 detects candidates, not causes. A flagged turn is a place to inspect, not proof that the AI was wrong.</p>
+    </section>
+
     <section class="astra-lab" id="astra">
       <div class="astra-head">
         <div>
@@ -350,6 +368,6 @@
   <aside class="flow-whisper" aria-live="polite">まだ決まっていないものは、そのままでいい。</aside>
 
   <script src="script.js"></script>
-  <script src="astra-loop.js"></script>
+  <script src="astra-loop.js"></script>\n  <script src="conversation-drift.js"></script>
 </body>
 </html>
