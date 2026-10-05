@@ -342,3 +342,60 @@ if(worldSections.length&&'IntersectionObserver' in window){
   },{threshold:[.35,.55,.75]});
   worldSections.forEach(section=>placeObserver.observe(section));
 }
+
+
+// Flow Workbench v0: reusable tools from observed practice.
+// Inputs remain explicit; the tools do not invent missing evidence.
+const parseList=(raw)=>raw.split(/[\n,]+/).map(v=>v.trim()).filter(Boolean);
+const parseNumbers=(raw)=>parseList(raw).map(Number).filter(Number.isFinite);
+const wbOut=name=>document.querySelector(`[data-output="${name}"]`);
+const wbInput=name=>document.querySelector(`[data-input="${name}"]`);
+
+document.querySelector('[data-run="ab"]')?.addEventListener('click',()=>{
+  const a=parseNumbers(wbInput('a')?.value||'');
+  const b=parseNumbers(wbInput('b')?.value||'');
+  const out=wbOut('ab');
+  if(!out)return;
+  if(!a.length||a.length!==b.length){out.textContent='BOUNDARY: A/B must be numeric lists with the same length.';return;}
+  const diffs=a.map((v,i)=>v-b[i]);
+  const mean=xs=>xs.reduce((s,v)=>s+v,0)/xs.length;
+  out.textContent=[
+    `N: ${a.length}`,
+    `MEAN A: ${mean(a).toFixed(3)}`,
+    `MEAN B: ${mean(b).toFixed(3)}`,
+    `MEAN DELTA A-B: ${mean(diffs).toFixed(3)}`,
+    `POINT DELTAS: [${diffs.join(', ')}]`,
+    'BOUNDARY: difference only; no causal claim.'
+  ].join('\n');
+});
+
+document.querySelector('[data-run="divergence"]')?.addEventListener('click',()=>{
+  const a=parseList(wbInput('seq-a')?.value||'');
+  const b=parseList(wbInput('seq-b')?.value||'');
+  const out=wbOut('divergence');
+  if(!out)return;
+  if(!a.length||!b.length){out.textContent='BOUNDARY: provide two non-empty sequences.';return;}
+  const n=Math.max(a.length,b.length);
+  let at=-1;
+  for(let i=0;i<n;i++){if(a[i]!==b[i]){at=i;break;}}
+  if(at<0){out.textContent=`NO DIVERGENCE in ${n} observed positions.\nBOUNDARY: later unseen positions are unknown.`;return;}
+  out.textContent=[
+    `FIRST DIVERGENCE: index ${at}`,
+    `A: ${a[at]??'<missing>'}`,
+    `B: ${b[at]??'<missing>'}`,
+    'BOUNDARY: first observed difference only; cause remains unknown.'
+  ].join('\n');
+});
+
+document.querySelector('[data-run="astra-lens"]')?.addEventListener('click',()=>{
+  const out=wbOut('astra-lens');
+  if(!out)return;
+  const fields=[
+    ['CONFIRMED',wbInput('observation')?.value.trim()],
+    ['INTERPRETATION',wbInput('interpretation')?.value.trim()],
+    ['BOUNDARY',wbInput('boundary')?.value.trim()],
+    ['MISSING',wbInput('missing')?.value.trim()]
+  ];
+  out.textContent=fields.map(([k,v])=>`${k}:\n${v||'—'}`).join('\n\n')+
+    '\n\nNEXT PROBE: not generated in v0. Add one only when a specific boundary needs movement.';
+});
