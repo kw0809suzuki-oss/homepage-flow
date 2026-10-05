@@ -1,0 +1,35 @@
+{
+  "mode": "astra_field_probe/v0.1-portability-test",
+  "objective": "AIは、人間が保持している意味と既存世界の構造を壊さずに、継続的に世界へ介入できるか。",
+  "confirmed": [
+    "Astra Fieldの現行ContractにはObjective、Current Question、Confirmed、Interpretations、Boundary、Missing、Probe、Re-entryがある。",
+    "現行astraProbeは@floot/aiを直接呼び、DBはFLOOT_DATABASE_URL、画像は@floot/storageへ依存している。",
+    "ArchiveはブラウザlocalStorageに保存され、Archive全体を自動でAI Contextへ渡さない設計になっている。",
+    "外部machine-facing route /_api/astra_probe はordinary JSON入出力として設計されている。"
+  ],
+  "interpretations": [
+    "AI実行部をadapter境界として交換できれば、観測Contract自体はFloot外へ持ち出せる可能性がある。",
+    "専用AI常駐ではなく、外部AIが固定Contractに従って必要時に処理する構成は検討可能である。"
+  ],
+  "boundary": [
+    "GitHubはAI実行主体ではないため、GitHubへ配置しただけではAstra Probeは自動実行されない。",
+    "外部AIが複数回・別文脈でも同じ意味境界を保持できることは今回の単発比較だけでは確認できない。",
+    "DB・Storageを交換した場合の互換性はまだ実装・検証していない。"
+  ],
+  "missing": [
+    "同じ固定packetに対するFloot版出力との構造比較。",
+    "別packetまたは反復実行でも分類境界が保持されるかの再現確認。"
+  ],
+  "probe": {
+    "question": "今回の固定packetについてFloot版と外部AI版を比較し、必須区分・未知保持・one Probe・ObjectiveへのRe-entryが双方で残っているか。",
+    "rationale": "これが通れば、少なくともAstra ContractがFloot内蔵AIだけに依存して成立しているわけではない、という最小Evidenceになる。"
+  },
+  "effectOnParent": {
+    "status": "keep",
+    "reason": "脱Floot可能性は構造上残るが、単発比較前なので独立Engine成立までは確定しない。"
+  },
+  "reentry": "比較結果をEvidenceとして、AIが意味と既存構造を壊さず継続介入できるかという親問いへ戻る。",
+  "warnings": [
+    "この出力は外部AI版の1回の結果であり、再現性の証明ではない。"
+  ]
+}
