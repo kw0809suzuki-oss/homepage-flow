@@ -1,78 +1,280 @@
 {
-  "schema_version": "opportunity-world/crowdworks-sample-v0.1",
+  "schema_version": "opportunity-world/crowdworks-sample-v0.2",
   "source": "CrowdWorks public job pages",
   "observed_at": "2026-10-05",
   "boundary": "Small hand-collected sample. Not representative of the full market.",
   "jobs": [
     {
-      "id":"13237968","title":"Googleフォーム×GASによる 出張報告書自動化","posted":"2026-06-13",
-      "cluster":"micro","cluster_label":"小型GAS","budget_label":"¥5,500","budget_mid":5500,
-      "applicants":167,"contracts":1,"slots":3,"tags":["フォーム","GAS","報告書","単発"],
-      "summary":"フォーム入力→スプレッドシート→報告書を自動化するシンプル案件。",
-      "observation":"小さく説明しやすい自動化でも応募が非常に多い。このサンプルでは『簡単なGAS』は競争が強い側に見える。",
-      "boundary":"1案件だけで小型GAS市場全体を代表しない。","url":"https://crowdworks.jp/public/jobs/13237968"
+      "id": "13237968",
+      "title": "Googleフォーム×GASによる 出張報告書自動化",
+      "posted": "2026-06-13",
+      "cluster": "micro",
+      "cluster_label": "小型GAS",
+      "budget_label": "¥5,500",
+      "budget_mid": 5500,
+      "applicants": 167,
+      "contracts": 1,
+      "slots": 3,
+      "tags": [
+        "フォーム",
+        "GAS",
+        "報告書",
+        "単発"
+      ],
+      "summary": "フォーム入力→スプレッドシート→報告書を自動化するシンプル案件。",
+      "observation": "小さく説明しやすい自動化でも応募が非常に多い。このサンプルでは『簡単なGAS』は競争が強い側に見える。",
+      "boundary": "1案件だけで小型GAS市場全体を代表しない。",
+      "url": "https://crowdworks.jp/public/jobs/13237968",
+      "definition": {
+        "deliverable": "clear",
+        "input": "clear",
+        "done": "partial",
+        "delegation": "clear",
+        "note": "成果物と入力経路はかなり具体的。完了条件の細部だけ一部不明。"
+      }
     },
     {
-      "id":"13037133","title":"スプレッドシート関数・GASの継続改善","posted":"2026-04-03",
-      "cluster":"micro","cluster_label":"小型GAS","budget_label":"〜¥5,000 / 1件¥1,000","budget_mid":2500,
-      "applicants":2,"contracts":1,"slots":1,"tags":["GAS","関数","広告連携","継続"],
-      "summary":"日々のスプレッドシート作業、広告媒体連携、エラー修正などを継続的に改善。",
-      "observation":"同じ小型GASでも応募2人。仕事内容が継続保守寄りで、単発テンプレ案件とは競争の形が違う。",
-      "boundary":"掲載期間や発注者条件の影響を分離できていない。","url":"https://crowdworks.jp/public/jobs/13037133"
+      "id": "13037133",
+      "title": "スプレッドシート関数・GASの継続改善",
+      "posted": "2026-04-03",
+      "cluster": "micro",
+      "cluster_label": "小型GAS",
+      "budget_label": "〜¥5,000 / 1件¥1,000",
+      "budget_mid": 2500,
+      "applicants": 2,
+      "contracts": 1,
+      "slots": 1,
+      "tags": [
+        "GAS",
+        "関数",
+        "広告連携",
+        "継続"
+      ],
+      "summary": "日々のスプレッドシート作業、広告媒体連携、エラー修正などを継続的に改善。",
+      "observation": "同じ小型GASでも応募2人。仕事内容が継続保守寄りで、単発テンプレ案件とは競争の形が違う。",
+      "boundary": "掲載期間や発注者条件の影響を分離できていない。",
+      "url": "https://crowdworks.jp/public/jobs/13037133",
+      "definition": {
+        "deliverable": "partial",
+        "input": "partial",
+        "done": "unknown",
+        "delegation": "partial",
+        "note": "『継続改善』のため、何をどこまで直せば完了かが案件ごとに変わる。"
+      }
     },
     {
-      "id":"13330197","title":"Amazon輸出用スプレッドシート改善・自動化","posted":"2026-07-24",
-      "cluster":"micro","cluster_label":"小型GAS","budget_label":"¥800","budget_mid":800,
-      "applicants":10,"contracts":1,"slots":1,"tags":["EC","GAS","為替","継続候補"],
-      "summary":"為替取得、SKUコピーなど小さな改善。良ければ今後も自動化相談あり。",
-      "observation":"報酬800円でも応募10人。価格の低さだけでは供給を抑えきれていない。",
-      "boundary":"評価5件以上という応募条件がある。","url":"https://crowdworks.jp/public/jobs/13330197"
+      "id": "13330197",
+      "title": "Amazon輸出用スプレッドシート改善・自動化",
+      "posted": "2026-07-24",
+      "cluster": "micro",
+      "cluster_label": "小型GAS",
+      "budget_label": "¥800",
+      "budget_mid": 800,
+      "applicants": 10,
+      "contracts": 1,
+      "slots": 1,
+      "tags": [
+        "EC",
+        "GAS",
+        "為替",
+        "継続候補"
+      ],
+      "summary": "為替取得、SKUコピーなど小さな改善。良ければ今後も自動化相談あり。",
+      "observation": "報酬800円でも応募10人。価格の低さだけでは供給を抑えきれていない。",
+      "boundary": "評価5件以上という応募条件がある。",
+      "url": "https://crowdworks.jp/public/jobs/13330197",
+      "definition": {
+        "deliverable": "clear",
+        "input": "clear",
+        "done": "clear",
+        "delegation": "clear",
+        "note": "小さな改善単位が明示され、依頼境界も比較的はっきりしている。"
+      }
     },
     {
-      "id":"13076165","title":"中古車オークションPDF→原価管理表","posted":"2026-04-22",
-      "cluster":"vertical","cluster_label":"縦型自動化","budget_label":"¥5,000〜¥10,000","budget_mid":7500,
-      "applicants":23,"contracts":2,"slots":1,"tags":["中古車","OCR","外部照会","PDF"],
-      "summary":"精算書OCR、車台番号による外部照会、原価表転記、契約書PDF生成までを繋ぐ。",
-      "observation":"業界固有の複数工程を含む縦型案件。単純GASより要件が深いが、応募は23人。",
-      "boundary":"予算と要件量の釣り合いは評価していない。","url":"https://crowdworks.jp/public/jobs/13076165"
+      "id": "13076165",
+      "title": "中古車オークションPDF→原価管理表",
+      "posted": "2026-04-22",
+      "cluster": "vertical",
+      "cluster_label": "縦型自動化",
+      "budget_label": "¥5,000〜¥10,000",
+      "budget_mid": 7500,
+      "applicants": 23,
+      "contracts": 2,
+      "slots": 1,
+      "tags": [
+        "中古車",
+        "OCR",
+        "外部照会",
+        "PDF"
+      ],
+      "summary": "精算書OCR、車台番号による外部照会、原価表転記、契約書PDF生成までを繋ぐ。",
+      "observation": "業界固有の複数工程を含む縦型案件。単純GASより要件が深いが、応募は23人。",
+      "boundary": "予算と要件量の釣り合いは評価していない。",
+      "url": "https://crowdworks.jp/public/jobs/13076165",
+      "definition": {
+        "deliverable": "clear",
+        "input": "clear",
+        "done": "partial",
+        "delegation": "clear",
+        "note": "処理工程は具体的。ただしOCR精度や外部照会失敗時など例外完了条件は残る。"
+      }
     },
     {
-      "id":"13042512","title":"AIを活用した求人管理スプレッドシート","posted":"2026-04-06",
-      "cluster":"vertical","cluster_label":"縦型自動化","budget_label":"¥5,000〜¥10,000","budget_mid":7500,
-      "applicants":17,"contracts":1,"slots":1,"tags":["求人","AI","GAS","既存組込"],
-      "summary":"既存の求人管理スプレッドシートへAI機能を組み込む小型開発。",
-      "observation":"用途が求人管理に限定されると、応募数は17人。このサンプルでは超汎用案件より競争がやや薄い。",
-      "boundary":"公開情報だけではAI機能の難易度を十分評価できない。","url":"https://crowdworks.jp/public/jobs/13042512"
+      "id": "13042512",
+      "title": "AIを活用した求人管理スプレッドシート",
+      "posted": "2026-04-06",
+      "cluster": "vertical",
+      "cluster_label": "縦型自動化",
+      "budget_label": "¥5,000〜¥10,000",
+      "budget_mid": 7500,
+      "applicants": 17,
+      "contracts": 1,
+      "slots": 1,
+      "tags": [
+        "求人",
+        "AI",
+        "GAS",
+        "既存組込"
+      ],
+      "summary": "既存の求人管理スプレッドシートへAI機能を組み込む小型開発。",
+      "observation": "用途が求人管理に限定されると、応募数は17人。このサンプルでは超汎用案件より競争がやや薄い。",
+      "boundary": "公開情報だけではAI機能の難易度を十分評価できない。",
+      "url": "https://crowdworks.jp/public/jobs/13042512",
+      "definition": {
+        "deliverable": "partial",
+        "input": "clear",
+        "done": "unknown",
+        "delegation": "partial",
+        "note": "既存シートへAI機能を組み込むことは分かるが、AI機能の具体的成果と合格条件が薄い。"
+      }
     },
     {
-      "id":"13166769","title":"GAS・VBA・RPA・AIによる業務自動化","posted":"2026-05-12",
-      "cluster":"broad","cluster_label":"広域業務改善","budget_label":"¥50,000〜¥100,000","budget_mid":75000,
-      "applicants":112,"contracts":1,"slots":3,"tags":["業務整理","要件定義","GAS","RPA"],
-      "summary":"Excel集計、受注入力、CSV加工、Web入力など、業務を見ながら自動化する広い案件。",
-      "observation":"10万円前後でも応募112人。『業務改善できます』という広い入口は高単価でも競争が強い。",
-      "boundary":"3名募集なので単純な応募数比較には注意。","url":"https://crowdworks.jp/public/jobs/13166769"
+      "id": "13166769",
+      "title": "GAS・VBA・RPA・AIによる業務自動化",
+      "posted": "2026-05-12",
+      "cluster": "broad",
+      "cluster_label": "広域業務改善",
+      "budget_label": "¥50,000〜¥100,000",
+      "budget_mid": 75000,
+      "applicants": 112,
+      "contracts": 1,
+      "slots": 3,
+      "tags": [
+        "業務整理",
+        "要件定義",
+        "GAS",
+        "RPA"
+      ],
+      "summary": "Excel集計、受注入力、CSV加工、Web入力など、業務を見ながら自動化する広い案件。",
+      "observation": "10万円前後でも応募112人。『業務改善できます』という広い入口は高単価でも競争が強い。",
+      "boundary": "3名募集なので単純な応募数比較には注意。",
+      "url": "https://crowdworks.jp/public/jobs/13166769",
+      "definition": {
+        "deliverable": "unknown",
+        "input": "partial",
+        "done": "unknown",
+        "delegation": "unknown",
+        "note": "『業務を見ながら自動化』で、何を作るか・どこまで任せるかが受注者側に大きく委ねられている。"
+      }
     },
     {
-      "id":"13230840","title":"AI業務改善エンジニア","posted":"2026-06-11",
-      "cluster":"broad","cluster_label":"広域業務改善","budget_label":"¥100,000〜¥150,000","budget_mid":125000,
-      "applicants":55,"contracts":2,"slots":5,"tags":["LLM","RAG","n8n","継続"],
-      "summary":"業務フロー分析からAI導入設計、RAG/エージェント、自動化、改善まで担当。",
-      "observation":"単価は高いが専門実績要求も高い。応募/募集枠は11で、広域業務改善の中でも入口条件が競争を絞っている可能性がある。",
-      "boundary":"応募者の適合率は分からない。","url":"https://crowdworks.jp/public/jobs/13230840"
+      "id": "13230840",
+      "title": "AI業務改善エンジニア",
+      "posted": "2026-06-11",
+      "cluster": "broad",
+      "cluster_label": "広域業務改善",
+      "budget_label": "¥100,000〜¥150,000",
+      "budget_mid": 125000,
+      "applicants": 55,
+      "contracts": 2,
+      "slots": 5,
+      "tags": [
+        "LLM",
+        "RAG",
+        "n8n",
+        "継続"
+      ],
+      "summary": "業務フロー分析からAI導入設計、RAG/エージェント、自動化、改善まで担当。",
+      "observation": "単価は高いが専門実績要求も高い。応募/募集枠は11で、広域業務改善の中でも入口条件が競争を絞っている可能性がある。",
+      "boundary": "応募者の適合率は分からない。",
+      "url": "https://crowdworks.jp/public/jobs/13230840",
+      "definition": {
+        "deliverable": "partial",
+        "input": "partial",
+        "done": "unknown",
+        "delegation": "unknown",
+        "note": "役割と技術領域は広く示されるが、個別案件の成果物と終了条件は固定されていない。"
+      }
     },
     {
-      "id":"13056568","title":"EC在庫管理AIエージェントの相談・試作","posted":"2026-04-13",
-      "cluster":"agent","cluster_label":"AIエージェント","budget_label":"¥3,300（相談）","budget_mid":3300,
-      "applicants":20,"contracts":3,"slots":1,"tags":["EC","AIエージェント","GAS","本開発候補"],
-      "summary":"既存在庫管理システムにAIを接続し、発注・発送の提案と承認後実行を想定。最初は設計相談。",
-      "observation":"本開発ではなく低額の『設計相談』を入口にして3契約。完成品ではなく、次の大型開発への入口そのものが取引単位になっている。",
-      "boundary":"本開発に何件つながったかは不明。","url":"https://crowdworks.jp/public/jobs/13056568"
+      "id": "13056568",
+      "title": "EC在庫管理AIエージェントの相談・試作",
+      "posted": "2026-04-13",
+      "cluster": "agent",
+      "cluster_label": "AIエージェント",
+      "budget_label": "¥3,300（相談）",
+      "budget_mid": 3300,
+      "applicants": 20,
+      "contracts": 3,
+      "slots": 1,
+      "tags": [
+        "EC",
+        "AIエージェント",
+        "GAS",
+        "本開発候補"
+      ],
+      "summary": "既存在庫管理システムにAIを接続し、発注・発送の提案と承認後実行を想定。最初は設計相談。",
+      "observation": "本開発ではなく低額の『設計相談』を入口にして3契約。完成品ではなく、次の大型開発への入口そのものが取引単位になっている。",
+      "boundary": "本開発に何件つながったかは不明。",
+      "url": "https://crowdworks.jp/public/jobs/13056568",
+      "definition": {
+        "deliverable": "partial",
+        "input": "clear",
+        "done": "partial",
+        "delegation": "partial",
+        "note": "相談・試作という入口は明確だが、本開発へ進む判断条件や最終形はまだ開いている。"
+      }
     }
   ],
-  "clusters":[
-    {"id":"micro","label":"小型GAS","jobs":3,"median_applicants":10,"median_budget_label":"¥2,500","observation":"応募数のばらつきが大きい。単純さだけでは競争密度を説明できない。"},
-    {"id":"vertical","label":"縦型自動化","jobs":2,"median_applicants":20,"median_budget_label":"¥7,500","observation":"用途が具体化されると競争は残るが、案件の中身が比較しやすくなる。"},
-    {"id":"broad","label":"広域業務改善","jobs":2,"median_applicants":83.5,"median_budget_label":"¥100,000","observation":"高単価だが応募も多い。『何でも改善』は市場として既に混んでいる可能性。"},
-    {"id":"agent","label":"AIエージェント","jobs":1,"median_applicants":20,"median_budget_label":"¥3,300","observation":"設計相談→本開発という二段階取引が見える。"}
-  ]
+  "clusters": [
+    {
+      "id": "micro",
+      "label": "小型GAS",
+      "jobs": 3,
+      "median_applicants": 10,
+      "median_budget_label": "¥2,500",
+      "observation": "応募数のばらつきが大きい。単純さだけでは競争密度を説明できない。"
+    },
+    {
+      "id": "vertical",
+      "label": "縦型自動化",
+      "jobs": 2,
+      "median_applicants": 20,
+      "median_budget_label": "¥7,500",
+      "observation": "用途が具体化されると競争は残るが、案件の中身が比較しやすくなる。"
+    },
+    {
+      "id": "broad",
+      "label": "広域業務改善",
+      "jobs": 2,
+      "median_applicants": 83.5,
+      "median_budget_label": "¥100,000",
+      "observation": "高単価だが応募も多い。『何でも改善』は市場として既に混んでいる可能性。"
+    },
+    {
+      "id": "agent",
+      "label": "AIエージェント",
+      "jobs": 1,
+      "median_applicants": 20,
+      "median_budget_label": "¥3,300",
+      "observation": "設計相談→本開発という二段階取引が見える。"
+    }
+  ],
+  "definition_legend": {
+    "clear": "明確",
+    "partial": "一部明確",
+    "unknown": "未定義",
+    "boundary": "求人票から読める範囲を手作業で分類。発注者の意図そのものを断定しない。"
+  }
 }
