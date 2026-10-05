@@ -224,6 +224,7 @@ const gardenSeed=document.querySelector('.garden-seed');
 const gardenClear=document.querySelector('.garden-clear');
 const GARDEN_KEY='flow-world-sky-garden-v1';
 let gardenTraces=[];
+
 const loadGarden=()=>{
   try{
     const saved=JSON.parse(localStorage.getItem(GARDEN_KEY)||'[]');
