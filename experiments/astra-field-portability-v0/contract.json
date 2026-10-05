@@ -1,0 +1,14 @@
+{
+  "mode": "astra_field_probe/v0.1-portability-test",
+  "required": ["objective","confirmed","interpretations","boundary","missing","probe","effectOnParent","reentry","warnings"],
+  "rules": {
+    "confirmed": "supplied observations/evidence directly support it",
+    "interpretations": "useful readings that remain interpretations",
+    "boundary": "where supplied evidence stops",
+    "missing": "smallest missing evidence/context needed to move the boundary",
+    "probe": "null or exactly one question whose result could change the current question or next choice",
+    "effectOnParent": "keep, revise, or drop with reason",
+    "reentry": "return explicitly to the original objective",
+    "unknowns": "must not be filled merely for completeness"
+  }
+}
