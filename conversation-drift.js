@@ -62,13 +62,13 @@
     out.push('');
     out.push('DRIFT CANDIDATES');
     if(!windows.length && continuity>=0.25) out.push('- no strong lexical shift detected');
-    windows.slice(0,5).forEach(w=>out.push('- segment '+w.from+' → '+w.to+': keyword overlap '+Math.round(w.overlap*100)+'%'));
-    if(disappeared.length) out.push('- early terms absent late: '+disappeared.join(', '));
-    if(appeared.length) out.push('- late terms absent early: '+appeared.join(', '));
+    windows.slice(0,3).forEach(w=>out.push('- segment '+w.from+' → '+w.to+': keyword overlap '+Math.round(w.overlap*100)+'%'));
+    if(disappeared.length) out.push('- early terms absent late: '+disappeared.slice(0,5).join(', '));
+    if(appeared.length) out.push('- late terms absent early: '+appeared.slice(0,5).join(', '));
     out.push('');
     out.push('CORRECTION SIGNALS');
     if(!corrections.length) out.push('- none detected');
-    corrections.slice(0,8).forEach(x=>out.push('- L'+x.line+' ['+x.word+'] '+x.text));
+    corrections.slice(0,4).forEach(x=>out.push('- L'+x.line+' ['+x.word+'] '+x.text));
     out.push('');
     out.push('BOUNDARY');
     out.push('- lexical/structural signals only');
