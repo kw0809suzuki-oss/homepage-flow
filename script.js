@@ -117,6 +117,7 @@ try{
 const observedWhisper=()=>{
   let roomCount=0;
   let gardenCount=0;
+  let constellationCount=0;
   let lastObservedPlace='';
   let selectedLens='';
   let loopState='';
@@ -127,6 +128,10 @@ const observedWhisper=()=>{
   try{
     const savedGarden=JSON.parse(localStorage.getItem('flow-world-sky-garden-v1')||'[]');
     if(Array.isArray(savedGarden))gardenCount=savedGarden.length;
+  }catch(e){}
+  try{
+    const savedConstellation=JSON.parse(localStorage.getItem('flow-world-constellation-v1')||'[]');
+    if(Array.isArray(savedConstellation))constellationCount=savedConstellation.length;
   }catch(e){}
   try{
     const savedPlace=localStorage.getItem('flow-world-last-place-v1');
@@ -141,10 +146,11 @@ const observedWhisper=()=>{
     const savedState=localStorage.getItem('flow-world-loop-state-v1');
     if(['observe','discover','expand'].includes(savedState))loopState=savedState;
   }catch(e){}
+  const constellationNote=constellationCount?` Playgroundには${constellationCount}個の星が残っている。`:'';
   const stateNote=loopState?` Loopに残っているstateは「${loopState}」。`:'';
   const placeNote=lastObservedPlace?` 最後に観測された場所は #${lastObservedPlace}。`:'';
   const lensNote=selectedLens?` Deskに残っているlensは「${selectedLens}」。`:'';
-  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。${stateNote}${placeNote}${lensNote}`;
+  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。${constellationNote}${stateNote}${placeNote}${lensNote}`;
 };
 
 if(signal&&whisper){
@@ -218,7 +224,6 @@ const gardenSeed=document.querySelector('.garden-seed');
 const gardenClear=document.querySelector('.garden-clear');
 const GARDEN_KEY='flow-world-sky-garden-v1';
 let gardenTraces=[];
-
 const loadGarden=()=>{
   try{
     const saved=JSON.parse(localStorage.getItem(GARDEN_KEY)||'[]');
