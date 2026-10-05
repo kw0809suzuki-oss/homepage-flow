@@ -23,9 +23,17 @@
   function topSet(text,n=12){ return new Set(terms(text).slice(0,n).map(x=>x[0])); }
   function overlap(a,b){ if(!a.size&&!b.size)return 1; let n=0;a.forEach(x=>{if(b.has(x))n++});return n/Math.max(1,Math.min(a.size,b.size)); }
 
+  function stripOwnObservation(text){
+    const markers=['\n会話の観測\n','\nCONVERSATION OBSERVATION\n'];
+    let cut=-1;
+    markers.forEach(m=>{ const i=text.indexOf(m); if(i>=0 && (cut<0 || i<cut)) cut=i; });
+    return cut>=0 ? text.slice(0,cut).trim() : text;
+  }
+
   function analyze(text){
-    const parts=chunks(text);
-    const lines=text.split(/\n/).map(s=>s.trim()).filter(Boolean);
+    const cleanText=stripOwnObservation(text);
+    const parts=chunks(cleanText);
+    const lines=cleanText.split(/\n/).map(s=>s.trim()).filter(Boolean);
     const corrections=[];
     lines.forEach((line,i)=>{ const hit=correctionWords.find(w=>line.includes(w)); if(hit) corrections.push({line:i+1,word:hit,text:line.slice(0,90)}); });
 
@@ -57,7 +65,7 @@
     out.push('会話のまとまり: '+parts.length);
     out.push('行数: '+lines.length);
     out.push('訂正らしき箇所: '+corrections.length);
-    out.push('question-like 行数: '+questions.length);
+    out.push('問いらしき箇所: '+questions.length);
     out.push('序盤と終盤の話題継続率: '+Math.round(continuity*100)+'%');
     out.push('');
     out.push('ズレ候補');
