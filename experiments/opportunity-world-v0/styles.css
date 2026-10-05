@@ -22,3 +22,5 @@
 }
 
 .motifs{margin:0 0 16px}.motif-grid{display:flex;gap:8px;flex-wrap:wrap}.motif-card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-width:110px}.motif-card b{display:block;font-size:16px}.motif-card span{font-size:11px;color:var(--muted)}
+
+.definition-guide{margin-top:16px}.definition-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.definition-item{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px}.definition-item span{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.definition-item b{font-size:13px}.def-clear{color:var(--good)}.def-partial{color:var(--mid)}.def-unknown{color:var(--bad)}.ambiguity-pill{display:inline-flex;margin-top:8px;padding:5px 8px;border-radius:999px;background:#2a2225;color:#ffd7d7;font-size:11px}@media(max-width:520px){.definition-grid{grid-template-columns:repeat(2,1fr)}}
