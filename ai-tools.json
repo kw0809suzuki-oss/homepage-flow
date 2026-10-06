@@ -1,0 +1,80 @@
+{
+  "schema": "flow-world-ai-tools-v0",
+  "updated_at": "2026-10-07",
+  "purpose": "Machine-readable definitions for public Flow World tools that an AI can understand and reproduce without a server API.",
+  "tools": [
+    {
+      "id": "ab-comparator",
+      "version": "v0",
+      "status": "available",
+      "implementation": "tools/ab-compare.js",
+      "human_ui": "#workbench",
+      "input": {
+        "a": {
+          "type": "number[]",
+          "required": true,
+          "description": "Non-empty finite numeric list."
+        },
+        "b": {
+          "type": "number[]",
+          "required": true,
+          "description": "Non-empty finite numeric list with the same length as a."
+        }
+      },
+      "preconditions": [
+        "a and b are arrays",
+        "a and b are non-empty",
+        "a and b have the same length",
+        "all values are finite numbers"
+      ],
+      "operation": {
+        "point_deltas": "a[i] - b[i]",
+        "mean_a": "sum(a) / length(a)",
+        "mean_b": "sum(b) / length(b)",
+        "mean_delta_a_minus_b": "sum(point_deltas) / length(point_deltas)"
+      },
+      "output": {
+        "ok": "boolean",
+        "n": "integer when ok",
+        "mean_a": "number when ok",
+        "mean_b": "number when ok",
+        "mean_delta_a_minus_b": "number when ok",
+        "point_deltas": "number[] when ok",
+        "boundary": "string when ok",
+        "error": "string when not ok"
+      },
+      "boundary": [
+        "Reports observed numeric differences only.",
+        "Does not establish causality.",
+        "Does not decide which side is better without an external objective."
+      ],
+      "example": {
+        "input": {
+          "a": [
+            10,
+            12,
+            9
+          ],
+          "b": [
+            8,
+            13,
+            7
+          ]
+        },
+        "output": {
+          "ok": true,
+          "n": 3,
+          "mean_a": 10.333333333333334,
+          "mean_b": 9.333333333333334,
+          "mean_delta_a_minus_b": 1,
+          "point_deltas": [
+            2,
+            -1,
+            2
+          ],
+          "boundary": "difference only; no causal claim."
+        }
+      }
+    }
+  ]
+}
