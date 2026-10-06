@@ -1,0 +1,35 @@
+{
+  "source": "Rakuten Takarakuji LOTO7 backnumber",
+  "source_urls": [
+    "https://takarakuji.rakuten.co.jp/backnumber/loto7/202609/",
+    "https://takarakuji.rakuten.co.jp/backnumber/loto7/202610/"
+  ],
+  "observed": [
+    {
+      "round": 696,
+      "date": "2026-09-25",
+      "numbers": [
+        10,
+        11,
+        15,
+        16,
+        23,
+        24,
+        34
+      ]
+    },
+    {
+      "round": 697,
+      "date": "2026-10-02",
+      "numbers": [
+        1,
+        6,
+        12,
+        23,
+        28,
+        32,
+        36
+      ]
+    }
+  ]
+}
