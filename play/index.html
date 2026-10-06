@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flow World / Play</title>
+  <meta name="description" content="A serverless handoff surface for Human × AI. Content lives only in the URL fragment.">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body{min-height:100vh;background:#f4f0e8;color:#24313b}
+    .play-shell{width:min(920px,calc(100% - 32px));margin:0 auto;padding:52px 0 80px}
+    .play-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:28px}
+    .play-kicker{font:10px/1.4 monospace;letter-spacing:.18em;color:#75808a}
+    .play-title{font-size:clamp(32px,7vw,72px);line-height:.92;margin:8px 0 10px}
+    .play-note{max-width:620px;color:#66717a;line-height:1.7}
+    .play-back{font:11px monospace;text-decoration:none;color:#42576a;border-bottom:1px solid rgba(66,87,106,.35)}
+    .play-card{background:rgba(255,255,255,.72);border:1px solid rgba(47,70,118,.16);border-radius:22px;padding:clamp(20px,4vw,42px);box-shadow:0 18px 50px rgba(70,63,48,.07)}
+    .play-status{font:10px/1.5 monospace;letter-spacing:.11em;color:#788391;margin-bottom:22px}
+    .play-content{font-size:17px;line-height:1.8;overflow-wrap:anywhere}
+    .play-content h1,.play-content h2,.play-content h3{line-height:1.15;margin:1.4em 0 .55em}
+    .play-content h1:first-child,.play-content h2:first-child,.play-content h3:first-child{margin-top:0}
+    .play-content pre{overflow:auto;background:#202a33;color:#edf2f5;padding:16px;border-radius:14px;font:13px/1.6 monospace}
+    .play-content code{font-family:monospace;background:rgba(40,55,68,.08);padding:.1em .35em;border-radius:5px}
+    .play-content pre code{background:none;padding:0}
+    .play-content blockquote{margin:1.2em 0;padding:.2em 0 .2em 18px;border-left:3px solid rgba(47,70,118,.25);color:#56636e}
+    .play-content ul{padding-left:1.4em}
+    .play-empty{color:#6c7680}
+    .play-boundary{border:1px dashed rgba(139,82,65,.35);background:rgba(255,247,242,.8);padding:16px;border-radius:12px;color:#774d42}
+    @media(max-width:640px){.play-head{display:block}.play-back{display:inline-block;margin-top:18px}}
+  </style>
+</head>
+<body>
+  <main class="play-shell">
+    <header class="play-head">
+      <div>
+        <div class="play-kicker">FLOW WORLD / STATIC HANDOFF</div>
+        <h1 class="play-title">PLAY</h1>
+        <p class="play-note">URLの # 以降だけを使う、一時的なHuman × AI受け渡し面。内容はサーバーへ保存しない。</p>
+      </div>
+      <a class="play-back" href="../">← FLOW WORLD</a>
+    </header>
+    <section class="play-card">
+      <div class="play-status" data-play-status>WAITING FOR URL FRAGMENT</div>
+      <article class="play-content" data-play-content>
+        <p class="play-empty">#type=markdown&amp;data=... を受け取ると、ここに展開します。</p>
+      </article>
+    </section>
+  </main>
+  <script src="play.js"></script>
+</body>
+</html>
