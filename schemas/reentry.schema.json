@@ -110,6 +110,39 @@
     "created_at": {
       "type": "string",
       "description": "Optional creation time, preferably ISO 8601."
+    },
+    "flow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topic",
+        "key_point",
+        "recent_flow",
+        "direction"
+      ],
+      "properties": {
+        "topic": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the work is currently about. Keep this short and concrete."
+        },
+        "key_point": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The central issue that makes the current position meaningful."
+        },
+        "recent_flow": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A compact movement trace, not a retrospective story. Prefer a short chain such as 'observed A -> B changed -> C held -> now checking D'."
+        },
+        "direction": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The current direction of movement, including what the work is intentionally not expanding into when relevant."
+        }
+      },
+      "description": "Optional lightweight movement layer. Carries topic, key point, recent motion, and direction without turning prior narrative into authority."
     }
   }
 }
