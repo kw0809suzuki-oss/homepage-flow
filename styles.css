@@ -637,6 +637,10 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 .core18-inputs input{display:block;width:100%;margin-top:8px;border:1px solid rgba(13,27,42,.16);background:#fff;padding:13px 14px;font:13px/1.4 monospace;color:var(--ink)}
 .core18-inputs button{border:0;background:#2f4676;color:#fff;padding:13px 16px;font:10px monospace;letter-spacing:.12em;cursor:pointer}
 .core18-inputs small{display:block;margin-top:14px;color:#7c8490;line-height:1.6}
+.core18-web-state{border:1px solid rgba(47,70,118,.2);padding:14px;margin-bottom:14px;background:rgba(255,255,255,.62)}
+.core18-web-state span{display:block;font:9px monospace;letter-spacing:.13em;color:#788391}
+.core18-web-state b{display:block;margin:8px 0 12px;font:13px/1.6 monospace;color:#31465d}
+.core18-web-state button{margin:0;background:#e8edf2!important;color:#334b61!important;border:1px solid rgba(47,70,118,.16)!important}
 .core18-file{border:1px dashed rgba(47,70,118,.28);padding:14px;background:rgba(255,255,255,.45)}
 .core18-file input{margin:10px 0 0;padding:0;border:0;background:transparent;font:11px monospace}
 .core18-file span{display:block;margin-top:8px;font:10px/1.6 monospace;letter-spacing:.04em;color:#53647a}
