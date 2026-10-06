@@ -111,6 +111,11 @@
       "id": "reentry-schema",
       "location": "schemas/reentry.schema.json",
       "role": "portable schema for handing off current coordinates between humans and AIs without writing personal work state into the public core."
+    },
+    {
+      "id": "flow-memory-relationship",
+      "location": "reference/flow-memory-relationship.txt",
+      "role": "boundary reference separating private FlowMemory continuity, public Flow World protocol, and portable Re-entry Packets."
     }
   ],
   "boundaries": [
@@ -121,7 +126,8 @@
     "CORE18 observation is not the same thing as CORE18 prediction.",
     "Prefer one small high-information probe over broad uncontrolled expansion.",
     "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements.",
-    "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core."
+    "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core.",
+    "FlowMemory and Flow World do not automatically synchronize; Re-entry Packets carry coordinates only and require re-approval."
   ],
   "recent_changes": [
     "Added in-visit persistent LAST PLACE return trace.",
