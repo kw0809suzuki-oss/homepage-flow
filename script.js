@@ -418,6 +418,8 @@ const core18Run=document.querySelector('[data-core18-run]');
 const core18Metrics=document.querySelector('[data-core18-metrics]');
 const core18Csv=document.querySelector('[data-core18-csv]');
 const core18CsvStatus=document.querySelector('[data-core18-csv-status]');
+const core18WebStatus=document.querySelector('[data-core18-web-status]');
+const core18WebRefresh=document.querySelector('[data-core18-web-refresh]');
 const CORE18_STATE_KEY='flow-world-core18-observation-v1';
 
 const parseCore18State=(raw)=>{
@@ -482,6 +484,38 @@ if(core18Prev&&core18Curr){
   }catch(e){}
 }
 core18Run?.addEventListener('click',renderCore18Observation);
+
+const loadCore18WebState=async()=>{
+  if(core18WebStatus)core18WebStatus.textContent='最新履歴を確認中…';
+  try{
+    const response=await fetch('data/loto7-latest.json',{cache:'no-store'});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const payload=await response.json();
+    const rows=Array.isArray(payload?.observed)?payload.observed:[];
+    if(rows.length<2)throw new Error('確認済みStateが2回分ありません。');
+    const previous=rows[rows.length-2];
+    const current=rows[rows.length-1];
+    const valid=row=>Number.isInteger(Number(row?.round))&&
+      Array.isArray(row?.numbers)&&row.numbers.length===7&&
+      row.numbers.every(n=>Number.isInteger(Number(n))&&Number(n)>=1&&Number(n)<=37)&&
+      new Set(row.numbers.map(Number)).size===7;
+    if(!valid(previous)||!valid(current))throw new Error('確認済みStateの形式が不正です。');
+
+    core18Prev.value=previous.numbers.map(Number).join(' ');
+    core18Curr.value=current.numbers.map(Number).join(' ');
+    renderCore18Observation();
+    if(core18WebStatus){
+      core18WebStatus.textContent=`OBSERVED: round ${previous.round} → ${current.round}`;
+    }
+  }catch(error){
+    if(core18WebStatus){
+      core18WebStatus.textContent=`BOUNDARY: 自動取得できません (${error.message||'unknown'})。CSV fallbackは使用可能です。`;
+    }
+  }
+};
+
+core18WebRefresh?.addEventListener('click',loadCore18WebState);
+if(core18Prev&&core18Curr)loadCore18WebState();
 
 core18Csv?.addEventListener('change',async()=>{
   const file=core18Csv.files?.[0];
