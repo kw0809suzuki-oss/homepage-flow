@@ -139,5 +139,26 @@
       "use human browser UI only when interaction is available"
     ],
     "unavailable_capability_rule": "If the environment cannot perform a listed interaction, report the boundary and use a lower-capability path when one exists."
-  }
+  },
+  "shapes": [
+    {
+      "id": "reentry-packet",
+      "type": "json_schema",
+      "location": "schemas/reentry.schema.json",
+      "purpose": "Carry current working coordinates to another AI or human without treating prior conclusions as authority.",
+      "fields": [
+        "current_position",
+        "confirmed",
+        "unknown",
+        "boundary",
+        "next_probe",
+        "sources"
+      ],
+      "boundary": [
+        "This is a shape, not an automated judgment tool.",
+        "Packet contents must be re-evaluated against current evidence on re-entry.",
+        "Do not write personal packet contents into the public core automatically."
+      ]
+    }
+  ]
 }
