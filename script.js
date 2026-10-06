@@ -416,6 +416,8 @@ const core18Prev=document.querySelector('[data-core18="previous"]');
 const core18Curr=document.querySelector('[data-core18="current"]');
 const core18Run=document.querySelector('[data-core18-run]');
 const core18Metrics=document.querySelector('[data-core18-metrics]');
+const core18Csv=document.querySelector('[data-core18-csv]');
+const core18CsvStatus=document.querySelector('[data-core18-csv-status]');
 const CORE18_STATE_KEY='flow-world-core18-observation-v1';
 
 const parseCore18State=(raw)=>{
@@ -480,3 +482,41 @@ if(core18Prev&&core18Curr){
   }catch(e){}
 }
 core18Run?.addEventListener('click',renderCore18Observation);
+
+core18Csv?.addEventListener('change',async()=>{
+  const file=core18Csv.files?.[0];
+  if(!file)return;
+  if(core18CsvStatus)core18CsvStatus.textContent='CSVを読んでいる…';
+  try{
+    const text=await file.text();
+    const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
+    if(lines.length<3)throw new Error('履歴が2回分以上必要です。');
+
+    const header=lines[0].split(',').map(v=>v.trim().toLowerCase());
+    const required=['round','n1','n2','n3','n4','n5','n6','n7'];
+    const indexes=required.map(name=>header.indexOf(name));
+    if(indexes.some(i=>i<0))throw new Error('列 round, n1〜n7 を確認できません。');
+
+    const rows=lines.slice(1).map(line=>{
+      const cells=line.split(',').map(v=>v.trim());
+      const round=cells[indexes[0]];
+      const nums=indexes.slice(1).map(i=>Number(cells[i]));
+      if(nums.length!==7||nums.some(v=>!Number.isInteger(v)||v<1||v>37)||new Set(nums).size!==7)return null;
+      return {round,nums};
+    }).filter(Boolean);
+
+    if(rows.length<2)throw new Error('有効な履歴が2回分以上必要です。');
+    const previous=rows[rows.length-2];
+    const current=rows[rows.length-1];
+    core18Prev.value=previous.nums.join(' ');
+    core18Curr.value=current.nums.join(' ');
+    renderCore18Observation();
+    if(core18CsvStatus){
+      core18CsvStatus.textContent=`OBSERVED: round ${previous.round || '?'} → ${current.round || '?'} / CSV末尾2回`;
+    }
+  }catch(error){
+    if(core18CsvStatus)core18CsvStatus.textContent=`BOUNDARY: ${error.message || 'CSVを読めませんでした。'}`;
+  }finally{
+    core18Csv.value='';
+  }
+});
