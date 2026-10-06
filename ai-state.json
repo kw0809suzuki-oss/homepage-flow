@@ -1,7 +1,7 @@
 {
   "schema": "flow-world-ai-entry-v0",
   "world": "Flow World",
-  "updated_at": "2026-10-06",
+  "updated_at": "2026-10-07",
   "purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
   "current_position": {
     "status": "active prototype",
@@ -11,10 +11,10 @@
   "confirmed": [
     "The Desk separates observation, interpretation, unknowns, evidence boundaries, and next probes as working principles.",
     "Browser-local persistent traces exist for loop state, constellation, room-door count, sky garden, selected Desk lens, last observed place, signal count, and CORE18 state inputs.",
-    "Flow Workbench contains A/B Comparator, First Divergence, and Astra Lens utilities.",
     "Conversation Drift Detector is local-only and flags candidates rather than causes.",
     "Flow-chan CORE18 currently observes Previous and Current LOTO7 states and reports centroid, variance, range, maxGap, gapCv, and their movement.",
-    "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback."
+    "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback.",
+    "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json."
   ],
   "unknowns": [
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
@@ -37,7 +37,9 @@
       "location": "#workbench",
       "input": "two equal-length numeric lists",
       "output": "means, point deltas, mean delta",
-      "boundary": "difference only; no causal claim."
+      "boundary": "difference only; no causal claim; no server API required.",
+      "machine_definition": "ai-tools.json",
+      "implementation": "tools/ab-compare.js"
     },
     {
       "id": "first-divergence",
@@ -84,6 +86,11 @@
       "location": "world-state.json",
       "role": "older prototype state file",
       "boundary": "stale relative to the current site; do not treat as current authority without re-checking."
+    },
+    {
+      "id": "ai-tools",
+      "location": "ai-tools.json",
+      "role": "machine-readable tool definitions that an AI can reproduce without a server API."
     }
   ],
   "boundaries": [
@@ -100,7 +107,8 @@
     "Added CSV fallback for loading latest two LOTO7 states.",
     "Added repository JSON-backed automatic web state for CORE18.",
     "Added scheduled Rakuten LOTO7 update workflow.",
-    "Added this machine-readable AI entry."
+    "Added this machine-readable AI entry.",
+    "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json."
   ],
-  "reentry_hint": "Start with current_position, then confirmed, unknowns, available_tools, and boundaries. Read full HTML or tool sections only when the current task requires them."
+  "reentry_hint": "Start with current_position, then confirmed, unknowns, available_tools, boundaries, and ai-tools.json when a reusable tool is relevant."
 }
