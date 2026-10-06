@@ -408,3 +408,75 @@ document.querySelector('[data-run="astra-lens"]')?.addEventListener('click',()=>
   out.textContent=fields.map(([k,v])=>`${k}:\n${v||'—'}`).join('\n\n')+
     '\n\nNEXT PROBE: not generated in v0. Add one only when a specific boundary needs movement.';
 });
+
+
+// Flow-chan CORE18 | State observation probe.
+// Observes explicit 7-number states only. It does not rank or predict numbers.
+const core18Prev=document.querySelector('[data-core18="previous"]');
+const core18Curr=document.querySelector('[data-core18="current"]');
+const core18Run=document.querySelector('[data-core18-run]');
+const core18Metrics=document.querySelector('[data-core18-metrics]');
+const CORE18_STATE_KEY='flow-world-core18-observation-v1';
+
+const parseCore18State=(raw)=>{
+  const xs=(raw||'').split(/[^0-9]+/).filter(Boolean).map(Number);
+  if(xs.length!==7)return null;
+  if(xs.some(v=>v<1||v>37)||new Set(xs).size!==7)return null;
+  return [...xs].sort((a,b)=>a-b);
+};
+const summarizeCore18State=(xs)=>{
+  const mean=xs.reduce((s,v)=>s+v,0)/xs.length;
+  const variance=xs.reduce((s,v)=>s+(v-mean)**2,0)/xs.length;
+  const range=xs[xs.length-1]-xs[0];
+  const gaps=xs.slice(1).map((v,i)=>v-xs[i]);
+  const gapMean=gaps.reduce((s,v)=>s+v,0)/gaps.length;
+  const gapVar=gaps.reduce((s,v)=>s+(v-gapMean)**2,0)/gaps.length;
+  const maxGap=Math.max(...gaps);
+  const gapCv=gapMean?Math.sqrt(gapVar)/gapMean:0;
+  return {mean,variance,range,maxGap,gapCv};
+};
+const signed=(v,d=2)=>`${v>0?'+':''}${v.toFixed(d)}`;
+
+const renderCore18Observation=()=>{
+  if(!core18Prev||!core18Curr||!core18Metrics)return;
+  const previous=parseCore18State(core18Prev.value);
+  const current=parseCore18State(core18Curr.value);
+  if(!previous||!current){
+    core18Metrics.innerHTML='<p>BOUNDARY: Previous / Current に、1〜37の異なる数字を7個ずつ入力してください。</p>';
+    return;
+  }
+  const p=summarizeCore18State(previous);
+  const c=summarizeCore18State(current);
+  const movement=[
+    `重心 ${p.mean.toFixed(2)} → ${c.mean.toFixed(2)} (${signed(c.mean-p.mean)})`,
+    `分散 ${p.variance.toFixed(2)} → ${c.variance.toFixed(2)} (${signed(c.variance-p.variance)})`,
+    `range ${p.range} → ${c.range} (${signed(c.range-p.range,0)})`,
+    `maxGap ${p.maxGap} → ${c.maxGap} (${signed(c.maxGap-p.maxGap,0)})`,
+    `gapCv ${p.gapCv.toFixed(3)} → ${c.gapCv.toFixed(3)} (${signed(c.gapCv-p.gapCv,3)})`
+  ];
+  core18Metrics.innerHTML=`
+    <div class="core18-metrics-grid">
+      <div class="core18-metric"><span>CENTROID</span><b>${c.mean.toFixed(2)}</b></div>
+      <div class="core18-metric"><span>VARIANCE</span><b>${c.variance.toFixed(2)}</b></div>
+      <div class="core18-metric"><span>RANGE</span><b>${c.range}</b></div>
+      <div class="core18-metric"><span>MAX GAP</span><b>${c.maxGap}</b></div>
+      <div class="core18-metric"><span>GAP CV</span><b>${c.gapCv.toFixed(3)}</b></div>
+    </div>
+    <div class="core18-movement"><b>OBSERVED MOVEMENT</b><br>${movement.join('<br>')}</div>
+  `;
+  try{
+    localStorage.setItem(CORE18_STATE_KEY,JSON.stringify({previous,current}));
+  }catch(e){}
+};
+
+if(core18Prev&&core18Curr){
+  try{
+    const saved=JSON.parse(localStorage.getItem(CORE18_STATE_KEY)||'null');
+    if(saved&&Array.isArray(saved.previous)&&Array.isArray(saved.current)){
+      core18Prev.value=saved.previous.join(' ');
+      core18Curr.value=saved.current.join(' ');
+      renderCore18Observation();
+    }
+  }catch(e){}
+}
+core18Run?.addEventListener('click',renderCore18Observation);
