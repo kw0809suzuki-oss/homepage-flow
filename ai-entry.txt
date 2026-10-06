@@ -15,6 +15,9 @@ START HERE
 - data/          : public observed data used by tools
 - play/          : optional Human × AI handoff surface; an AI may construct a URL for a human without opening it itself
 
+PORTABLE SHAPES
+- schemas/reentry.schema.json : portable current-position handoff; not shared state and not authority
+
 TOOL RULE
 A tool should remain useful to a read-only AI whenever its operation can be expressed as data + deterministic instructions.
 
