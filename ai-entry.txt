@@ -15,6 +15,9 @@ START HERE
 - data/          : public observed data used by tools
 - play/          : optional Human × AI handoff surface; an AI may construct a URL for a human without opening it itself
 
+RELATIONSHIP BOUNDARY
+- reference/flow-memory-relationship.txt : FlowMemory is private continuity; Flow World is public protocol; Re-entry Packet is the portable bridge
+
 PORTABLE SHAPES
 - schemas/reentry.schema.json : portable current-position handoff; not shared state and not authority
 
