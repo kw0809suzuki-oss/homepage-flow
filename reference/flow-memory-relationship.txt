@@ -1,0 +1,44 @@
+FlowMemory × Flow World Relationship v0
+
+Purpose
+- Keep the boundary between private continuity and public protocol explicit.
+- Prevent either system from being mistaken for the authority of the other.
+
+Observed basis
+- FlowMemory restores current posture/position with minimum necessary context and treats retrieved history as Historical Observation, not automatic truth.
+- FlowMemory CURRENT is a re-entry memo, not an authoritative project-state ledger, Evidence, or execution permission.
+- Flow World exposes public schemas, tool definitions, reference data, and handoff formats. Visitor working state stays local or portable unless explicitly adopted elsewhere.
+
+Roles
+
+FlowMemory
+- Private continuity and re-entry workspace.
+- Holds user/project-specific continuity, saved coordinates, and history needed for re-entry.
+- Re-approves retrieved material before using it in current reasoning or action.
+
+Flow World / Homepage
+- Public, read-oriented protocol surface.
+- Defines reusable schemas, deterministic tools, reference material, and handoff formats.
+- Does not serve as the user's private continuity store.
+- Does not automatically collect or publish visitor working state.
+
+Re-entry Packet
+- Portable bridge between a current working context and another human/AI context.
+- Carries coordinates, not authority.
+- The receiving side re-checks packet contents against current evidence before adoption.
+- Packet contents are personal/temporary artifacts unless explicitly adopted elsewhere.
+
+Allowed movement
+- FlowMemory -> Re-entry Packet -> Flow World schema -> another human or AI.
+- Flow World work -> Re-entry Packet -> optional manual/re-approved adoption into FlowMemory.
+
+Hard boundaries
+- No automatic synchronization between FlowMemory and Flow World.
+- No automatic write-back from personal packets or browser state into Flow World's public core.
+- Flow World's public schema does not make FlowMemory history true or current.
+- FlowMemory history is not automatically public material for Flow World.
+- A Re-entry Packet does not transfer truth, execution permission, or past authority.
+- This document defines a relationship boundary only; it is not an executable bridge or auto-reentry mechanism.
+
+Change condition
+- Change this relationship only after a concrete operational conflict or re-entry failure is observed. Do not expand it for hypothetical future needs.
