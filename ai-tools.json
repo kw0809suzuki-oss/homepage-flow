@@ -74,6 +74,11 @@
           ],
           "boundary": "difference only; no causal claim."
         }
+      },
+      "compatibility": {
+        "read_only_ai": "supported: reproduce from operation definition",
+        "javascript_ai": "supported: execute tools/ab-compare.js",
+        "browser_operator": "supported: use #workbench UI"
       }
     },
     {
@@ -118,7 +123,21 @@
         "Only markdown is supported in v0.",
         "Raw HTML is escaped and not executed.",
         "The fragment may remain visible in browser history or be shared with the URL; do not place secrets in it."
-      ]
+      ],
+      "compatibility": {
+        "read_only_ai": "supported for URL construction if Base64URL encoding is available; opening/rendering may be delegated to the human",
+        "javascript_ai": "supported",
+        "browser_operator": "supported"
+      }
     }
-  ]
+  ],
+  "compatibility_policy": {
+    "baseline": "read-only static web access",
+    "execution_preference": [
+      "reproduce deterministic operation from this file",
+      "use shared JavaScript implementation when executable",
+      "use human browser UI only when interaction is available"
+    ],
+    "unavailable_capability_rule": "If the environment cannot perform a listed interaction, report the boundary and use a lower-capability path when one exists."
+  }
 }
