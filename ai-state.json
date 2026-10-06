@@ -85,6 +85,11 @@
   ],
   "data_sources": [
     {
+      "id": "ai-entry",
+      "location": "ai-entry.txt",
+      "role": "smallest low-capability entry point for AIs that can read static text but cannot operate the browser UI."
+    },
+    {
       "id": "loto7-latest",
       "location": "data/loto7-latest.json",
       "source": "Rakuten Takarakuji LOTO7 backnumber",
@@ -108,7 +113,8 @@
     "A local improvement is not completion of Flow World.",
     "Do not infer user intent, preference, or meaning from browser trace counts.",
     "CORE18 observation is not the same thing as CORE18 prediction.",
-    "Prefer one small high-information probe over broad uncontrolled expansion."
+    "Prefer one small high-information probe over broad uncontrolled expansion.",
+    "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements."
   ],
   "recent_changes": [
     "Added in-visit persistent LAST PLACE return trace.",
@@ -120,5 +126,18 @@
     "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json.",
     "Added play/ as a serverless URL-fragment Markdown handoff surface."
   ],
-  "reentry_hint": "Start with current_position, then confirmed, unknowns, available_tools, boundaries, and ai-tools.json when a reusable tool is relevant."
+  "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
+  "compatibility_policy": {
+    "baseline": "read-only static web access",
+    "required_capabilities": [
+      "fetch or read static text/JSON resources"
+    ],
+    "optional_capabilities": [
+      "execute page JavaScript",
+      "press UI controls",
+      "read or write localStorage",
+      "render URL-fragment handoff pages"
+    ],
+    "rule": "Do not require optional browser capabilities when a tool can be reproduced from static data and deterministic instructions."
+  }
 }
