@@ -365,16 +365,16 @@ document.querySelector('[data-run="ab"]')?.addEventListener('click',()=>{
   const b=parseNumbers(wbInput('b')?.value||'');
   const out=wbOut('ab');
   if(!out)return;
-  if(!a.length||a.length!==b.length){out.textContent='BOUNDARY: A/B must be numeric lists with the same length.';return;}
-  const diffs=a.map((v,i)=>v-b[i]);
-  const mean=xs=>xs.reduce((s,v)=>s+v,0)/xs.length;
+  const result=window.FlowTools?.abCompare?.(a,b);
+  if(!result){out.textContent='BOUNDARY: shared A/B tool is unavailable.';return;}
+  if(!result.ok){out.textContent=`BOUNDARY: ${result.error}`;return;}
   out.textContent=[
-    `N: ${a.length}`,
-    `MEAN A: ${mean(a).toFixed(3)}`,
-    `MEAN B: ${mean(b).toFixed(3)}`,
-    `MEAN DELTA A-B: ${mean(diffs).toFixed(3)}`,
-    `POINT DELTAS: [${diffs.join(', ')}]`,
-    'BOUNDARY: difference only; no causal claim.'
+    `N: ${result.n}`,
+    `MEAN A: ${result.mean_a.toFixed(3)}`,
+    `MEAN B: ${result.mean_b.toFixed(3)}`,
+    `MEAN DELTA A-B: ${result.mean_delta_a_minus_b.toFixed(3)}`,
+    `POINT DELTAS: [${result.point_deltas.join(', ')}]`,
+    `BOUNDARY: ${result.boundary}`
   ].join('\n');
 });
 
