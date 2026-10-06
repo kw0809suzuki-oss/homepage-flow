@@ -620,3 +620,44 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 /* Drift mobile usability: action first, observation compact. */
 .drift-copy-top{position:sticky;top:10px;z-index:2;background:#0d2030;padding:0 0 12px}.drift-copy-top .drift-copy{margin-top:8px}.drift-output pre{max-height:520px;overflow:auto}
 @media(max-width:700px){.drift-copy-top{top:6px}.drift-output pre{max-height:360px;font-size:12px;line-height:1.55}.drift-output{padding:18px}.drift-copy{padding:14px}}
+
+
+/* Flow-chan CORE18 | State observation probe */
+.core18-room{
+  position:relative;padding:130px 7vw 120px;
+  background:linear-gradient(180deg,#f4f2ea 0%,#ebe7dc 100%);
+  border-top:1px solid var(--line);
+}
+.core18-head{display:grid;grid-template-columns:1.05fr .95fr;gap:7vw;align-items:end}
+.core18-head h2{font:500 clamp(46px,6.3vw,86px)/1.05 Georgia,"Noto Serif JP",serif;letter-spacing:-.04em;margin:12px 0 0}
+.core18-head>p{max-width:600px;color:#596574;line-height:1.9}
+.core18-board{display:grid;grid-template-columns:.9fr 1.1fr;gap:14px;margin-top:52px}
+.core18-inputs,.core18-observation{border:1px solid rgba(13,27,42,.14);background:rgba(255,255,255,.58);padding:22px}
+.core18-inputs label{display:block;font:10px monospace;letter-spacing:.12em;color:#6c7785;margin-bottom:14px}
+.core18-inputs input{display:block;width:100%;margin-top:8px;border:1px solid rgba(13,27,42,.16);background:#fff;padding:13px 14px;font:13px/1.4 monospace;color:var(--ink)}
+.core18-inputs button{border:0;background:#2f4676;color:#fff;padding:13px 16px;font:10px monospace;letter-spacing:.12em;cursor:pointer}
+.core18-inputs small{display:block;margin-top:14px;color:#7c8490;line-height:1.6}
+.core18-kicker{display:block;font:10px monospace;letter-spacing:.14em;color:#718096}
+.core18-metrics{margin-top:18px}
+.core18-metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.core18-metric{border-top:1px solid rgba(13,27,42,.16);padding-top:12px}
+.core18-metric span{display:block;font:9px monospace;letter-spacing:.1em;color:#7e8791}
+.core18-metric b{display:block;margin-top:5px;font:24px Georgia,serif;font-weight:500}
+.core18-movement{margin-top:20px;padding:16px;border-left:2px solid #2f4676;background:rgba(47,70,118,.05);font-size:13px;line-height:1.75}
+.core18-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:18px}
+.core18-flow article{min-height:160px;border:1px solid rgba(13,27,42,.13);padding:18px;background:rgba(255,255,255,.5);display:flex;flex-direction:column}
+.core18-flow article span{font:9px monospace;color:#818995}.core18-flow article b{margin-top:auto;font:21px Georgia,serif}.core18-flow article p{font-size:12px;line-height:1.6;color:#66717d}
+.core18-flow article.unknown{border-style:dashed;opacity:.68}
+.core18-boundary{margin:24px 0 0;font:10px/1.7 monospace;letter-spacing:.07em;color:#707986;text-align:right}
+@media(max-width:900px){
+  .core18-head,.core18-board{grid-template-columns:1fr}
+  .core18-head{gap:22px}
+  .core18-flow{grid-template-columns:1fr 1fr}
+  .core18-metrics-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .core18-room{padding:100px 24px 90px}
+  .core18-flow{grid-template-columns:1fr}
+  .core18-metrics-grid{grid-template-columns:1fr 1fr}
+  .core18-boundary{text-align:left}
+}
