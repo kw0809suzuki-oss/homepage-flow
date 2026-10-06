@@ -1,0 +1,120 @@
+name: Update LOTO7 latest state
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 12 * * 5'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch latest LOTO7 results from Rakuten
+        shell: python
+        run: |
+          from __future__ import annotations
+          import json, re, urllib.request
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+          from html.parser import HTMLParser
+
+          class TextParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.parts=[]
+              def handle_data(self, data):
+                  s=data.strip()
+                  if s:
+                      self.parts.append(s)
+
+          def month_key(dt):
+              return f"{dt.year}{dt.month:02d}"
+
+          def previous_month(dt):
+              year, month = dt.year, dt.month
+              if month == 1:
+                  return year-1, 12
+              return year, month-1
+
+          def fetch_text(url):
+              req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
+              with urllib.request.urlopen(req,timeout=20) as r:
+                  raw=r.read().decode("utf-8","ignore")
+              p=TextParser()
+              p.feed(raw)
+              return " ".join(p.parts)
+
+          def parse_results(text, source_url):
+              # Match each round only inside the observed block from round -> draw date -> main numbers -> bonus.
+              pat=re.compile(
+                  r"第(\d{4})回\s+抽せん日\s+(\d{4}/\d{2}/\d{2})\s+本数字\s+"
+                  r"(\d{1,2})\s+(\d{1,2})\s+(\d{1,2})\s+(\d{1,2})\s+(\d{1,2})\s+(\d{1,2})\s+(\d{1,2})"
+                  r"\s+ボーナス数字"
+              )
+              out=[]
+              for m in pat.finditer(text):
+                  nums=[int(m.group(i)) for i in range(3,10)]
+                  if len(set(nums)) != 7 or any(n < 1 or n > 37 for n in nums):
+                      continue
+                  out.append({
+                      "round": int(m.group(1)),
+                      "date": m.group(2).replace("/","-"),
+                      "numbers": nums,
+                      "source_url": source_url
+                  })
+              return out
+
+          now=datetime.now(ZoneInfo("Asia/Tokyo"))
+          py, pm=previous_month(now)
+          urls=[
+              f"https://takarakuji.rakuten.co.jp/backnumber/loto7/{py}{pm:02d}/",
+              f"https://takarakuji.rakuten.co.jp/backnumber/loto7/{month_key(now)}/",
+          ]
+
+          rows=[]
+          for url in urls:
+              try:
+                  rows.extend(parse_results(fetch_text(url),url))
+              except Exception as e:
+                  print(f"WARN: {url}: {e}")
+
+          dedup={}
+          for row in rows:
+              dedup[row["round"]]=row
+          rows=sorted(dedup.values(), key=lambda r:r["round"])
+
+          if len(rows) < 2:
+              raise SystemExit("Could not confirm at least two valid LOTO7 rounds; refusing to overwrite data.")
+
+          latest=rows[-2:]
+          payload={
+              "source":"Rakuten Takarakuji LOTO7 backnumber",
+              "source_urls":urls,
+              "observed":[
+                  {"round":r["round"],"date":r["date"],"numbers":r["numbers"]}
+                  for r in latest
+              ]
+          }
+
+          path=Path("data/loto7-latest.json")
+          path.parent.mkdir(parents=True,exist_ok=True)
+          path.write_text(json.dumps(payload,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print(json.dumps(payload,ensure_ascii=False))
+
+      - name: Commit observed update
+        run: |
+          if git diff --quiet -- data/loto7-latest.json; then
+            echo "No observed change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/loto7-latest.json
+          git commit -m "Update observed LOTO7 latest state"
+          git push
