@@ -637,6 +637,10 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 .core18-inputs input{display:block;width:100%;margin-top:8px;border:1px solid rgba(13,27,42,.16);background:#fff;padding:13px 14px;font:13px/1.4 monospace;color:var(--ink)}
 .core18-inputs button{border:0;background:#2f4676;color:#fff;padding:13px 16px;font:10px monospace;letter-spacing:.12em;cursor:pointer}
 .core18-inputs small{display:block;margin-top:14px;color:#7c8490;line-height:1.6}
+.core18-file{border:1px dashed rgba(47,70,118,.28);padding:14px;background:rgba(255,255,255,.45)}
+.core18-file input{margin:10px 0 0;padding:0;border:0;background:transparent;font:11px monospace}
+.core18-file span{display:block;margin-top:8px;font:10px/1.6 monospace;letter-spacing:.04em;color:#53647a}
+.core18-csv-status{margin:0 0 18px!important;font:10px/1.6 monospace!important;letter-spacing:.04em}
 .core18-kicker{display:block;font:10px monospace;letter-spacing:.14em;color:#718096}
 .core18-metrics{margin-top:18px}
 .core18-metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
