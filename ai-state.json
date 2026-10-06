@@ -16,7 +16,8 @@
     "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback.",
     "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json.",
     "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API.",
-    "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources."
+    "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources.",
+    "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid."
   ],
   "unknowns": [
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
@@ -127,7 +128,8 @@
     "Prefer one small high-information probe over broad uncontrolled expansion.",
     "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements.",
     "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core.",
-    "FlowMemory and Flow World do not automatically synchronize; Re-entry Packets carry coordinates only and require re-approval."
+    "FlowMemory and Flow World do not automatically synchronize; Re-entry Packets carry coordinates only and require re-approval.",
+    "The Re-entry Flow layer is not a conversation summary or authority; it should carry only the minimum movement needed to understand why the current position points in its present direction."
   ],
   "recent_changes": [
     "Added in-visit persistent LAST PLACE return trace.",
@@ -138,7 +140,8 @@
     "Added this machine-readable AI entry.",
     "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json.",
     "Added play/ as a serverless URL-fragment Markdown handoff surface.",
-    "Added the first SHAPE schema: a portable Re-entry Packet format."
+    "Added the first SHAPE schema: a portable Re-entry Packet format.",
+    "Added an optional lightweight Flow layer to the Re-entry Packet without invalidating existing v0 packets."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
