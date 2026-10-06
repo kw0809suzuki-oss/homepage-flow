@@ -14,7 +14,8 @@
     "Conversation Drift Detector is local-only and flags candidates rather than causes.",
     "Flow-chan CORE18 currently observes Previous and Current LOTO7 states and reports centroid, variance, range, maxGap, gapCv, and their movement.",
     "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback.",
-    "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json."
+    "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json.",
+    "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API."
   ],
   "unknowns": [
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
@@ -72,6 +73,14 @@
       "input": "Previous and Current LOTO7 states, usually auto-loaded",
       "output": "centroid, variance, range, maxGap, gapCv, observed movement",
       "boundary": "not a predictor; Recent History, Similar Transitions, and CORE18 generation remain unconnected."
+    },
+    {
+      "id": "static-handoff-play",
+      "type": "url_fragment_renderer",
+      "location": "play/",
+      "input": "URL fragment: #type=markdown&data=<UTF-8 Base64URL>",
+      "output": "locally rendered Markdown in the visitor browser",
+      "boundary": "content is not stored server-side; current probe supports markdown only; embedded HTML is escaped rather than executed."
     }
   ],
   "data_sources": [
@@ -108,7 +117,8 @@
     "Added repository JSON-backed automatic web state for CORE18.",
     "Added scheduled Rakuten LOTO7 update workflow.",
     "Added this machine-readable AI entry.",
-    "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json."
+    "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json.",
+    "Added play/ as a serverless URL-fragment Markdown handoff surface."
   ],
   "reentry_hint": "Start with current_position, then confirmed, unknowns, available_tools, boundaries, and ai-tools.json when a reusable tool is relevant."
 }
