@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kw0809suzuki-oss.github.io/homepage-flow/schemas/reentry.schema.json",
+  "title": "Flow World Re-entry Packet",
+  "description": "Portable handoff shape for passing current working coordinates between a human and one or more AIs without treating prior conclusions as authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "current_position",
+    "confirmed",
+    "unknown",
+    "boundary",
+    "next_probe",
+    "sources"
+  ],
+  "properties": {
+    "schema": {
+      "const": "flow-world-reentry-v0"
+    },
+    "current_position": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the work currently is. Describe position, not a retrospective summary."
+    },
+    "confirmed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Items supported strongly enough to carry forward as confirmed within the stated boundary."
+    },
+    "unknown": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Questions or facts that remain unresolved. Do not fill these by inference."
+    },
+    "boundary": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Limits on what may be claimed, reused, or acted on from this packet."
+    },
+    "next_probe": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "observation"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The unresolved point this probe is intended to move."
+        },
+        "observation": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The smallest concrete observation to make next."
+        },
+        "why": {
+          "type": "string",
+          "description": "Optional reason this probe has high information value."
+        }
+      },
+      "description": "At most one next probe. Null is valid when no justified probe has been chosen."
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "user_input",
+              "file",
+              "web",
+              "repository",
+              "tool_output",
+              "other"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Where carried-forward claims came from. A source entry does not by itself make a claim confirmed."
+    },
+    "created_at": {
+      "type": "string",
+      "description": "Optional creation time, preferably ISO 8601."
+    }
+  }
+}
