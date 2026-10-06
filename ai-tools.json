@@ -158,7 +158,21 @@
         "This is a shape, not an automated judgment tool.",
         "Packet contents must be re-evaluated against current evidence on re-entry.",
         "Do not write personal packet contents into the public core automatically."
-      ]
+      ],
+      "optional_flow_layer": {
+        "fields": [
+          "topic",
+          "key_point",
+          "recent_flow",
+          "direction"
+        ],
+        "purpose": "Preserve the minimum movement needed to avoid turning the packet into a static parts list.",
+        "boundary": [
+          "Do not use it as a retrospective narrative.",
+          "Do not promote prior interpretation to authority.",
+          "Keep recent_flow short and directional."
+        ]
+      }
     }
   ]
 }
