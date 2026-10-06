@@ -18,6 +18,7 @@
       <a href="#room">Room</a>
       <a href="#garden">Garden</a>
       <a href="#desk">Desk</a>
+      <a href="#core18">CORE18</a>
       <a href="#workbench">Workbench</a>
       <a href="#drift">Drift</a>\n      <a href="#astra">Astra</a>
       <a href="#states">States</a>
@@ -163,6 +164,48 @@
       </div>
 
       <p class="desk-footnote">This desk does not decide for Flow. It keeps the world legible enough for the next move.</p>
+    </section>
+
+
+    <section class="core18-room" id="core18">
+      <div class="core18-head">
+        <div>
+          <div class="no">07</div>
+          <p class="eyebrow">FLOW-CHAN CORE18 / STATE OBSERVATION PROBE</p>
+          <h2>数字を当てる前に、<br>いまの形を見る。</h2>
+        </div>
+        <p>Current と Previous を観測し、形と変化を分けて見る小さな実験室。ここでは新しい採用ルールを作らず、観測できた量だけを表示する。</p>
+      </div>
+
+      <div class="core18-board">
+        <div class="core18-inputs">
+          <label>PREVIOUS STATE
+            <input data-core18="previous" inputmode="numeric" placeholder="例: 03 08 12 19 24 31 36">
+          </label>
+          <label>CURRENT STATE
+            <input data-core18="current" inputmode="numeric" placeholder="例: 04 09 14 21 25 32 37">
+          </label>
+          <button type="button" data-core18-run>OBSERVE STATE</button>
+          <small>7個の異なる数字（1〜37）だけを受け取る。入力はこのブラウザにだけ保存される。</small>
+        </div>
+
+        <div class="core18-observation" aria-live="polite">
+          <span class="core18-kicker">OBSERVATION</span>
+          <div class="core18-metrics" data-core18-metrics>
+            <p>まだStateは観測されていない。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="core18-flow">
+        <article><span>01</span><b>STATE</b><p>Current / Previous の配置</p></article>
+        <article><span>02</span><b>MOVEMENT</b><p>重心・分散・range・gap の変化</p></article>
+        <article class="unknown"><span>03</span><b>RECENT HISTORY</b><p>未接続。履歴データが必要。</p></article>
+        <article class="unknown"><span>04</span><b>SIMILAR TRANSITIONS</b><p>未接続。類似景色の定義はまだ固定しない。</p></article>
+        <article class="unknown"><span>05</span><b>CORE18</b><p>未接続。観測から18数字への翻訳規則はまだ作らない。</p></article>
+      </div>
+
+      <p class="core18-boundary">BOUNDARY — これは予測器ではない。観測面だけを実装した最初のProbe。未来情報は使わず、結果を見てからStateを直さない。</p>
     </section>
 
 
