@@ -1,0 +1,22 @@
+FLOW WORLD / AI ENTRY v0
+
+PURPOSE
+Use Flow World without assuming browser control, JavaScript execution, or localStorage access.
+
+BASELINE COMPATIBILITY
+1. Read static text or JSON.
+2. Reproduce tool operations from their published definitions when possible.
+3. Treat browser UI, button presses, JavaScript execution, and localStorage as optional capabilities.
+4. Do not infer unavailable browser state.
+
+START HERE
+- ai-state.json  : current position, confirmed items, unknowns, boundaries, recent changes
+- ai-tools.json  : machine-readable tool definitions and reproducible operations
+- data/          : public observed data used by tools
+- play/          : optional Human × AI handoff surface; an AI may construct a URL for a human without opening it itself
+
+TOOL RULE
+A tool should remain useful to a read-only AI whenever its operation can be expressed as data + deterministic instructions.
+
+BOUNDARY
+If a task requires browser-only state, button interaction, localStorage, or another unavailable capability, report that boundary instead of pretending the action occurred.
