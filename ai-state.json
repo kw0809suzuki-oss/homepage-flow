@@ -1,0 +1,106 @@
+{
+  "schema": "flow-world-ai-entry-v0",
+  "world": "Flow World",
+  "updated_at": "2026-10-06",
+  "purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
+  "current_position": {
+    "status": "active prototype",
+    "summary": "Flow World is a human-facing discovery world with small persistent browser traces, explicit thinking principles, reusable observation tools, and a LOTO7 state-observation probe.",
+    "working_coordinate": "The current probe is whether a stable machine-readable AI entry reduces re-reading and unsupported inference."
+  },
+  "confirmed": [
+    "The Desk separates observation, interpretation, unknowns, evidence boundaries, and next probes as working principles.",
+    "Browser-local persistent traces exist for loop state, constellation, room-door count, sky garden, selected Desk lens, last observed place, signal count, and CORE18 state inputs.",
+    "Flow Workbench contains A/B Comparator, First Divergence, and Astra Lens utilities.",
+    "Conversation Drift Detector is local-only and flags candidates rather than causes.",
+    "Flow-chan CORE18 currently observes Previous and Current LOTO7 states and reports centroid, variance, range, maxGap, gapCv, and their movement.",
+    "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback."
+  ],
+  "unknowns": [
+    "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
+    "Whether the current fields are sufficient for useful AI re-entry across different tasks.",
+    "How Recent History, Similar Transitions, and CORE18 candidate generation should be connected without inventing unsupported fixed rules.",
+    "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run."
+  ],
+  "available_tools": [
+    {
+      "id": "desk",
+      "type": "principle_surface",
+      "location": "#desk",
+      "input": "current task context",
+      "output": "selected cognitive lens",
+      "boundary": "guidance only; it does not decide."
+    },
+    {
+      "id": "ab-comparator",
+      "type": "local_utility",
+      "location": "#workbench",
+      "input": "two equal-length numeric lists",
+      "output": "means, point deltas, mean delta",
+      "boundary": "difference only; no causal claim."
+    },
+    {
+      "id": "first-divergence",
+      "type": "local_utility",
+      "location": "#workbench",
+      "input": "two sequences",
+      "output": "first observed differing position",
+      "boundary": "cause remains unknown."
+    },
+    {
+      "id": "astra-lens",
+      "type": "local_utility",
+      "location": "#workbench",
+      "input": "observation, interpretation, boundary, missing",
+      "output": "separated fields",
+      "boundary": "does not generate the next probe."
+    },
+    {
+      "id": "conversation-drift",
+      "type": "local_observer",
+      "location": "#drift",
+      "input": "conversation text",
+      "output": "candidate corrections, unresolved questions, topic movement",
+      "boundary": "candidate detection only; no causal judgment."
+    },
+    {
+      "id": "core18-state-observer",
+      "type": "state_observer",
+      "location": "#core18",
+      "input": "Previous and Current LOTO7 states, usually auto-loaded",
+      "output": "centroid, variance, range, maxGap, gapCv, observed movement",
+      "boundary": "not a predictor; Recent History, Similar Transitions, and CORE18 generation remain unconnected."
+    }
+  ],
+  "data_sources": [
+    {
+      "id": "loto7-latest",
+      "location": "data/loto7-latest.json",
+      "source": "Rakuten Takarakuji LOTO7 backnumber",
+      "role": "confirmed latest two observed LOTO7 states used by the CORE18 observation room."
+    },
+    {
+      "id": "world-state-legacy",
+      "location": "world-state.json",
+      "role": "older prototype state file",
+      "boundary": "stale relative to the current site; do not treat as current authority without re-checking."
+    }
+  ],
+  "boundaries": [
+    "Generated ideas are not evidence.",
+    "Unknowns remain unknown until evidence changes them.",
+    "A local improvement is not completion of Flow World.",
+    "Do not infer user intent, preference, or meaning from browser trace counts.",
+    "CORE18 observation is not the same thing as CORE18 prediction.",
+    "Prefer one small high-information probe over broad uncontrolled expansion."
+  ],
+  "recent_changes": [
+    "Added in-visit persistent LAST PLACE return trace.",
+    "Added Flow-chan CORE18 State Observation room.",
+    "Added CSV fallback for loading latest two LOTO7 states.",
+    "Added repository JSON-backed automatic web state for CORE18.",
+    "Added scheduled Rakuten LOTO7 update workflow.",
+    "Added this machine-readable AI entry."
+  ],
+  "reentry_hint": "Start with current_position, then confirmed, unknowns, available_tools, and boundaries. Read full HTML or tool sections only when the current task requires them."
+}
