@@ -15,7 +15,8 @@
     "Flow-chan CORE18 currently observes Previous and Current LOTO7 states and reports centroid, variance, range, maxGap, gapCv, and their movement.",
     "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback.",
     "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json.",
-    "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API."
+    "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API.",
+    "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources."
   ],
   "unknowns": [
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
@@ -105,6 +106,11 @@
       "id": "ai-tools",
       "location": "ai-tools.json",
       "role": "machine-readable tool definitions that an AI can reproduce without a server API."
+    },
+    {
+      "id": "reentry-schema",
+      "location": "schemas/reentry.schema.json",
+      "role": "portable schema for handing off current coordinates between humans and AIs without writing personal work state into the public core."
     }
   ],
   "boundaries": [
@@ -114,7 +120,8 @@
     "Do not infer user intent, preference, or meaning from browser trace counts.",
     "CORE18 observation is not the same thing as CORE18 prediction.",
     "Prefer one small high-information probe over broad uncontrolled expansion.",
-    "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements."
+    "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements.",
+    "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core."
   ],
   "recent_changes": [
     "Added in-visit persistent LAST PLACE return trace.",
@@ -124,7 +131,8 @@
     "Added scheduled Rakuten LOTO7 update workflow.",
     "Added this machine-readable AI entry.",
     "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json.",
-    "Added play/ as a serverless URL-fragment Markdown handoff surface."
+    "Added play/ as a serverless URL-fragment Markdown handoff surface.",
+    "Added the first SHAPE schema: a portable Re-entry Packet format."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
