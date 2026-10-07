@@ -11,12 +11,7 @@ function extractOutputText(data) {
 }
 
 function parseGateJson(text) {
-  const cleaned = String(text || "")
-    .trim()
-    .replace(/^```(?:json)?/i, "")
-    .replace(/```$/, "")
-    .trim();
-  const parsed = JSON.parse(cleaned);
+  const parsed = JSON.parse(String(text || "").trim());
   const allowed = ["CONNECTED", "OPEN_UNKNOWN", "CONTINUING_ELSEWHERE"];
   if (!allowed.includes(parsed.state)) throw new Error("invalid state");
   return {
@@ -46,17 +41,19 @@ module.exports = async function handler(req, res) {
   const boundaryEvent = body.boundary_event || null;
 
   if (!placed || movement.length === 0) {
-    return res.status(400).json({ error: "placed_direction and recent_movement are required" });
+    return res.status(400).json({
+      error: "placed_direction and recent_movement are required",
+    });
   }
 
   const prompt = [
     "You are Connection Gate, not a goal-inference or authorization system.",
-    "A boundary event is about to occur. Judge only whether recent movement is still connected to the human-placed direction.",
-    "Do not decide whether the commit/action itself is permitted. Do not invent a replacement goal.",
-    "Do not call exploration a mistake. Use OPEN_UNKNOWN when the connection cannot be established.",
-    "Return JSON only with exactly: state, evidence.",
-    'state must be one of: "CONNECTED", "OPEN_UNKNOWN", "CONTINUING_ELSEWHERE".',
-    "Keep evidence under 40 words.",
+    "A boundary event is about to occur.",
+    "Judge only whether recent movement is still connected to the human-placed direction.",
+    "Do not decide whether the commit/action itself is permitted.",
+    "Do not invent a replacement goal.",
+    "Do not call exploration a mistake.",
+    "Use OPEN_UNKNOWN when the connection cannot be established.",
     "",
     "PLACED DIRECTION:",
     placed,
@@ -82,13 +79,38 @@ module.exports = async function handler(req, res) {
     },
     body: JSON.stringify({
       model: process.env.OPENAI_DIRECTION_MODEL || "gpt-6-luna",
+      reasoning: { effort: "none" },
       input: prompt,
-      max_output_tokens: 120,
+      text: {
+        verbosity: "low",
+        format: {
+          type: "json_schema",
+          name: "connection_gate_result",
+          strict: true,
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              state: {
+                type: "string",
+                enum: ["CONNECTED", "OPEN_UNKNOWN", "CONTINUING_ELSEWHERE"],
+              },
+              evidence: {
+                type: "string",
+                description: "Brief evidence for the connection state.",
+              },
+            },
+            required: ["state", "evidence"],
+          },
+        },
+      },
+      max_output_tokens: 200,
       store: false,
     }),
   });
 
   const data = await response.json();
+
   if (!response.ok) {
     return res.status(response.status).json({
       error: "OpenAI request failed",
@@ -96,8 +118,28 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  if (data?.status === "incomplete") {
+    return res.status(502).json({
+      error: "Connection Gate response incomplete",
+      incomplete_reason: data?.incomplete_details?.reason || "unknown",
+      usage: data?.usage || null,
+    });
+  }
+
+  const outputText = extractOutputText(data);
+  if (!outputText) {
+    return res.status(502).json({
+      error: "Connection Gate returned no visible output",
+      response_status: data?.status || null,
+      output_types: Array.isArray(data?.output)
+        ? data.output.map((item) => item?.type || "unknown")
+        : [],
+      usage: data?.usage || null,
+    });
+  }
+
   try {
-    const result = parseGateJson(extractOutputText(data));
+    const result = parseGateJson(outputText);
     return res.status(200).json({
       ...result,
       model: data.model || process.env.OPENAI_DIRECTION_MODEL || "gpt-6-luna",
@@ -105,8 +147,10 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     return res.status(502).json({
-      error: "Connection Gate returned unparsable output",
-      raw: extractOutputText(data).slice(0, 500),
+      error: "Connection Gate returned unparsable structured output",
+      raw: outputText.slice(0, 500),
+      response_status: data?.status || null,
+      usage: data?.usage || null,
     });
   }
 };
