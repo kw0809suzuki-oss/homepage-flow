@@ -268,3 +268,70 @@ Connect one real tool/runtime execution source to the Execution Facts Collector 
 Do not broaden the Detector into a semantic LLM classifier unless deterministic signals are genuinely insufficient.
 
 This branch remains isolated from `main`.
+
+
+## Reality Re-observe v0 — GitHub file_write probe
+
+A real GitHub write/read probe was executed on this branch.
+
+Expected state:
+
+```text
+repo: kw0809suzuki-oss/homepage-flow
+branch: direction-gate-v0
+path: direction-gate/reobserve-probe-v0.txt
+content:
+execution-os-reobserve-v0
+probe=github-file-write
+expected=verified
+```
+
+Execute returned commit:
+
+```text
+277fc4d60812f4aba40fab23f75777013670babc
+```
+
+That execute response was **not** accepted as verification.
+
+A separate GitHub read then observed:
+
+- the file exists on `direction-gate-v0`;
+- its content exactly matches the expected content;
+- commit `277fc4d60812f4aba40fab23f75777013670babc` exists in GitHub;
+- the commit diff contains the expected file and exact probe content.
+
+Result:
+
+```text
+VERIFIED
+```
+
+This establishes the Reality Re-observe principle for one real `file_write` case.
+
+### Evidence boundary
+
+This probe was orchestrated externally: Execute and Re-observe were separate GitHub operations initiated by the assistant.
+
+Therefore it does **not** yet establish an autonomous runtime loop from tool execution into the Execution OS.
+
+Confirmed:
+
+```text
+GitHub write
+→ independent GitHub re-fetch
+→ deterministic comparison
+→ VERIFIED
+```
+
+Still unresolved:
+
+```text
+real tool runtime
+→ automatic Execution Fact emission
+→ detector
+→ execute
+→ automatic re-observe
+```
+
+The next integration problem is automation of that source/runtime handoff, not redesign of the Detector.
