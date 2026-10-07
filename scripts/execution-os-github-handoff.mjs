@@ -1,5 +1,8 @@
 import { execFileSync } from "node:child_process";
-import { collectExecutionFact } from "../direction-gate/execution-facts.js";
+import {
+  collectExecutionFact,
+  appendExecutionFact
+} from "../direction-gate/execution-facts.js";
 import { detectBoundary } from "../direction-gate/boundary-detector.js";
 
 const before = String(process.env.GITHUB_BEFORE || "").trim();
@@ -33,6 +36,8 @@ function kindFromStatus(status) {
   return "unknown";
 }
 
+let factLog = [];
+
 const rows = changedFiles().map(({ status, path }) => {
   const fact = collectExecutionFact({
     kind: kindFromStatus(status),
@@ -49,7 +54,12 @@ const rows = changedFiles().map(({ status, path }) => {
     },
   });
 
+  const record = appendExecutionFact(factLog, fact);
+  factLog = record.log;
+
   return {
+    record_status: record.status,
+    record_errors: record.errors,
     fact,
     detection: detectBoundary(fact),
   };
@@ -62,7 +72,7 @@ const result = {
   ref: process.env.GITHUB_REF || null,
   before: before || null,
   after: after || null,
-  fact_count: rows.length,
+  fact_count: factLog.length,
   items: rows,
 };
 
