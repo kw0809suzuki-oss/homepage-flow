@@ -23,6 +23,14 @@ START HERE
   - If no such surface is useful, continue normally; generating a surface is not mandatory.
   - Use :::surface ... :::end only as an inert layout boundary. Do not emit executable HTML or JavaScript.
 
+
+INSTRUMENT FIRST
+- When the current task calls for an operation such as observation, comparison, probing, tracing, or re-entry, check Flow World's existing instruments before inventing a new method.
+- If an existing instrument materially fits the current need, use it first.
+- If none fits, generate the smallest suitable method or temporary surface.
+- Do not force a named instrument by topic alone; choose by the operation actually needed.
+- Using an existing instrument does not make its result correct or complete; keep its stated boundary.
+
 PARENT PURPOSE BOUNDARY
 - Keep the current local question distinct from the parent purpose that made the question relevant.
 - Before promoting, replacing, or reframing the parent purpose because a local branch became interesting, re-check why the current question was introduced.
