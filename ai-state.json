@@ -4,9 +4,9 @@
   "updated_at": "2026-10-07",
   "purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
   "current_position": {
-    "status": "operational re-entry probe",
-    "summary": "Flow World is being used as an external recalibration surface that an AI can reach through a public URL and static machine-readable entry points.",
-    "working_coordinate": "A connected web-reading plugin successfully reached Flow World and read its AI Entry, AI State, tool definitions, and relationship reference. The current question is how to keep Flow World's public current position fresh enough to support real re-entry without turning it into a private activity log."
+    "status": "AI instrument execution boundary probe",
+    "summary": "Flow World checks existing instruments before generating new ones. Switch Lab is now described for read-only AIs as an observation protocol.",
+    "working_coordinate": "A matching instrument can be discovered and guided conversationally. UI events, human reports, and independently evidenced real-world actions must remain separate; external-AI adoption and actual action evidence remain unverified."
   },
   "confirmed": [
     "The Desk separates observation, interpretation, unknowns, evidence boundaries, and next probes as working principles.",
@@ -20,7 +20,7 @@
     "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid.",
     "A connected external AI can reach Flow World through its public URL and read ai-entry.txt, ai-state.json, ai-tools.json, and reference/flow-memory-relationship.txt through a compatible web-reading plugin.",
     "Flow World keeps a public re-entry route that works without private continuity, while allowing an optional personal route to an authorized private continuity source when one exists.",
-    "An Internal Switch Lab now provides eight small in-world instruments that can make choice, switching, postponement, continuation, and re-reference events directly observable without inferring their meaning."
+    "Internal Switch Lab has eight UI choices and an AI-readable protocol; button events and human reports do not independently establish real-world task changes."
   ],
   "unknowns": [
     "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
@@ -92,8 +92,10 @@
       "type": "observation_surface",
       "location": "#switch-lab",
       "input": "a currently held parent question and a newly attractive interest",
-      "output": "user-executed choice/switch/re-reference events",
-      "boundary": "records interaction facts only; does not infer motive, value, true purpose, personality, or stable tendency."
+      "output": "UI button-choice events or human reports; actual real-world actions only when separately evidenced.",
+      "boundary": "UI clicks and reports are not independent proof of task switching, continuation, or return; no motive or stable tendency inferred.",
+      "machine_definition": "ai-tools.json",
+      "implementation": "internal-switch.js"
     }
   ],
   "data_sources": [
@@ -158,7 +160,8 @@
     "Observed a real external re-entry path: a connected web-reading plugin reached Flow World and followed its static AI entry resources; updated only the public current position and related observations.",
     "Added public and optional personal re-entry routes to AI Entry without making FlowMemory a requirement for other visitors.",
     "Added a parent-purpose boundary so interesting local questions or observations update the route without silently replacing the purpose that made them relevant.",
-    "Added Internal Switch Lab: eight in-world observation instruments for the already-observed phenomenon where a new interest can change the current progression target."
+    "Added Internal Switch Lab: eight in-world observation instruments for the already-observed phenomenon where a new interest can change the current progression target.",
+    "Aligned Switch Lab UI messages, AI tool definition, and state: button events and self-reports are distinct from evidence of actual task switching."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
