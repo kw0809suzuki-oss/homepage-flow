@@ -119,3 +119,22 @@ export function adaptEvent(raw = {}) {
     errors: validation.errors,
   };
 }
+
+
+export async function adaptAndObserve(state, raw = {}) {
+  const adapted = adaptEvent(raw);
+  if (adapted.status !== "ADAPTED") {
+    return {
+      adapted,
+      observation: null,
+    };
+  }
+
+  const { observeDirectionEvent } = await import("./observer.js");
+  const observation = observeDirectionEvent(state, adapted.event);
+
+  return {
+    adapted,
+    observation,
+  };
+}
