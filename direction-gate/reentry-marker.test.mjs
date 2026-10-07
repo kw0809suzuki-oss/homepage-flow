@@ -1,0 +1,45 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  markReturnPoint,
+  completeReturn,
+  composeStance,
+} from "./reentry-marker.js";
+
+test("marks the current position and keeps concrete references", () => {
+  const packet = { current_position: "A", return_point: null };
+  const next = markReturnPoint(packet, [
+    { kind: "repository", ref: "branch:direction-gate-v0", stance: "observed" },
+  ]);
+
+  assert.equal(next.return_point.current_position, "A");
+  assert.deepEqual(next.return_point.references, [
+    { kind: "repository", ref: "branch:direction-gate-v0", stance: "observed" },
+  ]);
+});
+
+test("does not overwrite an active return point during a branch", () => {
+  const first = markReturnPoint({ current_position: "A", return_point: null }, []);
+  const branched = { ...first, current_position: "B" };
+  const second = markReturnPoint(branched, [
+    { kind: "file", ref: "B.txt", stance: "observed" },
+  ]);
+
+  assert.equal(second.return_point.current_position, "A");
+  assert.deepEqual(second.return_point.references, []);
+});
+
+test("consumes the return point after successful return and moves to A-prime", () => {
+  const marked = markReturnPoint({ current_position: "A", return_point: null }, []);
+  const returned = completeReturn({ ...marked, current_position: "B" }, "A-prime");
+
+  assert.equal(returned.current_position, "A-prime");
+  assert.equal(returned.return_point, null);
+});
+
+test("composes stance conservatively", () => {
+  assert.equal(composeStance(["observed", "observed"]), "observed");
+  assert.equal(composeStance(["observed", "inferred"]), "inferred");
+  assert.equal(composeStance(["observed", "unknown"]), "unknown");
+  assert.equal(composeStance(["inferred", "unknown"]), "unknown");
+});
