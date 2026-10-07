@@ -7,7 +7,7 @@
   <meta name="description" content="まだ見えていないものを、人間とAIで一緒に発見する。">
   <link rel="alternate" type="text/plain" href="ai-entry.txt" title="Flow World AI Entry">\n  <link rel="alternate" type="application/json" href="ai-state.json" title="Flow World AI State">\n  <link rel="alternate" type="application/json" href="ai-tools.json" title="Flow World AI Tools">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="astra-loop.css">
+  <link rel="stylesheet" href="astra-loop.css">\n  <link rel="stylesheet" href="internal-switch.css">
 </head>
 <body>
   <header class="nav">
@@ -21,7 +21,7 @@
       <a href="#desk">Desk</a>
       <a href="#core18">CORE18</a>
       <a href="#workbench">Workbench</a>
-      <a href="#drift">Drift</a>\n      <a href="#astra">Astra</a>
+      <a href="#drift">Drift</a>\n      <a href="#switch-lab">Switch Lab</a>\n      <a href="#astra">Astra</a>
       <a href="#states">States</a>
       <a href="#play">Play</a>
     </div>
@@ -268,7 +268,24 @@
     </section>
 
 
-    <section class="conversation-drift" id="drift">
+
+    <section class="switch-lab" id="switch-lab" data-switch-lab>
+      <div class="switch-lab-head"><div><div class="no">08</div><p class="eyebrow">INTERNAL SWITCH LAB / OBSERVATION INSTRUMENTS</p><h2>切り替わる瞬間に、<br>事実を発生させる。</h2></div><p>目的を矯正しない。理由も診断しない。親問いと新しい興味を置き、実際の選択・切替・再参照だけを観測する。各器具は独立して使える。</p></div>
+      <div class="switch-setup"><label>PARENT QUESTION<input data-parent placeholder="いま追っている問い"></label><label>NEW INTEREST<input data-interest placeholder="いま引かれている新しい対象"></label><button type="button" data-arm>START OBSERVATION</button></div>
+      <div class="switch-card" data-armed="false"><header><span>00</span><h3>START</h3></header><pre class="switch-result" data-result="start">waiting</pre></div>
+      <div class="switch-grid">
+        <article class="switch-card" data-armed="false"><header><span>01 / FIRST MOVE</span><h3>最初の手</h3></header><p>説明する前に、次に触る方を押す。</p><div class="switch-actions"><button data-id="first" data-act="p"><span data-parent-name>親問い</span></button><button data-id="first" data-act="i"><span data-interest-name>新しい興味</span></button></div><pre class="switch-result" data-result="first">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>02 / PULL</span><h3>いま触る対象</h3></header><p>「重要」ではなく、今この瞬間に手を出す対象を選ぶ。</p><div class="switch-actions"><button data-id="pull" data-act="p"><span data-parent-name>親問い</span></button><button data-id="pull" data-act="i"><span data-interest-name>新しい興味</span></button></div><pre class="switch-result" data-result="pull">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>03 / OPPORTUNITY COST</span><h3>何を後回しにしたか</h3></header><p>選んだ対象ではなく、実際に後ろへ送る方を押す。</p><div class="switch-actions"><button data-id="cost" data-act="p"><span data-parent-name>親問い</span></button><button data-id="cost" data-act="i"><span data-interest-name>新しい興味</span></button></div><pre class="switch-result" data-result="cost">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>04 / SWITCH</span><h3>切替を実行</h3></header><p>本当に新しい対象へ進むなら、このボタンで切替を発生させる。</p><div class="switch-actions"><button data-id="branch" data-act="i"><span data-interest-name>新しい興味</span>へ切り替える</button></div><pre class="switch-result" data-result="branch">waiting</pre><div class="switch-actions" data-return-actions hidden><button data-id="after" data-act="return"><span data-parent-name>親問い</span>を再参照</button><button data-id="after" data-act="continue"><span data-interest-name>新しい興味</span>を継続</button></div><pre class="switch-result" data-result="after">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>05 / REMOVE ONE</span><h3>片方を消す</h3></header><p>今だけ片方を視界から外すなら、どちらを消すか。</p><div class="switch-actions"><button data-id="erase" data-act="p"><span data-parent-name>親問い</span>を隠す</button><button data-id="erase" data-act="i"><span data-interest-name>新しい興味</span>を隠す</button></div><pre class="switch-result" data-result="erase">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>06 / ONE ACTION</span><h3>次の一手を渡す</h3></header><p>次の具体的な1アクションだけ、どちらへ渡すか。</p><div class="switch-actions"><button data-id="commit" data-act="p"><span data-parent-name>親問い</span></button><button data-id="commit" data-act="i"><span data-interest-name>新しい興味</span></button></div><pre class="switch-result" data-result="commit">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>07 / SURPRISE CONTACT</span><h3>興味を見た後</h3></header><p>新しい興味が存在すると知った今、実際の進行対象はどちらか。</p><div class="switch-actions"><button data-id="surprise" data-act="p"><span data-parent-name>親問い</span></button><button data-id="surprise" data-act="i"><span data-interest-name>新しい興味</span></button></div><pre class="switch-result" data-result="surprise">waiting</pre></article>
+        <article class="switch-card" data-armed="false"><header><span>08 / RETURNABILITY</span><h3>親問いはまだ掴めるか</h3></header><p>切替の意味は決めず、元の問いが現在も再参照可能かだけを残す。</p><div class="switch-actions"><button data-id="returnable" data-act="yes">まだ掴める</button><button data-id="returnable" data-act="no">今は掴めない</button></div><pre class="switch-result" data-result="returnable">waiting</pre></article>
+      </div>
+      <p class="switch-boundary">BOUNDARY — クリックは行動事実。理由・欲求・価値・「本当の目的」はここから自動推定しない。各結果は一回の観測であり、性格や恒常傾向の証明ではない。</p>
+    </section>
+\n    <section class="conversation-drift" id="drift">
       <div class="drift-head">
         <div><div class="no">08</div><p class="eyebrow">CONVERSATION DRIFT DETECTOR v0 / LOCAL ONLY</p><h2>AIとの会話を、<br>外から一度見る。</h2></div>
         <p>会話全文を貼ると、ブラウザ内だけで訂正・未回収の問い・話題の移動を機械的に観測する。AI/APIは使わず、意味や原因を断定しない。</p>
@@ -423,6 +440,6 @@
   <aside class="flow-whisper" aria-live="polite">まだ決まっていないものは、そのままでいい。</aside>
 
   <script src="tools/ab-compare.js"></script>\n  <script src="script.js"></script>
-  <script src="astra-loop.js"></script>\n  <script src="conversation-drift.js?v=20261005-self1"></script>
+  <script src="astra-loop.js"></script>\n  <script src="conversation-drift.js?v=20261005-self1"></script>\n  <script src="internal-switch.js"></script>
 </body>
 </html>
