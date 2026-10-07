@@ -67,6 +67,22 @@
 
       closeList();
 
+      // A tiny, inert surface primitive for AI-generated temporary workspaces.
+      // :::surface / :::end only changes layout; inner content still uses the
+      // same escaped Markdown renderer and cannot execute HTML or scripts.
+      if(line.trim() === ':::surface'){
+        out.push('<section class="play-surface">');
+        continue;
+      }
+      if(line.trim() === ':::end'){
+        out.push('</section>');
+        continue;
+      }
+      if(line.trim() === '---'){
+        out.push('<hr>');
+        continue;
+      }
+
       const quote = line.match(/^>\s?(.*)$/);
       if(quote){
         out.push('<blockquote>' + inline(quote[1]) + '</blockquote>');
