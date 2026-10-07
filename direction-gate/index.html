@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Boundary Control v1</title>
+<title>Execution OS v0</title>
 <style>
-body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 18px;line-height:1.6}
+body{font-family:system-ui,sans-serif;max-width:920px;margin:40px auto;padding:0 18px;line-height:1.6}
 label{display:block;margin:10px 0} input,select,button{font:inherit;padding:8px} input{width:min(100%,560px)}
 .row{display:flex;gap:8px;flex-wrap:wrap}.box{border:1px solid #bbb;border-radius:12px;padding:16px;margin:18px 0}
 pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.muted{opacity:.7}
@@ -13,8 +13,8 @@ pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.mute
 </style>
 </head>
 <body>
-<h1>Boundary Control v1</h1>
-<p>生成・探索は自由。変化候補はObserverに貯め、COMMIT / ACTION の境界に来た時だけ必要ならConnection Gateを呼ぶ。</p>
+<h1>Execution OS v0</h1>
+<p>生成は自由。実行事実だけを記録し、決定論的Detectorが境界を分類する。判定不能はFREEではなくUNKNOWN。</p>
 
 <div class="box">
 <label>PLACED DIRECTION <input id="placed" value="A"></label>
@@ -22,34 +22,25 @@ pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.mute
 </div>
 
 <div class="box">
-<h2>Observed event</h2>
+<h2>Execution fact source</h2>
 <div class="grid">
-<label>kind <input id="kind" value="work"></label>
+<label>kind <input id="kind" value="search" placeholder="search / commit / send / ..."></label>
 <label>target <input id="target" placeholder="A / B"></label>
 <label>result destination <input id="dest" placeholder="A / B / empty"></label>
 <label>continuation from <input id="cont" placeholder="A / B / empty"></label>
-<label>boundary
-<select id="boundary">
-<option>NONE</option>
-<option>COMMIT</option>
-<option>ACTION</option>
-</select>
-</label>
 </div>
 
-<h3>Commit metadata</h3>
+<h3>Commit policy metadata</h3>
 <div class="grid">
 <label>epistemic state
-<select id="epistemic">
-<option>OBSERVED</option><option>INFERRED</option><option>UNKNOWN</option><option>CONFLICT</option>
-</select>
+<select id="epistemic"><option>OBSERVED</option><option>INFERRED</option><option>UNKNOWN</option><option>CONFLICT</option></select>
 </label>
 <label>provenance <select id="provenance"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
 <label>authority <select id="authority"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
 <label>freshness <select id="freshness"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
 </div>
 
-<h3>Action metadata</h3>
+<h3>Action policy metadata</h3>
 <div class="grid">
 <label>permission <select id="permission"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
 <label>scope <input id="scope" value="single-target"></label>
@@ -58,13 +49,18 @@ pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.mute
 </div>
 
 <div class="row">
-<button id="add">ADD EVENT</button>
-<button id="sample">ADD B→B + COMMIT SAMPLE</button>
+<button id="add">ADD FACT</button>
+<button id="sample">B→B → COMMIT SAMPLE</button>
+<button id="unknown">UNKNOWN SIGNAL SAMPLE</button>
 </div>
 </div>
 
 <div class="box">
-<h2>Observer</h2>
+<h2>Execution Facts Collector</h2>
+<pre id="facts">waiting</pre>
+<h2>Boundary Detector</h2>
+<pre id="detector">waiting</pre>
+<h2>Direction Observer</h2>
 <pre id="observer">waiting</pre>
 <h2>Boundary Policy</h2>
 <pre id="policy">waiting</pre>
@@ -72,7 +68,7 @@ pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.mute
 <pre id="gate">API not called yet.</pre>
 <h2>Control Result</h2>
 <pre id="control">waiting</pre>
-<p class="muted">Connection Gateは目的接続だけを見る。Commit / Actionの許可判断とは分離する。</p>
+<p class="muted">Detectorはkindの確定シグナルだけを見る。未知のkindはUNKNOWN。入力側のboundary申告には依存しない。</p>
 </div>
 
 <script type="module">
@@ -81,10 +77,12 @@ import {
   buildDirectionCheckPayload,
   applyConnectionCheckResult
 } from "/direction-gate/observer.js";
-import {adaptAndObserve} from "/direction-gate/event-adapter.js";
+import {createExecutionOSState,processExecutionFact} from "/direction-gate/execution-os.js";
 import {evaluateBoundaryPolicy} from "/direction-gate/boundary-policy.js";
 
-let state=createDirectionState(document.querySelector("#placed").value);
+let osState=createExecutionOSState(createDirectionState(document.querySelector("#placed").value));
+const facts=document.querySelector("#facts");
+const detector=document.querySelector("#detector");
 const obs=document.querySelector("#observer");
 const gate=document.querySelector("#gate");
 const policy=document.querySelector("#policy");
@@ -101,7 +99,7 @@ function readEvent(){
     target:document.querySelector("#target").value,
     resultDestination:document.querySelector("#dest").value,
     continuationFrom:document.querySelector("#cont").value,
-    boundary:document.querySelector("#boundary").value,
+    source:"manual-harness",
     commit:{
       epistemicState:document.querySelector("#epistemic").value,
       provenance:boolOrNull("#provenance"),
@@ -118,7 +116,18 @@ function readEvent(){
   };
 }
 
-function render(result){
+function boundaryPolicyFor(event,detection){
+  if(detection.classification==="FREE"){
+    return {gate:"NONE",decision:"FREE",reasons:[]};
+  }
+  if(detection.classification==="UNKNOWN"){
+    return {gate:"BOUNDARY",decision:"UNKNOWN",reasons:["BOUNDARY_UNCLASSIFIED"]};
+  }
+  return evaluateBoundaryPolicy({...event,boundary:detection.classification});
+}
+
+function renderObservation(result){
+  const state=osState.directionState;
   obs.textContent=JSON.stringify({
     observation:result.observation,
     reasons:result.reasons,
@@ -147,51 +156,72 @@ function combineControl(boundaryDecision, connectionState, connectionRequired){
 }
 
 async function pushEvent(event){
-  const boundaryDecision=evaluateBoundaryPolicy(event);
-  policy.textContent=JSON.stringify(boundaryDecision,null,2);
+  const processed=processExecutionFact(osState,event);
+  osState=processed.osState;
 
-  const adaptedResult=await adaptAndObserve(state,event);
-  if(adaptedResult.adapted.status!=="ADAPTED"){
-    obs.textContent=JSON.stringify(adaptedResult.adapted,null,2);
+  if(!processed.fact || !processed.detection || !processed.observation){
+    facts.textContent=JSON.stringify(processed.adapted,null,2);
+    detector.textContent="not classified";
     control.textContent=JSON.stringify({
-      gate:"ADAPTER",
-      decision:"HOLD",
-      reasons:adaptedResult.adapted.errors
+      gate:"COLLECTOR",
+      decision:"UNKNOWN",
+      reasons:["FACT_NOT_RECORDED"]
     },null,2);
     return;
   }
-  const result=adaptedResult.observation;
-  state=result.state;
-  render(result);
 
-  if(result.observation!=="BOUNDARY_CHECK_REQUIRED"){
-    gate.textContent=result.observation==="CHANGE_NOTED"
+  facts.textContent=JSON.stringify({
+    lastFact:processed.fact,
+    factCount:osState.factLog.length
+  },null,2);
+  detector.textContent=JSON.stringify(processed.detection,null,2);
+  renderObservation(processed.observation);
+
+  const boundaryDecision=boundaryPolicyFor(event,processed.detection);
+  policy.textContent=JSON.stringify(boundaryDecision,null,2);
+
+  if(processed.detection.classification==="UNKNOWN"){
+    gate.textContent="No API call. Unknown boundary is held before policy execution.";
+    control.textContent=JSON.stringify(boundaryDecision,null,2);
+    return;
+  }
+
+  if(processed.observation.observation!=="BOUNDARY_CHECK_REQUIRED"){
+    gate.textContent=processed.observation.observation==="CHANGE_NOTED"
       ? "Change noted. No API call; exploration continues."
       : "No Connection API call.";
     control.textContent=JSON.stringify(boundaryDecision,null,2);
     return;
   }
 
-  gate.textContent="Boundary reached with pending change → calling Connection Gate…";
+  gate.textContent="Detected boundary + pending direction change → calling Connection Gate…";
   try{
     const r=await fetch("/api/direction-check",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(buildDirectionCheckPayload(state,result.reasons,{
-        type:event.boundary,
-        kind:event.kind,
-        target:event.target
-      })),
+      body:JSON.stringify(buildDirectionCheckPayload(
+        osState.directionState,
+        processed.observation.reasons,
+        {
+          type:processed.detection.classification,
+          signal:processed.detection.signal,
+          kind:event.kind,
+          target:event.target
+        }
+      )),
     });
     const data=await r.json();
     gate.textContent=JSON.stringify(data,null,2);
     if(data?.state){
-      state=applyConnectionCheckResult(state,data);
-      render({...result,state});
+      osState={
+        ...osState,
+        directionState:applyConnectionCheckResult(osState.directionState,data)
+      };
+      renderObservation(processed.observation);
       control.textContent=JSON.stringify(
         combineControl(boundaryDecision,data.state,true),null,2
       );
-    } else {
+    }else{
       control.textContent=JSON.stringify({
         gate:boundaryDecision.gate,
         decision:"UNKNOWN",
@@ -211,19 +241,27 @@ async function pushEvent(event){
 document.querySelector("#add").onclick=()=>pushEvent(readEvent());
 
 document.querySelector("#sample").onclick=async()=>{
-  await pushEvent({kind:"search",target:"B",boundary:"NONE"});
-  await pushEvent({kind:"edit",target:"B",continuationFrom:"B",boundary:"NONE"});
+  await pushEvent({kind:"search",target:"B",source:"sample"});
+  await pushEvent({kind:"draft_edit",target:"B",continuationFrom:"B",source:"sample"});
   await pushEvent({
-    kind:"commit-candidate",
+    kind:"commit",
     target:"B",
     continuationFrom:"B",
-    boundary:"COMMIT",
+    source:"sample",
     commit:{epistemicState:"OBSERVED",provenance:true,authority:true,freshness:true}
   });
 };
 
+document.querySelector("#unknown").onclick=()=>pushEvent({
+  kind:"mystery_operation",
+  target:"B",
+  source:"sample"
+});
+
 document.querySelector("#reset").onclick=()=>{
-  state=createDirectionState(document.querySelector("#placed").value);
+  osState=createExecutionOSState(createDirectionState(document.querySelector("#placed").value));
+  facts.textContent="reset";
+  detector.textContent="waiting";
   obs.textContent="reset";
   policy.textContent="waiting";
   gate.textContent="API not called yet.";
