@@ -1,3 +1,68 @@
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 10;
+const RATE_LIMIT_STORE_KEY = "__directionCheckRateLimitStore";
+
+function getRateLimitStore() {
+  if (!globalThis[RATE_LIMIT_STORE_KEY]) {
+    globalThis[RATE_LIMIT_STORE_KEY] = new Map();
+  }
+  return globalThis[RATE_LIMIT_STORE_KEY];
+}
+
+function getClientKey(req) {
+  const forwarded = req.headers?.["x-forwarded-for"];
+  if (Array.isArray(forwarded) && forwarded.length > 0) {
+    return String(forwarded[0]).split(",")[0].trim() || "unknown";
+  }
+  if (typeof forwarded === "string" && forwarded.trim()) {
+    return forwarded.split(",")[0].trim();
+  }
+
+  const realIp = req.headers?.["x-real-ip"];
+  if (typeof realIp === "string" && realIp.trim()) {
+    return realIp.trim();
+  }
+
+  return req.socket?.remoteAddress || "unknown";
+}
+
+function consumeRateLimit(req) {
+  const now = Date.now();
+  const store = getRateLimitStore();
+  const key = getClientKey(req);
+  const current = store.get(key);
+
+  if (!current || now >= current.resetAt) {
+    const next = { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS };
+    store.set(key, next);
+    return {
+      allowed: true,
+      remaining: RATE_LIMIT_MAX_REQUESTS - 1,
+      resetAt: next.resetAt,
+    };
+  }
+
+  current.count += 1;
+
+  if (store.size > 5000) {
+    for (const [storedKey, value] of store) {
+      if (now >= value.resetAt) store.delete(storedKey);
+    }
+  }
+
+  return {
+    allowed: current.count <= RATE_LIMIT_MAX_REQUESTS,
+    remaining: Math.max(0, RATE_LIMIT_MAX_REQUESTS - current.count),
+    resetAt: current.resetAt,
+  };
+}
+
+function applyRateLimitHeaders(res, result) {
+  res.setHeader("X-RateLimit-Limit", String(RATE_LIMIT_MAX_REQUESTS));
+  res.setHeader("X-RateLimit-Remaining", String(result.remaining));
+  res.setHeader("X-RateLimit-Reset", String(Math.ceil(result.resetAt / 1000)));
+}
+
 function extractOutputText(data) {
   if (typeof data?.output_text === "string") return data.output_text;
   for (const item of data?.output || []) {
@@ -24,6 +89,22 @@ module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "POST only" });
+  }
+
+  const rateLimit = consumeRateLimit(req);
+  applyRateLimitHeaders(res, rateLimit);
+
+  if (!rateLimit.allowed) {
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil((rateLimit.resetAt - Date.now()) / 1000)
+    );
+    res.setHeader("Retry-After", String(retryAfterSeconds));
+    return res.status(429).json({
+      error: "Too many requests",
+      boundary: "No OpenAI API call was made.",
+      retry_after_seconds: retryAfterSeconds,
+    });
   }
 
   if (!process.env.OPENAI_API_KEY) {
