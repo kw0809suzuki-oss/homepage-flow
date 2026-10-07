@@ -37,6 +37,14 @@ test("consumes the return point after successful return and moves to A-prime", (
   assert.equal(returned.return_point, null);
 });
 
+test("does not consume the return point when return has not succeeded", () => {
+  const marked = markReturnPoint({ current_position: "A", return_point: null }, []);
+  const stillBranched = completeReturn({ ...marked, current_position: "B" }, "");
+
+  assert.equal(stillBranched.current_position, "B");
+  assert.equal(stillBranched.return_point.current_position, "A");
+});
+
 test("composes stance conservatively", () => {
   assert.equal(composeStance(["observed", "observed"]), "observed");
   assert.equal(composeStance(["observed", "inferred"]), "inferred");
