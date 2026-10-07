@@ -411,3 +411,73 @@ Detector
 The automatic handoff is confirmed only through Collector and Detector.
 
 Do not infer full autonomous Execution OS closure from this result.
+
+## Execution phase separation — observed evidence
+
+Execution Facts now carry an explicit phase:
+
+```text
+PRE_EXECUTION
+POST_EXECUTION
+UNSPECIFIED
+```
+
+Routing rule:
+
+```text
+PRE_EXECUTION + boundary
+→ Policy / Gate
+
+POST_EXECUTION + boundary
+→ Reality Re-observe
+
+UNSPECIFIED + boundary
+→ HOLD / UNKNOWN
+```
+
+This prevents a completed action from being retroactively treated as a pre-action authorization request.
+
+### Automatic post-execution run
+
+For GitHub push commit:
+
+```text
+78ae384cf9306d72b6056c66d7d88a33f357f0b2
+```
+
+the automatic runtime produced:
+
+```text
+record_status: RECORDED
+factType: file_write
+phase: POST_EXECUTION
+classification: COMMIT
+route: REALITY_REOBSERVE
+reality_source: github-rest-refetch
+reobserve.status: VERIFIED
+```
+
+The re-observation was a separate GitHub REST read performed after the push event. The push event itself was not accepted as verification.
+
+This establishes the automatic post-execution path:
+
+```text
+real GitHub push
+→ Execution Fact
+→ Boundary Detection
+→ POST_EXECUTION routing
+→ independent GitHub re-fetch
+→ VERIFIED
+```
+
+Still unresolved:
+
+```text
+PRE_EXECUTION runtime event
+→ Policy / Gate
+→ Execute
+→ POST_EXECUTION fact
+→ Reality Re-observe
+```
+
+The next integration target is therefore a controllable pre-execution runtime surface, not further changes to the GitHub post-execution detector.
