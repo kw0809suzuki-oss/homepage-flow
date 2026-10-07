@@ -1,0 +1,18 @@
+.switch-lab{padding:96px 6vw;border-top:1px solid rgba(255,255,255,.12)}
+.switch-lab-head{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;margin-bottom:34px}
+.switch-lab-head h2{margin:.35rem 0 0;font-size:clamp(2rem,5vw,4.6rem);line-height:.98}
+.switch-lab-head>p{max-width:620px;opacity:.78;line-height:1.8}
+.switch-setup{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;margin:28px 0}
+.switch-setup label{display:grid;gap:7px;font-size:.72rem;letter-spacing:.12em}
+.switch-setup input{min-width:0;padding:13px 14px;border:1px solid rgba(255,255,255,.18);background:transparent;color:inherit;font:inherit}
+.switch-setup button,.switch-card button{min-height:44px;padding:10px 14px;border:1px solid rgba(255,255,255,.24);background:transparent;color:inherit;cursor:pointer}
+.switch-setup button:hover,.switch-card button:hover{border-color:currentColor}
+.switch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.switch-card{border:1px solid rgba(255,255,255,.14);padding:20px;min-width:0}
+.switch-card header{display:flex;gap:10px;align-items:baseline;margin-bottom:10px}
+.switch-card header span{font-size:.68rem;letter-spacing:.14em;opacity:.55}.switch-card h3{margin:0;font-size:1rem}
+.switch-card p{opacity:.76;line-height:1.6}.switch-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.switch-result{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);font:inherit;white-space:pre-wrap;min-height:2.6em}
+.switch-card[data-armed="false"] .switch-actions button{opacity:.45}
+.switch-boundary{margin-top:24px;font-size:.78rem;opacity:.62;line-height:1.7}
+@media(max-width:760px){.switch-lab-head,.switch-grid{grid-template-columns:1fr}.switch-setup{grid-template-columns:1fr}.switch-lab{padding:68px 5vw}}
