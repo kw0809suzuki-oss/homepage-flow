@@ -545,3 +545,55 @@ external tool proposal
 ```
 
 Do not treat this probe as proof of a fully autonomous pre-execution runtime.
+
+## External PRE_EXECUTION handoff — live OpenAI Runtime evidence
+
+A live OpenAI Responses API runtime with remote MCP approval was observed before tool execution.
+
+Observed result:
+
+```text
+status: PRE_EXECUTION_CAPTURED
+executed: false
+approval_sent: false
+
+proposal.action: search_openai_docs
+proposal.target: mcp:openai_docs
+
+fact.factType: external_action
+fact.phase: PRE_EXECUTION
+
+detection.classification: ACTION
+detection.signal: external_action
+detection.reason: KNOWN_ACTION_SIGNAL
+
+route: POLICY_GATE
+```
+
+This establishes:
+
+```text
+External Runtime
+→ live tool proposal
+→ automatic PRE_EXECUTION capture
+→ Execution Fact
+→ Boundary Detector
+→ POLICY_GATE
+```
+
+The MCP tool was not executed during this probe. No approval response was sent.
+
+Vercel Deployment Protection remained enabled. A temporary automation bypass was used only for the probe, then revoked. The temporary sandbox was stopped.
+
+Still unresolved:
+
+```text
+POLICY_GATE
+→ ALLOW / HOLD / UNKNOWN
+→ approval response
+→ Execute
+→ existing POST_EXECUTION
+→ Reality Re-observe
+```
+
+The next integration target is to make the gate result synchronously determine whether the MCP approval response is sent.
