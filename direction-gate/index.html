@@ -3,17 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Direction Gate v0</title>
+<title>Boundary Control v1</title>
 <style>
-body{font-family:system-ui,sans-serif;max-width:820px;margin:40px auto;padding:0 18px;line-height:1.6}
-label{display:block;margin:12px 0} input,select,button{font:inherit;padding:8px} input{width:min(100%,540px)}
+body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 18px;line-height:1.6}
+label{display:block;margin:10px 0} input,select,button{font:inherit;padding:8px} input{width:min(100%,560px)}
 .row{display:flex;gap:8px;flex-wrap:wrap}.box{border:1px solid #bbb;border-radius:12px;padding:16px;margin:18px 0}
 pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.muted{opacity:.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 </style>
 </head>
 <body>
-<h1>Direction Gate v0</h1>
-<p>Observerは意味を推定せず、変化候補だけを拾う。Trigger時だけAPIへ接続確認を送る。</p>
+<h1>Boundary Control v1</h1>
+<p>生成・探索は自由。変化候補はObserverに貯め、COMMIT / ACTION の境界に来た時だけ必要ならConnection Gateを呼ぶ。</p>
 
 <div class="box">
 <label>PLACED DIRECTION <input id="placed" value="A"></label>
@@ -22,79 +23,201 @@ pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.mute
 
 <div class="box">
 <h2>Observed event</h2>
+<div class="grid">
 <label>kind <input id="kind" value="work"></label>
 <label>target <input id="target" placeholder="A / B"></label>
 <label>result destination <input id="dest" placeholder="A / B / empty"></label>
 <label>continuation from <input id="cont" placeholder="A / B / empty"></label>
+<label>boundary
+<select id="boundary">
+<option>NONE</option>
+<option>COMMIT</option>
+<option>ACTION</option>
+</select>
+</label>
+</div>
+
+<h3>Commit metadata</h3>
+<div class="grid">
+<label>epistemic state
+<select id="epistemic">
+<option>OBSERVED</option><option>INFERRED</option><option>UNKNOWN</option><option>CONFLICT</option>
+</select>
+</label>
+<label>provenance <select id="provenance"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
+<label>authority <select id="authority"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
+<label>freshness <select id="freshness"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
+</div>
+
+<h3>Action metadata</h3>
+<div class="grid">
+<label>permission <select id="permission"><option value="true">true</option><option value="false">false</option><option value="">unknown</option></select></label>
+<label>scope <input id="scope" value="single-target"></label>
+<label>impact <select id="impact"><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option value="">unknown</option></select></label>
+<label>reversibility <select id="reversibility"><option>REVERSIBLE</option><option>COMPENSATABLE</option><option>IRREVERSIBLE</option><option value="">unknown</option></select></label>
+</div>
+
 <div class="row">
 <button id="add">ADD EVENT</button>
-<button id="sample">ADD B→B SAMPLE</button>
+<button id="sample">ADD B→B + COMMIT SAMPLE</button>
 </div>
 </div>
 
 <div class="box">
 <h2>Observer</h2>
 <pre id="observer">waiting</pre>
-<h2>Direction Check</h2>
+<h2>Boundary Policy</h2>
+<pre id="policy">waiting</pre>
+<h2>Connection Gate</h2>
 <pre id="gate">API not called yet.</pre>
-<p class="muted">API endpointが未設定ならObserverまで動作し、API判定だけ503になる。</p>
+<h2>Control Result</h2>
+<pre id="control">waiting</pre>
+<p class="muted">Connection Gateは目的接続だけを見る。Commit / Actionの許可判断とは分離する。</p>
 </div>
 
 <script type="module">
-import {createDirectionState,observeDirectionEvent,buildDirectionCheckPayload} from "/direction-gate/observer.js";
+import {
+  createDirectionState,
+  observeDirectionEvent,
+  buildDirectionCheckPayload,
+  applyConnectionCheckResult
+} from "/direction-gate/observer.js";
+import {evaluateBoundaryPolicy} from "/direction-gate/boundary-policy.js";
 
 let state=createDirectionState(document.querySelector("#placed").value);
 const obs=document.querySelector("#observer");
 const gate=document.querySelector("#gate");
+const policy=document.querySelector("#policy");
+const control=document.querySelector("#control");
+
+function boolOrNull(id){
+  const value=document.querySelector(id).value;
+  return value==="true" ? true : value==="false" ? false : null;
+}
+
+function readEvent(){
+  return {
+    kind:document.querySelector("#kind").value,
+    target:document.querySelector("#target").value,
+    resultDestination:document.querySelector("#dest").value,
+    continuationFrom:document.querySelector("#cont").value,
+    boundary:document.querySelector("#boundary").value,
+    commit:{
+      epistemicState:document.querySelector("#epistemic").value,
+      provenance:boolOrNull("#provenance"),
+      authority:boolOrNull("#authority"),
+      freshness:boolOrNull("#freshness"),
+    },
+    action:{
+      permission:boolOrNull("#permission"),
+      target:document.querySelector("#target").value,
+      scope:document.querySelector("#scope").value,
+      impact:document.querySelector("#impact").value,
+      reversibility:document.querySelector("#reversibility").value,
+    }
+  };
+}
 
 function render(result){
   obs.textContent=JSON.stringify({
     observation:result.observation,
     reasons:result.reasons,
+    pendingReasons:state.pendingReasons,
+    boundary:result.boundary,
     eventCount:state.eventCount,
     triggerCount:state.triggerCount,
+    connectionState:state.connectionState,
     recentEvents:state.recentEvents,
   },null,2);
 }
 
+function combineControl(boundaryDecision, connectionState, connectionRequired){
+  if(!connectionRequired) return boundaryDecision;
+  if(connectionState==="CONNECTED") return boundaryDecision;
+  if(connectionState==="OPEN_UNKNOWN") return {
+    gate:boundaryDecision.gate,
+    decision:"UNKNOWN",
+    reasons:["CONNECTION_OPEN_UNKNOWN", ...boundaryDecision.reasons]
+  };
+  return {
+    gate:boundaryDecision.gate,
+    decision:"HOLD",
+    reasons:["CONTINUING_ELSEWHERE", ...boundaryDecision.reasons]
+  };
+}
+
 async function pushEvent(event){
+  const boundaryDecision=evaluateBoundaryPolicy(event);
+  policy.textContent=JSON.stringify(boundaryDecision,null,2);
+
   const result=observeDirectionEvent(state,event);
   state=result.state;
   render(result);
-  if(result.observation!=="CHECK_WORTHY_CHANGE"){
-    gate.textContent="No API call. Normal flow continues.";
+
+  if(result.observation!=="BOUNDARY_CHECK_REQUIRED"){
+    gate.textContent=result.observation==="CHANGE_NOTED"
+      ? "Change noted. No API call; exploration continues."
+      : "No Connection API call.";
+    control.textContent=JSON.stringify(boundaryDecision,null,2);
     return;
   }
-  gate.textContent="CHECK_WORTHY_CHANGE → calling Direction Gate…";
+
+  gate.textContent="Boundary reached with pending change → calling Connection Gate…";
   try{
     const r=await fetch("/api/direction-check",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(buildDirectionCheckPayload(state,result.reasons)),
+      body:JSON.stringify(buildDirectionCheckPayload(state,result.reasons,{
+        type:event.boundary,
+        kind:event.kind,
+        target:event.target
+      })),
     });
     const data=await r.json();
     gate.textContent=JSON.stringify(data,null,2);
+    if(data?.state){
+      state=applyConnectionCheckResult(state,data);
+      render({...result,state});
+      control.textContent=JSON.stringify(
+        combineControl(boundaryDecision,data.state,true),null,2
+      );
+    } else {
+      control.textContent=JSON.stringify({
+        gate:boundaryDecision.gate,
+        decision:"UNKNOWN",
+        reasons:["CONNECTION_CHECK_FAILED"]
+      },null,2);
+    }
   }catch(e){
-    gate.textContent="API endpoint unavailable. Observer trigger was still observed.";
+    gate.textContent="Connection API unavailable.";
+    control.textContent=JSON.stringify({
+      gate:boundaryDecision.gate,
+      decision:"UNKNOWN",
+      reasons:["CONNECTION_CHECK_UNAVAILABLE"]
+    },null,2);
   }
 }
 
-document.querySelector("#add").onclick=()=>pushEvent({
-  kind:document.querySelector("#kind").value,
-  target:document.querySelector("#target").value,
-  resultDestination:document.querySelector("#dest").value,
-  continuationFrom:document.querySelector("#cont").value,
-});
+document.querySelector("#add").onclick=()=>pushEvent(readEvent());
 
 document.querySelector("#sample").onclick=async()=>{
-  await pushEvent({kind:"search",target:"B"});
-  await pushEvent({kind:"edit",target:"B",continuationFrom:"B"});
+  await pushEvent({kind:"search",target:"B",boundary:"NONE"});
+  await pushEvent({kind:"edit",target:"B",continuationFrom:"B",boundary:"NONE"});
+  await pushEvent({
+    kind:"commit-candidate",
+    target:"B",
+    continuationFrom:"B",
+    boundary:"COMMIT",
+    commit:{epistemicState:"OBSERVED",provenance:true,authority:true,freshness:true}
+  });
 };
 
 document.querySelector("#reset").onclick=()=>{
   state=createDirectionState(document.querySelector("#placed").value);
   obs.textContent="reset";
+  policy.textContent="waiting";
   gate.textContent="API not called yet.";
+  control.textContent="waiting";
 };
 </script>
 </body>
