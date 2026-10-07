@@ -13,8 +13,8 @@ function extractOutputText(data) {
 function parseGateJson(text) {
   const cleaned = String(text || "")
     .trim()
-    .replace(/^\`\`\`(?:json)?/i, "")
-    .replace(/\`\`\`$/, "")
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/, "")
     .trim();
   const parsed = JSON.parse(cleaned);
   const allowed = ["CONNECTED", "OPEN_UNKNOWN", "CONTINUING_ELSEWHERE"];
@@ -43,18 +43,19 @@ module.exports = async function handler(req, res) {
   const movement = Array.isArray(body.recent_movement)
     ? body.recent_movement.slice(-8)
     : [];
+  const boundaryEvent = body.boundary_event || null;
 
   if (!placed || movement.length === 0) {
     return res.status(400).json({ error: "placed_direction and recent_movement are required" });
   }
 
   const prompt = [
-    "You are Direction Gate, not a goal-inference system.",
-    "Judge only whether the observed movement is still connected to the human-placed direction.",
-    "Do not invent a new goal. Do not call exploration a mistake.",
+    "You are Connection Gate, not a goal-inference or authorization system.",
+    "A boundary event is about to occur. Judge only whether recent movement is still connected to the human-placed direction.",
+    "Do not decide whether the commit/action itself is permitted. Do not invent a replacement goal.",
+    "Do not call exploration a mistake. Use OPEN_UNKNOWN when the connection cannot be established.",
     "Return JSON only with exactly: state, evidence.",
     'state must be one of: "CONNECTED", "OPEN_UNKNOWN", "CONTINUING_ELSEWHERE".',
-    "Use OPEN_UNKNOWN when evidence is insufficient.",
     "Keep evidence under 40 words.",
     "",
     "PLACED DIRECTION:",
@@ -63,8 +64,11 @@ module.exports = async function handler(req, res) {
     "RECENT MOVEMENT:",
     JSON.stringify(movement),
     "",
-    "TRIGGER REASONS:",
+    "PENDING CHANGE REASONS:",
     JSON.stringify(body.trigger_reasons || []),
+    "",
+    "BOUNDARY EVENT:",
+    JSON.stringify(boundaryEvent),
     "",
     "LAST OBSERVED RETURN EVENT:",
     JSON.stringify(body.last_observed_return_event ?? null),
@@ -101,7 +105,7 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     return res.status(502).json({
-      error: "Direction Gate returned unparsable output",
+      error: "Connection Gate returned unparsable output",
       raw: extractOutputText(data).slice(0, 500),
     });
   }
