@@ -4,7 +4,7 @@ const MCP_TOOL = {
   server_description: "Search and read the public OpenAI documentation.",
   server_url: "https://developers.openai.com/mcp",
   require_approval: "always",
-  allowed_tools: ["search_openai_docs"],
+  allowed_tools: ["fetch_openai_doc"],
 };
 
 async function postOpenAI(apiKey, body) {
@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
   try {
     first = await postOpenAI(apiKey, {
       model: "gpt-6-luna",
-      input: "Search the OpenAI docs for the MCP approval flow. Find the documentation that contains both mcp_approval_request and require_approval. You must use the openai_docs tool before answering.",
+      input: "Fetch exactly this OpenAI documentation page with the openai_docs tool before answering: https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
       tools: [MCP_TOOL],
       reasoning: { effort: "none" },
       text: { verbosity: "low" },
@@ -149,14 +149,34 @@ module.exports = async function handler(req, res) {
   const detection = detectBoundary(preFact);
   const route = routeDetectedFact(preFact, detection);
 
+  let approvalArgs = null;
+  try {
+    approvalArgs = approval.arguments ? JSON.parse(approval.arguments) : null;
+  } catch {
+    approvalArgs = null;
+  }
+
+  const expectedRealityUrl =
+    "https://developers.openai.com/api/docs/guides/tools-connectors-mcp";
+
+  const proposedUrl =
+    approvalArgs?.url ||
+    approvalArgs?.uri ||
+    approvalArgs?.href ||
+    approvalArgs?.path ||
+    null;
+
   const exactReadOnlyProbe =
     approval.server_label === "openai_docs" &&
-    approval.name === "search_openai_docs";
+    approval.name === "fetch_openai_doc" &&
+    typeof proposedUrl === "string" &&
+    (proposedUrl === expectedRealityUrl ||
+      proposedUrl === "/api/docs/guides/tools-connectors-mcp");
 
   const actionPolicyInput = {
     permission: exactReadOnlyProbe,
     target: proposal.target,
-    scope: "openai-docs-readonly-probe",
+    scope: "openai-docs-exact-page-readonly-probe",
     impact: "LOW",
     reversibility: "REVERSIBLE",
   };
@@ -287,7 +307,7 @@ module.exports = async function handler(req, res) {
     let realityText = "";
     try {
       realityResponse = await fetch(
-        "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+        expectedRealityUrl,
         {
           method: "GET",
           headers: {
@@ -338,8 +358,7 @@ module.exports = async function handler(req, res) {
           reobserve = {
             status: "VERIFIED",
             reasons: [],
-            reality_source:
-              "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+            reality_source: expectedRealityUrl,
             markers,
           };
         }
