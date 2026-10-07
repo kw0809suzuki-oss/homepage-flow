@@ -78,10 +78,10 @@ pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.mute
 <script type="module">
 import {
   createDirectionState,
-  observeDirectionEvent,
   buildDirectionCheckPayload,
   applyConnectionCheckResult
 } from "/direction-gate/observer.js";
+import {adaptAndObserve} from "/direction-gate/event-adapter.js";
 import {evaluateBoundaryPolicy} from "/direction-gate/boundary-policy.js";
 
 let state=createDirectionState(document.querySelector("#placed").value);
@@ -150,7 +150,17 @@ async function pushEvent(event){
   const boundaryDecision=evaluateBoundaryPolicy(event);
   policy.textContent=JSON.stringify(boundaryDecision,null,2);
 
-  const result=observeDirectionEvent(state,event);
+  const adaptedResult=await adaptAndObserve(state,event);
+  if(adaptedResult.adapted.status!=="ADAPTED"){
+    obs.textContent=JSON.stringify(adaptedResult.adapted,null,2);
+    control.textContent=JSON.stringify({
+      gate:"ADAPTER",
+      decision:"HOLD",
+      reasons:adaptedResult.adapted.errors
+    },null,2);
+    return;
+  }
+  const result=adaptedResult.observation;
   state=result.state;
   render(result);
 
