@@ -39,16 +39,40 @@ module.exports = async function handler(req, res) {
         store: false,
       }),
     });
-  } catch {
+  } catch (error) {
+    console.error("OPENAI_PREEXEC_FETCH_ERROR", {
+      name: error?.name || null,
+      message: error?.message || null,
+    });
     return res.status(503).json({
       status: "UNKNOWN",
       reason: "OPENAI_RUNTIME_UNAVAILABLE",
     });
   }
 
-  const data = await response.json();
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (error) {
+    console.error("OPENAI_PREEXEC_RESPONSE_PARSE_ERROR", {
+      openai_status: response.status,
+      name: error?.name || null,
+      message: error?.message || null,
+    });
+    return res.status(502).json({
+      status: "UNKNOWN",
+      reason: "OPENAI_RESPONSE_PARSE_ERROR",
+      openai_status: response.status,
+    });
+  }
 
   if (!response.ok) {
+    console.error("OPENAI_PREEXEC_API_ERROR", {
+      openai_status: response.status,
+      error_code: data?.error?.code || null,
+      error_type: data?.error?.type || null,
+      error_message: data?.error?.message || null,
+    });
     return res.status(502).json({
       status: "UNKNOWN",
       reason: "OPENAI_RUNTIME_ERROR",
