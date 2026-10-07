@@ -4,9 +4,9 @@
   "updated_at": "2026-10-07",
   "purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
   "current_position": {
-    "status": "active prototype",
-    "summary": "Flow World is a human-facing discovery world with small persistent browser traces, explicit thinking principles, reusable observation tools, and a LOTO7 state-observation probe.",
-    "working_coordinate": "The current probe is whether a stable machine-readable AI entry reduces re-reading and unsupported inference."
+    "status": "operational re-entry probe",
+    "summary": "Flow World is being used as an external recalibration surface that an AI can reach through a public URL and static machine-readable entry points.",
+    "working_coordinate": "A connected web-reading plugin successfully reached Flow World and read its AI Entry, AI State, tool definitions, and relationship reference. The current question is how to keep Flow World's public current position fresh enough to support real re-entry without turning it into a private activity log."
   },
   "confirmed": [
     "The Desk separates observation, interpretation, unknowns, evidence boundaries, and next probes as working principles.",
@@ -17,11 +17,12 @@
     "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json.",
     "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API.",
     "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources.",
-    "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid."
+    "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid.",
+    "A connected external AI can reach Flow World through its public URL and read ai-entry.txt, ai-state.json, ai-tools.json, and reference/flow-memory-relationship.txt through a compatible web-reading plugin."
   ],
   "unknowns": [
+    "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
-    "Whether the current fields are sufficient for useful AI re-entry across different tasks.",
     "How Recent History, Similar Transitions, and CORE18 candidate generation should be connected without inventing unsupported fixed rules.",
     "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run."
   ],
@@ -141,7 +142,8 @@
     "Extracted A/B Comparator into a shared implementation and published its machine-readable definition in ai-tools.json.",
     "Added play/ as a serverless URL-fragment Markdown handoff surface.",
     "Added the first SHAPE schema: a portable Re-entry Packet format.",
-    "Added an optional lightweight Flow layer to the Re-entry Packet without invalidating existing v0 packets."
+    "Added an optional lightweight Flow layer to the Re-entry Packet without invalidating existing v0 packets.",
+    "Observed a real external re-entry path: a connected web-reading plugin reached Flow World and followed its static AI entry resources; updated only the public current position and related observations."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
