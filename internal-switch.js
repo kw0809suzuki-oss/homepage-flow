@@ -11,7 +11,10 @@
     const p=q('[data-parent]').value.trim();
     const i=q('[data-interest]').value.trim();
     if(!p||!i){
-      armed=false;
+      armed=false;branchSelected=false;firstSelection=null;
+      qa('[data-result]').forEach(el=>{el.textContent='waiting';});
+      qa('.switch-card').forEach(el=>{el.dataset.armed='false';});
+      q('[data-return-actions]').hidden=true;
       out('start','親問いと新しい興味の両方を入力してからSTART。');
       return;
     }
