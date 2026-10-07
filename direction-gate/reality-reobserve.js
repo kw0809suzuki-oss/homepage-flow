@@ -66,6 +66,50 @@ export function reobserveGithubFile(expected = {}, observed = {}) {
     : { status: "VERIFIED", reasons: [] };
 }
 
+export function reobserveGithubExecutionFact(fact = {}, observed = {}) {
+  if (observed.unavailable === true) {
+    return { status: "UNKNOWN", reasons: ["REALITY_UNAVAILABLE"] };
+  }
+
+  const expectedSha = clean(fact.sourceEventId).trim();
+  const target = clean(fact.target).trim();
+  if (!expectedSha || !target) {
+    return { status: "UNKNOWN", reasons: ["FACT_IDENTITY_INCOMPLETE"] };
+  }
+
+  if (observed.commitExists !== true) {
+    return observed.commitExists === false
+      ? { status: "CONFLICT", reasons: ["COMMIT_NOT_FOUND"] }
+      : { status: "UNKNOWN", reasons: ["COMMIT_NOT_OBSERVED"] };
+  }
+
+  if (clean(observed.commitSha).trim() !== expectedSha) {
+    return { status: "CONFLICT", reasons: ["COMMIT_MISMATCH"] };
+  }
+
+  const files = Array.isArray(observed.files) ? observed.files : [];
+  const match = files.find((file) => clean(file?.filename).trim() === target);
+  if (!match) {
+    return { status: "CONFLICT", reasons: ["TARGET_CHANGE_NOT_FOUND"] };
+  }
+
+  const status = clean(match.status).trim().toLowerCase();
+  if (fact.factType === "file_write") {
+    if (["added", "modified", "renamed", "copied", "changed"].includes(status)) {
+      return { status: "VERIFIED", reasons: [] };
+    }
+    return { status: "CONFLICT", reasons: ["FILE_WRITE_NOT_OBSERVED"] };
+  }
+
+  if (fact.factType === "delete") {
+    return status === "removed"
+      ? { status: "VERIFIED", reasons: [] }
+      : { status: "CONFLICT", reasons: ["DELETE_NOT_OBSERVED"] };
+  }
+
+  return { status: "UNKNOWN", reasons: ["FACT_TYPE_NOT_SUPPORTED"] };
+}
+
 export function normalizeGithubRealityObservation(raw = {}) {
   return {
     repo: clean(raw.repo).trim(),
@@ -76,6 +120,7 @@ export function normalizeGithubRealityObservation(raw = {}) {
     commitExists:
       raw.commitExists === true ? true : raw.commitExists === false ? false : null,
     commitSha: clean(raw.commitSha).trim() || null,
+    files: Array.isArray(raw.files) ? raw.files : [],
     unavailable: raw.unavailable === true,
     observedAt: raw.observedAt || new Date().toISOString(),
     source: clean(raw.source).trim() || "github-reality-read",
