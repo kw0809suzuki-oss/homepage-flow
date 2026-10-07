@@ -39,3 +39,7 @@ This prototype proves only that:
 3. the API boundary can be separated from the static client.
 
 It does not yet prove that real ChatGPT conversation/tool events can be captured automatically. The event adapter is the next unresolved connection.
+
+## Preview trigger
+
+This branch is intentionally isolated from `main`. A tiny documentation-only change here is used to trigger a Vercel Preview deployment after the project and secret are configured.
