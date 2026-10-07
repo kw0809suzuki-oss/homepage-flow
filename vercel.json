@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/direction-gate",
+      "destination": "/direction-gate/index.html"
+    },
+    {
+      "source": "/direction-gate/",
+      "destination": "/direction-gate/index.html"
+    }
+  ]
+}
