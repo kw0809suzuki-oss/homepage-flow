@@ -1,5 +1,3 @@
-const BOUNDARY_TYPES = new Set(["NONE", "COMMIT", "ACTION"]);
-
 function clean(value) {
   return value == null ? "" : String(value).trim();
 }
@@ -9,18 +7,12 @@ function upper(value, fallback = "") {
   return v || fallback;
 }
 
-function canonicalBoundary(value) {
-  const v = upper(value, "NONE");
-  return BOUNDARY_TYPES.has(v) ? v : "NONE";
-}
-
 function normalizeExplicit(raw) {
   return {
-    kind: clean(raw.kind) || "work",
+    kind: clean(raw.kind) || "unknown",
     target: clean(raw.target),
     resultDestination: clean(raw.result_destination ?? raw.resultDestination),
     continuationFrom: clean(raw.continuation_from ?? raw.continuationFrom),
-    boundary: canonicalBoundary(raw.boundary),
     timestamp: raw.timestamp || new Date().toISOString(),
     source: clean(raw.source) || "explicit",
     sourceEventId: clean(raw.source_event_id ?? raw.sourceEventId) || null,
@@ -40,7 +32,6 @@ function normalizeOpenAIResponse(raw) {
     target: clean(raw.target),
     resultDestination: clean(raw.result_destination),
     continuationFrom: clean(raw.continuation_from),
-    boundary: canonicalBoundary(raw.boundary),
     timestamp: raw.timestamp || new Date().toISOString(),
     source: "openai-response",
     sourceEventId: clean(raw.id) || responseId || null,
@@ -58,14 +49,12 @@ function normalizeOpenAIAgentSession(raw) {
 
   const requiredAction = data.required_action || null;
   const actionType = clean(requiredAction?.type);
-  const isActionRequired = type === "agent.session.action_required";
 
   return {
     kind: type,
     target: clean(raw.target || actionType),
     resultDestination: clean(raw.result_destination),
     continuationFrom: clean(raw.continuation_from),
-    boundary: isActionRequired ? "ACTION" : canonicalBoundary(raw.boundary),
     timestamp: raw.timestamp || new Date().toISOString(),
     source: "openai-agent-session",
     sourceEventId: clean(raw.id || data.id) || null,
@@ -99,9 +88,6 @@ export function validateNormalizedEvent(event) {
   if (!event || typeof event !== "object") errors.push("EVENT_REQUIRED");
   if (!clean(event?.kind)) errors.push("KIND_REQUIRED");
   if (!clean(event?.source)) errors.push("SOURCE_REQUIRED");
-  if (!BOUNDARY_TYPES.has(canonicalBoundary(event?.boundary))) {
-    errors.push("INVALID_BOUNDARY");
-  }
 
   return {
     valid: errors.length === 0,
@@ -117,24 +103,5 @@ export function adaptEvent(raw = {}) {
     status: validation.valid ? "ADAPTED" : "REJECTED",
     event,
     errors: validation.errors,
-  };
-}
-
-
-export async function adaptAndObserve(state, raw = {}) {
-  const adapted = adaptEvent(raw);
-  if (adapted.status !== "ADAPTED") {
-    return {
-      adapted,
-      observation: null,
-    };
-  }
-
-  const { observeDirectionEvent } = await import("./observer.js");
-  const observation = observeDirectionEvent(state, adapted.event);
-
-  return {
-    adapted,
-    observation,
   };
 }
