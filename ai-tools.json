@@ -129,6 +129,35 @@
         "javascript_ai": "supported",
         "browser_operator": "supported"
       }
+    },
+    {
+      "id": "internal-switch-lab",
+      "version": "v0",
+      "status": "available",
+      "implementation": "internal-switch.js",
+      "human_ui": "#switch-lab",
+      "input": {
+        "parent_target": "current task or question",
+        "new_interest": "newly attractive target"
+      },
+      "operation": [
+        "Keep the two targets separate.",
+        "Select one relevant observation: first move, immediate choice, postponed target, explicit switch, next action, or return to parent.",
+        "If current evidence already contains the action result, record it.",
+        "Otherwise request one minimal human choice needed to produce the result; browser UI is optional.",
+        "Record only the resulting action fact.",
+        "Return that fact to the parent question."
+      ],
+      "boundary": [
+        "Do not infer a reason from the action.",
+        "One action is one observation, not a stable tendency.",
+        "Describing the instrument is not using it."
+      ],
+      "compatibility": {
+        "read_only_ai": "supported through conversational execution with minimal human contact when needed",
+        "javascript_ai": "supported",
+        "browser_operator": "supported through #switch-lab"
+      }
     }
   ],
   "compatibility_policy": {
