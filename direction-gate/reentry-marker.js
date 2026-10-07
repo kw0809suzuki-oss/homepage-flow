@@ -28,9 +28,14 @@ export function completeReturn(packet, nextPosition) {
     return { ...packet };
   }
 
+  const resolvedPosition = String(nextPosition || "").trim();
+  if (!resolvedPosition) {
+    return { ...packet };
+  }
+
   return {
     ...packet,
-    current_position: String(nextPosition || packet.return_point.current_position),
+    current_position: resolvedPosition,
     return_point: null,
   };
 }
