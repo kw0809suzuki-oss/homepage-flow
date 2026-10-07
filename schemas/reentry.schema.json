@@ -102,6 +102,15 @@
           },
           "note": {
             "type": "string"
+          },
+          "stance": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "inferred",
+              "unknown"
+            ],
+            "description": "Epistemic stance carried with this item. Do not promote it without new evidence."
           }
         }
       },
@@ -143,6 +152,71 @@
         }
       },
       "description": "Optional lightweight movement layer. Carries topic, key point, recent motion, and direction without turning prior narrative into authority."
+    },
+    "return_point": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "current_position",
+        "references"
+      ],
+      "properties": {
+        "status": {
+          "const": "active",
+          "description": "An active marker exists only while a temporary branch is open."
+        },
+        "current_position": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The working coordinate captured before entering the temporary branch."
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "ref"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "user_input",
+                  "file",
+                  "web",
+                  "repository",
+                  "tool_output",
+                  "other"
+                ]
+              },
+              "ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "note": {
+                "type": "string"
+              },
+              "stance": {
+                "type": "string",
+                "enum": [
+                  "observed",
+                  "inferred",
+                  "unknown"
+                ],
+                "description": "Epistemic stance carried with this item. Do not promote it without new evidence."
+              }
+            }
+          },
+          "description": "Concrete pointers needed to identify what the captured position actually referred to."
+        }
+      },
+      "description": "Optional one-use return marker. Do not overwrite it while branching; clear it after successful return."
     }
   }
 }
