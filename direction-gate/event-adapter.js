@@ -10,6 +10,7 @@ function upper(value, fallback = "") {
 function normalizeExplicit(raw) {
   return {
     kind: clean(raw.kind) || "unknown",
+    phase: upper(raw.phase, "UNSPECIFIED"),
     target: clean(raw.target),
     resultDestination: clean(raw.result_destination ?? raw.resultDestination),
     continuationFrom: clean(raw.continuation_from ?? raw.continuationFrom),
@@ -29,6 +30,7 @@ function normalizeOpenAIResponse(raw) {
 
   return {
     kind: type,
+    phase: upper(raw.phase, "UNSPECIFIED"),
     target: clean(raw.target),
     resultDestination: clean(raw.result_destination),
     continuationFrom: clean(raw.continuation_from),
@@ -52,6 +54,10 @@ function normalizeOpenAIAgentSession(raw) {
 
   return {
     kind: type,
+    phase:
+      type === "agent.session.action_required"
+        ? "PRE_EXECUTION"
+        : upper(raw.phase, "UNSPECIFIED"),
     target: clean(raw.target || actionType),
     resultDestination: clean(raw.result_destination),
     continuationFrom: clean(raw.continuation_from),
