@@ -597,3 +597,77 @@ POLICY_GATE
 ```
 
 The next integration target is to make the gate result synchronously determine whether the MCP approval response is sent.
+
+## Gate result → MCP approval response → Execute — live evidence
+
+A live OpenAI Responses API remote MCP approval flow was executed through the real Execution OS pre-execution path.
+
+Observed PRE_EXECUTION state:
+
+```text
+record_status: RECORDED
+factType: external_action
+phase: PRE_EXECUTION
+classification: ACTION
+route: POLICY_GATE
+Action Gate decision: ALLOW
+```
+
+The Action Gate permission was limited to the exact read-only probe:
+
+```text
+server: openai_docs
+tool: search_openai_docs
+scope: openai-docs-readonly-probe
+impact: LOW
+reversibility: REVERSIBLE
+```
+
+Only after `ALLOW`, the runtime sent:
+
+```text
+type: mcp_approval_response
+approve: true
+approval_request_id: mcpr_02262bb74b3c218a006ac611a3c30087d2bc441a71bf0eccbe
+previous_response_id: resp_02262bb74b3c218a006ac611a206b887d29a886159b68eed08
+```
+
+The continued OpenAI response then contained:
+
+```text
+type: mcp_call
+id: mcp_02262bb74b3c218a016ac611a545a087d2817a06c6432877ab
+name: search_openai_docs
+server_label: openai_docs
+status: completed
+approval_request_id: mcpr_02262bb74b3c218a006ac611a3c30087d2bc441a71bf0eccbe
+error: null
+output_present: true
+```
+
+Result:
+
+```text
+Proposal
+→ automatic PRE_EXECUTION capture
+→ Boundary Detector
+→ POLICY_GATE
+→ Action Gate ALLOW
+→ mcp_approval_response approve:true
+→ MCP Execute
+→ execution observed
+```
+
+Evidence boundary:
+
+`mcp_call status: completed` is execution evidence, not independent reality verification. This probe does not promote the result to `VERIFIED` merely from the execution response.
+
+The temporary Vercel Sandbox was stopped and the temporary Automation Bypass was revoked after the probe.
+
+Remaining closure work:
+
+```text
+external MCP Execute
+→ independent Reality Re-observe
+→ VERIFIED / CONFLICT / UNKNOWN
+```
