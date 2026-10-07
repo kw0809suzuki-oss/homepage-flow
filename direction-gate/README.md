@@ -335,3 +335,79 @@ real tool runtime
 ```
 
 The next integration problem is automation of that source/runtime handoff, not redesign of the Detector.
+
+## Automatic handoff v0 — GitHub Actions evidence
+
+The first live automatic source handoff is now connected for pushes to `direction-gate-v0`.
+
+Path:
+
+```text
+real GitHub push
+        |
+        v
+GitHub Actions
+        |
+        v
+git diff of the pushed revision
+        |
+        v
+Execution Facts Collector
+        |
+        v
+Boundary Detector
+```
+
+Implementation:
+
+- `.github/workflows/execution-os-handoff.yml`
+- `scripts/execution-os-github-handoff.mjs`
+
+The workflow has only `contents: read` permission and requires no new secret or public receiver endpoint.
+
+### Observed run
+
+For push commit:
+
+```text
+06c2d295f894b09df07623aaf569eb106ed02f94
+```
+
+GitHub Actions automatically produced:
+
+```text
+handoff: AUTOMATIC
+runtime: github-actions
+record_status: RECORDED
+factType: file_write
+source: github-actions-push
+target: scripts/execution-os-github-handoff.mjs
+classification: COMMIT
+reason: KNOWN_COMMIT_SIGNAL
+```
+
+No Execution Fact was manually injected for this run.
+
+This establishes:
+
+```text
+real GitHub push
+→ automatic runtime handoff
+→ Execution Facts Collector
+→ deterministic Boundary Detector
+```
+
+### Evidence boundary
+
+Not yet automatic:
+
+```text
+Detector
+→ Policy / Gate
+→ Execute
+→ Reality Re-observe
+```
+
+The automatic handoff is confirmed only through Collector and Detector.
+
+Do not infer full autonomous Execution OS closure from this result.
