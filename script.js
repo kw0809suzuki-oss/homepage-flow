@@ -115,42 +115,43 @@ try{
 }catch(e){}
 
 const observedWhisper=()=>{
-  let roomCount=0;
-  let gardenCount=0;
-  let constellationCount=0;
-  let lastObservedPlace='';
-  let selectedLens='';
-  let loopState='';
+  const traces=[];
   try{
     const savedRoom=Number(localStorage.getItem('flow-world-room-door-count-v1'));
-    if(Number.isInteger(savedRoom)&&savedRoom>=0)roomCount=savedRoom;
+    if(Number.isInteger(savedRoom)&&savedRoom>0)traces.push(`小さな扉を開いた記録が${savedRoom}回残っている。`);
   }catch(e){}
   try{
     const savedGarden=JSON.parse(localStorage.getItem('flow-world-sky-garden-v1')||'[]');
-    if(Array.isArray(savedGarden))gardenCount=savedGarden.length;
+    if(Array.isArray(savedGarden)&&savedGarden.length)traces.push(`庭には${savedGarden.length}個のtraceが残っている。`);
   }catch(e){}
   try{
     const savedConstellation=JSON.parse(localStorage.getItem('flow-world-constellation-v1')||'[]');
-    if(Array.isArray(savedConstellation))constellationCount=savedConstellation.length;
+    if(Array.isArray(savedConstellation)&&savedConstellation.length)traces.push(`Playgroundには${savedConstellation.length}個の星が残っている。`);
   }catch(e){}
   try{
     const savedPlace=localStorage.getItem('flow-world-last-place-v1');
-    if(savedPlace&&document.getElementById(savedPlace))lastObservedPlace=savedPlace;
+    if(savedPlace&&document.getElementById(savedPlace))traces.push(`最後に観測された場所は #${savedPlace}。`);
   }catch(e){}
   try{
     const savedLens=Number(localStorage.getItem('flow-world-desk-lens-v1'));
     const lenses=[...document.querySelectorAll('.desk-card')];
-    if(Number.isInteger(savedLens)&&lenses[savedLens])selectedLens=lenses[savedLens].dataset.title||'';
+    if(Number.isInteger(savedLens)&&lenses[savedLens]){
+      const title=lenses[savedLens].dataset.title||'';
+      if(title)traces.push(`Deskに残っているlensは「${title}」。`);
+    }
   }catch(e){}
   try{
     const savedState=localStorage.getItem('flow-world-loop-state-v1');
-    if(['observe','discover','expand'].includes(savedState))loopState=savedState;
+    if(['observe','discover','expand'].includes(savedState))traces.push(`Loopに残っているstateは「${savedState}」。`);
   }catch(e){}
-  const constellationNote=constellationCount?` Playgroundには${constellationCount}個の星が残っている。`:'';
-  const stateNote=loopState?` Loopに残っているstateは「${loopState}」。`:'';
-  const placeNote=lastObservedPlace?` 最後に観測された場所は #${lastObservedPlace}。`:'';
-  const lensNote=selectedLens?` Deskに残っているlensは「${selectedLens}」。`:'';
-  return `このブラウザには、庭のtraceが${gardenCount}個、扉を開いた記録が${roomCount}回残っている。${constellationNote}${stateNote}${placeNote}${lensNote}`;
+
+  if(!traces.length)return 'このブラウザから、返せる過去のtraceはまだ観測できない。';
+
+  // Return only one or two observed traces. Selection changes the glimpse, not the evidence.
+  const start=signalCount%traces.length;
+  const glimpse=[traces[start]];
+  if(traces.length>2)glimpse.push(traces[(start+2)%traces.length]);
+  return `前に残したものが、少しだけ戻ってきた。 ${glimpse.join(' ')} 意味は決めない。`;
 };
 
 if(signal&&whisper){
