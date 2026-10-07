@@ -14,6 +14,9 @@ START HERE
 - ai-tools.json  : machine-readable tool definitions and reproducible operations
 - data/          : public observed data used by tools
 - play/          : optional Human × AI handoff surface; an AI may construct a URL for a human without opening it itself
+  - If the current task has no suitable fixed surface, the AI may compose a temporary task-specific surface in Markdown and hand it to play/.
+  - Use :::surface ... :::end only as an inert layout boundary. Do not emit executable HTML or JavaScript.
+  - Choose the shape from the current task; do not require the human to name a UI type first.
 
 RELATIONSHIP BOUNDARY
 - reference/flow-memory-relationship.txt : FlowMemory is private continuity; Flow World is public protocol; Re-entry Packet is the portable bridge
