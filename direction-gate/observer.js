@@ -1,3 +1,5 @@
+import { BOUNDARY_TYPES, normalizeBoundaryType } from "./boundary-policy.js";
+
 export const DEFAULTS = Object.freeze({
   continuationThreshold: 2,
   accumulationThreshold: 2,
@@ -10,6 +12,7 @@ export function createDirectionState(placedDirection = "", config = {}) {
     placedDirection: String(placedDirection || "").trim(),
     connectionState: "UNOBSERVED",
     recentEvents: [],
+    pendingReasons: [],
     lastReturnIndex: null,
     triggerCount: 0,
     eventCount: 0,
@@ -21,12 +24,17 @@ function sameNonEmpty(a, b) {
   return Boolean(a && b && String(a).trim() === String(b).trim());
 }
 
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
+}
+
 export function observeDirectionEvent(state, rawEvent) {
   const event = {
     kind: String(rawEvent?.kind || "work"),
     target: String(rawEvent?.target || "").trim(),
     resultDestination: String(rawEvent?.resultDestination || "").trim(),
     continuationFrom: String(rawEvent?.continuationFrom || "").trim(),
+    boundary: normalizeBoundaryType(rawEvent?.boundary),
     timestamp: rawEvent?.timestamp || new Date().toISOString(),
   };
 
@@ -36,11 +44,13 @@ export function observeDirectionEvent(state, rawEvent) {
     recentEvents: [...state.recentEvents, event].slice(-state.config.recentLimit),
   };
 
-  if (
+  const returnedToPlacedDirection =
     sameNonEmpty(event.resultDestination, state.placedDirection) ||
-    sameNonEmpty(event.target, state.placedDirection)
-  ) {
+    sameNonEmpty(event.target, state.placedDirection);
+
+  if (returnedToPlacedDirection) {
     next.lastReturnIndex = next.eventCount;
+    next.pendingReasons = [];
   }
 
   const recent = next.recentEvents;
@@ -81,17 +91,41 @@ export function observeDirectionEvent(state, rawEvent) {
   if (accumulationShift) reasons.push("ACCUMULATION_SHIFT");
   if (returnMissing) reasons.push("RETURN_MISSING");
 
-  const trigger = reasons.length > 0;
-  if (trigger) next.triggerCount += 1;
+  if (reasons.length) {
+    next.pendingReasons = unique([...(next.pendingReasons || []), ...reasons]);
+  }
+
+  const atBoundary = event.boundary !== BOUNDARY_TYPES.NONE;
+  const needsConnectionCheck = atBoundary && next.pendingReasons.length > 0;
+
+  if (needsConnectionCheck) next.triggerCount += 1;
 
   return {
     state: next,
-    observation: trigger ? "CHECK_WORTHY_CHANGE" : "NO_TRIGGER",
+    observation: needsConnectionCheck
+      ? "BOUNDARY_CHECK_REQUIRED"
+      : reasons.length
+        ? "CHANGE_NOTED"
+        : atBoundary
+          ? "BOUNDARY_READY"
+          : "NO_TRIGGER",
     reasons,
+    pendingReasons: next.pendingReasons,
+    boundary: event.boundary,
   };
 }
 
-export function buildDirectionCheckPayload(state, reasons = []) {
+export function applyConnectionCheckResult(state, result) {
+  const connectionState = String(result?.state || "OPEN_UNKNOWN");
+  return {
+    ...state,
+    connectionState,
+    pendingReasons:
+      connectionState === "CONNECTED" ? [] : [...(state.pendingReasons || [])],
+  };
+}
+
+export function buildDirectionCheckPayload(state, reasons = [], boundaryEvent = null) {
   return {
     placed_direction: state.placedDirection,
     recent_movement: state.recentEvents.map((e) => ({
@@ -99,10 +133,12 @@ export function buildDirectionCheckPayload(state, reasons = []) {
       target: e.target,
       result_destination: e.resultDestination || null,
       continuation_from: e.continuationFrom || null,
+      boundary: e.boundary || "NONE",
       timestamp: e.timestamp,
     })),
     last_observed_return_event:
       state.lastReturnIndex == null ? null : state.lastReturnIndex,
-    trigger_reasons: reasons,
+    trigger_reasons: unique([...(state.pendingReasons || []), ...reasons]),
+    boundary_event: boundaryEvent,
   };
 }
