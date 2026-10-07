@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
+import * as marker from "./reentry-marker.js";
+
+const {
   markReturnPoint,
   completeReturn,
   composeStance,
-} from "./reentry-marker.js";
+} = marker;
 
 test("marks the current position and keeps concrete references", () => {
   const packet = { current_position: "A", return_point: null };
@@ -50,4 +52,18 @@ test("composes stance conservatively", () => {
   assert.equal(composeStance(["observed", "inferred"]), "inferred");
   assert.equal(composeStance(["observed", "unknown"]), "unknown");
   assert.equal(composeStance(["inferred", "unknown"]), "unknown");
+});
+
+
+test("explicitly promoting B to the main line discards the old return point", () => {
+  assert.equal(typeof marker.promoteBranch, "function");
+
+  const marked = markReturnPoint({ current_position: "A", return_point: null }, [
+    { kind: "repository", ref: "branch:direction-gate-v0", stance: "observed" },
+  ]);
+  const branched = { ...marked, current_position: "B" };
+  const promoted = marker.promoteBranch(branched);
+
+  assert.equal(promoted.current_position, "B");
+  assert.equal(promoted.return_point, null);
 });
