@@ -22,14 +22,15 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-6-luna",
-        input: "Use the dmcp tool to roll 2d4+1. Do not answer without using the tool.",
+        input: "Search the OpenAI docs for Responses API streaming. You must use the openai_docs tool before answering.",
         tools: [
           {
             type: "mcp",
-            server_label: "dmcp",
-            server_description: "A Dungeons and Dragons MCP server used only to test pre-execution approval capture.",
-            server_url: "https://dmcp-server.deno.dev/mcp",
+            server_label: "openai_docs",
+            server_description: "Search and read the public OpenAI documentation.",
+            server_url: "https://developers.openai.com/mcp",
             require_approval: "always",
+            allowed_tools: ["search_openai_docs"],
           },
         ],
         reasoning: { effort: "none" },
