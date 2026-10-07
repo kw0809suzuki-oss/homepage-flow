@@ -1,56 +1,159 @@
-# Boundary Control v1
+# Execution OS v0
 
-Experimental branch-only prototype.
+Experimental branch-only implementation.
 
-## Parent principle
+## Purpose
 
-Generation is free. Control only the boundary where generated material would become reality, an authoritative record, a permissioned action, or persistent state.
+This is not an AI monitoring system.
 
-The system does **not** continuously grade model output.
+Its purpose is to place a fact-based execution boundary between model generation and reality.
 
-## Minimal architecture
+> Generation is free. Control only boundary crossings.
+
+The core loop is:
 
 ```text
-Generation / exploration
+Execution Facts
         |
         v
-Light Observer
-  - records change candidates only
-  - no model call
+Boundary Event Detection
         |
         v
-Boundary event?
-  NONE  -> continue freely
-  COMMIT / ACTION
-        |
-        +-- pending direction change? --> Connection Gate (Luna)
-        |
-        +-- Commit policy / Action policy
+Policy / Gate
         |
         v
-ALLOW / HOLD / UNKNOWN / ESCALATE
+Execute
         |
         v
-execute outside this prototype
-        |
-        v
-re-observe
-VERIFIED / CONFLICT / UNKNOWN
+Reality Re-observe
 ```
 
-## Parts
+## Invariants
 
-- `observer.js`: deterministic movement observer. It stores pending change reasons but no longer calls the model merely because movement changed.
-- `boundary-policy.js`: deterministic boundary policy for COMMIT and ACTION. It uses only explicit fields; it does not infer hidden intent.
-- `../api/direction-check.js`: server-side Connection Gate using OpenAI Responses API. It asks only whether current movement is still connected to the human-placed direction.
-- `index.html`: manual harness for the boundary flow.
+1. **Fact without inference**  
+   Record observable execution facts without adding intent.
 
-## Connection Gate
+2. **No silent boundary crossing**  
+   An unrecognized execution signal becomes `UNKNOWN`, never `FREE`.
 
-The Connection Gate is invoked only when:
+3. **Policy only at boundary**  
+   Generation and exploration do not enter control policy.
 
-1. the Observer has pending change evidence, and
-2. a COMMIT or ACTION boundary is reached.
+4. **Reality outranks execution logs**  
+   Execution success is not verification. Reality must be re-observed.
+
+5. **UNKNOWN is valid**  
+   Missing evidence is preserved instead of filled.
+
+## Current pipeline
+
+```text
+source-specific event
+        |
+        v
+event-adapter.js
+  normalization only
+        |
+        v
+execution-facts.js
+  immutable fact collection
+        |
+        v
+boundary-detector.js
+  deterministic exact-signal rules
+        |
+        +--> FREE
+        +--> COMMIT
+        +--> ACTION
+        +--> UNKNOWN
+        |
+        v
+execution-os.js
+        |
+        +--> direction observer
+        +--> boundary policy
+        +--> Connection Gate when required
+```
+
+The Event Adapter no longer assigns boundary meaning. It only normalizes observable source fields.
+
+The Execution Facts Collector intentionally drops upstream boundary claims. Boundary classification is produced independently by the Detector.
+
+## Execution Facts Collector
+
+Canonical fact fields:
+
+```text
+factType
+source
+sourceEventId
+target
+resultDestination
+continuationFrom
+timestamp
+evidence
+```
+
+The Collector does not store inferred intent or a guessed goal.
+
+## Boundary Detector v0
+
+The Detector is deterministic and uses exact known signals.
+
+Current FREE signals:
+
+```text
+search
+read
+inspect
+compare
+generate
+draft
+draft_edit
+response.completed
+response.in_progress
+response.created
+```
+
+Current COMMIT signals:
+
+```text
+commit
+file_write
+memory_write
+record_write
+state_write
+```
+
+Current ACTION signals:
+
+```text
+send
+publish
+permission_change
+external_action
+purchase
+delete
+agent.session.action_required
+```
+
+Everything else:
+
+```text
+UNKNOWN
+```
+
+This is deliberate. Unknown signals are not silently treated as free exploration.
+
+The v0 goal is not semantic completeness. It is to establish the invariant:
+
+> If the detector does not know, it does not waive the boundary.
+
+## Policy components
+
+### Connection Gate
+
+Checks only whether a detected COMMIT/ACTION boundary is still connected to the human-placed direction.
 
 States:
 
@@ -58,16 +161,16 @@ States:
 - `OPEN_UNKNOWN`
 - `CONTINUING_ELSEWHERE`
 
-It does not authorize the commit/action and does not infer a replacement goal.
+It does not infer a replacement goal and does not authorize the action itself.
 
-## Commit Gate
+### Commit Gate
 
-The current deterministic prototype accepts explicit:
+Uses explicit policy metadata:
 
-- epistemic state: OBSERVED / INFERRED / UNKNOWN / CONFLICT
-- provenance present?
-- authority confirmed?
-- freshness confirmed?
+- epistemic state
+- provenance
+- authority
+- freshness
 
 Results:
 
@@ -75,13 +178,9 @@ Results:
 - `HOLD`
 - `UNKNOWN`
 
-UNKNOWN is a normal state, not a failure.
+### Action Gate
 
-This gate does not decide semantic truth. It only refuses to silently promote a candidate when the declared evidence boundary is incomplete or conflicting.
-
-## Action Gate
-
-The current deterministic prototype accepts explicit:
+Uses explicit policy metadata:
 
 - permission
 - target
@@ -96,111 +195,76 @@ Results:
 - `UNKNOWN`
 - `ESCALATE`
 
-High-impact or irreversible actions conservatively escalate in this prototype.
+## Reality Re-observe
 
-The gate does not execute any external action.
-
-## Re-observe
-
-Execution success must not be inferred from the request or API call itself. The post-action state is represented separately as:
+The status vocabulary remains:
 
 - `VERIFIED`
 - `CONFLICT`
 - `UNKNOWN`
 
-The actual independent re-observation adapter is not yet connected.
+But an independent reality adapter is **not yet connected**.
 
-## Security boundary
+A tool/API success response must not itself become `VERIFIED`.
 
-Never put `OPENAI_API_KEY` in browser JavaScript or GitHub Pages.
-
-The Connection Gate runs server-side on Vercel using:
-
-- `OPENAI_API_KEY`
-- optional `OPENAI_DIRECTION_MODEL` (default: `gpt-6-luna`)
-
-## Current evidence boundary
-
-Confirmed by this prototype:
-
-1. movement changes can be observed without calling an LLM;
-2. model calls can be deferred until an actual COMMIT/ACTION boundary;
-3. Connection, Commit, and Action concerns can remain separate;
-4. UNKNOWN can be preserved instead of filled;
-5. the OpenAI key stays on the server boundary.
-
-Not yet established:
-
-- automatic capture of real ChatGPT/tool events;
-- automatic classification of real-world boundary events;
-- actual tool execution behind Action Gate;
-- independent post-action re-observation.
-
-The next unresolved connection remains the Event Adapter:
+Example for GitHub:
 
 ```text
-real AI/tool activity
+execution says commit succeeded
         |
         v
-Event Adapter   <- unresolved
+fetch GitHub branch/file/commit again
         |
-        v
-Observer / Boundary Control
+        +--> matches    -> VERIFIED
+        +--> conflicts  -> CONFLICT
+        +--> unavailable -> UNKNOWN
 ```
+
+## Current evidence
+
+Already observed in the live prototype:
+
+```text
+B exploration
+→ no model call
+
+B continuation
+→ no model call
+
+COMMIT boundary
+→ Connection Gate invoked
+
+Commit policy
+→ ALLOW
+
+Connection evidence insufficient
+→ OPEN_UNKNOWN
+
+Final control
+→ UNKNOWN
+```
+
+One measured Luna call:
+
+- input: 326 tokens
+- output: 44 tokens
+- reasoning: 0 tokens
+- total: 370 tokens
+
+This demonstrates the intended behavior: exploration remains free while commitment can be held.
+
+## Hard boundary
+
+This project does **not** claim access to every internal ChatGPT conversation turn or tool call.
+
+No source event means no invented Execution Fact.
+
+Current practical sources include controlled API/agent runtimes, Vercel functions, GitHub events, custom tools/apps, and explicit Flow World events.
+
+## Next unresolved step
+
+Connect one real tool/runtime execution source to the Execution Facts Collector and connect a matching Reality Re-observe adapter to the same external system.
+
+Do not broaden the Detector into a semantic LLM classifier unless deterministic signals are genuinely insufficient.
 
 This branch remains isolated from `main`.
-
-
-## Event Adapter
-
-`event-adapter.js` is now the single normalization entrance before the Observer.
-
-Current supported source shapes:
-
-- explicit canonical events;
-- OpenAI Responses lifecycle events such as `response.completed`;
-- OpenAI Agent session lifecycle events such as `agent.session.action_required`.
-
-The adapter converts source-specific payloads into the small movement shape used by the Observer:
-
-```text
-kind
-target
-resultDestination
-continuationFrom
-boundary
-timestamp
-source
-sourceEventId
-evidence
-```
-
-The manual harness now also passes through this adapter before reaching the Observer, so the normalization boundary is exercised instead of bypassed.
-
-### Hard boundary: ChatGPT app activity
-
-This prototype does **not** claim that the ChatGPT product exposes every conversation turn or tool call to this Vercel project.
-
-OpenAI's documented project webhooks cover API project events (for example Response completion and Agent session lifecycle). MCP Events deliver external server events into ChatGPT; they are not a generic ChatGPT-to-server activity export.
-
-Therefore automatic capture of this ChatGPT conversation remains `UNOBSERVED` unless a documented product surface is added later.
-
-The practical connection path is:
-
-```text
-controlled AI/tool runtime
-        |
-        v
-source-specific event
-        |
-        v
-Event Adapter
-        |
-        v
-Observer
-        |
-        v
-Boundary Control
-```
-
-This keeps the evidence boundary intact: no source event means no invented movement event.
