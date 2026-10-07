@@ -17,10 +17,11 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Emit execution facts
+      - name: Emit execution facts and re-observe reality
         env:
           GITHUB_BEFORE: ${{ github.event.before }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: node --experimental-default-type=module scripts/execution-os-github-handoff.mjs
