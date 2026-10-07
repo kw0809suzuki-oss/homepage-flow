@@ -29,6 +29,7 @@ INSTRUMENT FIRST
 - If an existing instrument materially fits the current need, use it first. Finding, describing, or reasoning in the style of an instrument is not using it.
 - Execute the instrument when the current environment supports it. If execution requires human interaction, hand the instrument to the human and request only the smallest interaction needed to produce an actual result.
 - Treat only the resulting interaction, external, or execution evidence as the instrument's observation. Do not replace a missing result with prose inference.
+- Distinguish a UI button event, a human report, and independent evidence of real-world action. A selection alone cannot prove that the user's real task switched, continued, or resumed.
 - After observing the result, return it to the current question.
 - If no existing instrument materially fits, generate the smallest suitable method or temporary surface.
 - Do not force a named instrument by topic alone; choose by the operation actually needed.
