@@ -1,0 +1,76 @@
+Re-entry Packet Lifecycle v0
+2026-10-07
+
+SCOPE
+Re-entry Packet boundary only.
+AI Entry and Execution OS are intentionally unchanged.
+
+PURPOSE
+Carry a return route during a temporary branch without turning the route into a control command.
+
+LIFECYCLE
+1. BRANCH
+   A -> B
+   markReturnPoint() captures A once with concrete references.
+   Deeper B -> C -> D does not overwrite A.
+
+2. RETURN
+   B/C/D -> A'
+   completeReturn() requires a non-empty A' coordinate.
+   On successful return, the Return Point is consumed.
+   This is re-entry with new information, not rollback.
+
+3. PROMOTE
+   If B becomes the explicit main line, promoteBranch() discards the old A Return Point.
+   No automatic inference decides promotion.
+
+STANCE
+observed + observed -> observed
+observed + inferred -> inferred
+anything + unknown -> unknown
+
+LIVE MINI TRACE
+A:
+  decide where to introduce the Astra-polished component in Flow World
+
+B:
+  implement lifecycle only at the Re-entry Packet boundary
+  return_point = A
+  reference = homepage-flow@direction-gate-v0 [observed]
+
+C:
+  verify schema and packet lifecycle tests
+  return_point = A
+  observed + inferred = inferred
+
+A':
+  Re-entry Packet lifecycle is implemented;
+  evaluate the first live deep-dive use before AI Entry wiring
+  return_point = consumed
+
+VERIFICATION
+RED:
+  existing behaviors passed; branch-promotion behavior failed because promoteBranch did not exist.
+
+GREEN:
+  marker behavior tests 6/6 PASS.
+  schema tests 2/2 PASS.
+  repository tree contains these two test files for this component surface.
+
+BOUNDARY
+Confirmed:
+- Return Point is one-use on successful return.
+- Active Return Point is not overwritten by deeper branching.
+- Explicit branch promotion discards the old Return Point.
+- Reference and stance travel with the packet.
+- Mixed stance does not silently promote to observed.
+
+Not confirmed:
+- AI will autonomously decide when a live conversation is a temporary branch.
+- AI will naturally create/use the packet without an AI Entry contract.
+- Execution events can safely infer branch/return semantics.
+
+NEXT
+Use the Packet in a real deep-dive episode.
+Only if that shows value, consider the thin AI Entry operating contract.
+Do not wire Execution OS yet.
