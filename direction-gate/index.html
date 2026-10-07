@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Direction Gate v0</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:820px;margin:40px auto;padding:0 18px;line-height:1.6}
+label{display:block;margin:12px 0} input,select,button{font:inherit;padding:8px} input{width:min(100%,540px)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.box{border:1px solid #bbb;border-radius:12px;padding:16px;margin:18px 0}
+pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:8px}.muted{opacity:.7}
+</style>
+</head>
+<body>
+<h1>Direction Gate v0</h1>
+<p>Observerは意味を推定せず、変化候補だけを拾う。Trigger時だけAPIへ接続確認を送る。</p>
+
+<div class="box">
+<label>PLACED DIRECTION <input id="placed" value="A"></label>
+<button id="reset">RESET</button>
+</div>
+
+<div class="box">
+<h2>Observed event</h2>
+<label>kind <input id="kind" value="work"></label>
+<label>target <input id="target" placeholder="A / B"></label>
+<label>result destination <input id="dest" placeholder="A / B / empty"></label>
+<label>continuation from <input id="cont" placeholder="A / B / empty"></label>
+<div class="row">
+<button id="add">ADD EVENT</button>
+<button id="sample">ADD B→B SAMPLE</button>
+</div>
+</div>
+
+<div class="box">
+<h2>Observer</h2>
+<pre id="observer">waiting</pre>
+<h2>Direction Check</h2>
+<pre id="gate">API not called yet.</pre>
+<p class="muted">API endpointが未設定ならObserverまで動作し、API判定だけ503になる。</p>
+</div>
+
+<script type="module">
+import {createDirectionState,observeDirectionEvent,buildDirectionCheckPayload} from "./observer.js";
+
+let state=createDirectionState(document.querySelector("#placed").value);
+const obs=document.querySelector("#observer");
+const gate=document.querySelector("#gate");
+
+function render(result){
+  obs.textContent=JSON.stringify({
+    observation:result.observation,
+    reasons:result.reasons,
+    eventCount:state.eventCount,
+    triggerCount:state.triggerCount,
+    recentEvents:state.recentEvents,
+  },null,2);
+}
+
+async function pushEvent(event){
+  const result=observeDirectionEvent(state,event);
+  state=result.state;
+  render(result);
+  if(result.observation!=="CHECK_WORTHY_CHANGE"){
+    gate.textContent="No API call. Normal flow continues.";
+    return;
+  }
+  gate.textContent="CHECK_WORTHY_CHANGE → calling Direction Gate…";
+  try{
+    const r=await fetch("/api/direction-check",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(buildDirectionCheckPayload(state,result.reasons)),
+    });
+    const data=await r.json();
+    gate.textContent=JSON.stringify(data,null,2);
+  }catch(e){
+    gate.textContent="API endpoint unavailable. Observer trigger was still observed.";
+  }
+}
+
+document.querySelector("#add").onclick=()=>pushEvent({
+  kind:document.querySelector("#kind").value,
+  target:document.querySelector("#target").value,
+  resultDestination:document.querySelector("#dest").value,
+  continuationFrom:document.querySelector("#cont").value,
+});
+
+document.querySelector("#sample").onclick=async()=>{
+  await pushEvent({kind:"search",target:"B"});
+  await pushEvent({kind:"edit",target:"B",continuationFrom:"B"});
+};
+
+document.querySelector("#reset").onclick=()=>{
+  state=createDirectionState(document.querySelector("#placed").value);
+  obs.textContent="reset";
+  gate.textContent="API not called yet.";
+};
+</script>
+</body>
+</html>
