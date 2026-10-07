@@ -6,9 +6,9 @@ const FREE_SIGNALS = new Set([
   "generate",
   "draft",
   "draft_edit",
-  "response_completed",
-  "response_in_progress",
-  "response_created",
+  "response.completed",
+  "response.in_progress",
+  "response.created",
 ]);
 
 const COMMIT_SIGNALS = new Set([
@@ -31,7 +31,7 @@ const ACTION_SIGNALS = new Set([
 
 function normalizeSignal(value) {
   const raw = value == null ? "" : String(value).trim().toLowerCase();
-  if (raw.startsWith("agent.session.")) return raw;
+  if (raw.includes(".")) return raw;
   return raw.replace(/[\s-]+/g, "_");
 }
 
