@@ -1,45 +1,151 @@
-# Direction Gate v0
+# Boundary Control v1
 
 Experimental branch-only prototype.
 
-## Purpose
+## Parent principle
 
-Do not continuously monitor or control AI movement. Detect lightweight change candidates first, then call an OpenAI model only when a check is worth paying for.
+Generation is free. Control only the boundary where generated material would become reality, an authoritative record, a permissioned action, or persistent state.
+
+The system does **not** continuously grade model output.
+
+## Minimal architecture
+
+```text
+Generation / exploration
+        |
+        v
+Light Observer
+  - records change candidates only
+  - no model call
+        |
+        v
+Boundary event?
+  NONE  -> continue freely
+  COMMIT / ACTION
+        |
+        +-- pending direction change? --> Connection Gate (Luna)
+        |
+        +-- Commit policy / Action policy
+        |
+        v
+ALLOW / HOLD / UNKNOWN / ESCALATE
+        |
+        v
+execute outside this prototype
+        |
+        v
+re-observe
+VERIFIED / CONFLICT / UNKNOWN
+```
 
 ## Parts
 
-- `observer.js`: deterministic first-stage observer. No LLM.
-- `../api/direction-check.js`: optional server-side OpenAI Responses API gate.
-- `index.html`: manual event harness for observing trigger behavior.
+- `observer.js`: deterministic movement observer. It stores pending change reasons but no longer calls the model merely because movement changed.
+- `boundary-policy.js`: deterministic boundary policy for COMMIT and ACTION. It uses only explicit fields; it does not infer hidden intent.
+- `../api/direction-check.js`: server-side Connection Gate using OpenAI Responses API. It asks only whether current movement is still connected to the human-placed direction.
+- `index.html`: manual harness for the boundary flow.
 
-## States returned by API
+## Connection Gate
+
+The Connection Gate is invoked only when:
+
+1. the Observer has pending change evidence, and
+2. a COMMIT or ACTION boundary is reached.
+
+States:
 
 - `CONNECTED`
 - `OPEN_UNKNOWN`
 - `CONTINUING_ELSEWHERE`
 
-The API does not infer a replacement goal.
+It does not authorize the commit/action and does not infer a replacement goal.
+
+## Commit Gate
+
+The current deterministic prototype accepts explicit:
+
+- epistemic state: OBSERVED / INFERRED / UNKNOWN / CONFLICT
+- provenance present?
+- authority confirmed?
+- freshness confirmed?
+
+Results:
+
+- `ALLOW`
+- `HOLD`
+- `UNKNOWN`
+
+UNKNOWN is a normal state, not a failure.
+
+This gate does not decide semantic truth. It only refuses to silently promote a candidate when the declared evidence boundary is incomplete or conflicting.
+
+## Action Gate
+
+The current deterministic prototype accepts explicit:
+
+- permission
+- target
+- scope
+- impact
+- reversibility
+
+Results:
+
+- `ALLOW`
+- `HOLD`
+- `UNKNOWN`
+- `ESCALATE`
+
+High-impact or irreversible actions conservatively escalate in this prototype.
+
+The gate does not execute any external action.
+
+## Re-observe
+
+Execution success must not be inferred from the request or API call itself. The post-action state is represented separately as:
+
+- `VERIFIED`
+- `CONFLICT`
+- `UNKNOWN`
+
+The actual independent re-observation adapter is not yet connected.
 
 ## Security boundary
 
 Never put `OPENAI_API_KEY` in browser JavaScript or GitHub Pages.
 
-The current public Flow World is static GitHub Pages. To run the second-stage API check, deploy this branch through a server-capable host (for example Vercel) and set:
+The Connection Gate runs server-side on Vercel using:
 
 - `OPENAI_API_KEY`
 - optional `OPENAI_DIRECTION_MODEL` (default: `gpt-6-luna`)
 
-Without a server endpoint, the first-stage Observer still runs and reports `CHECK_WORTHY_CHANGE`.
-
 ## Current evidence boundary
 
-This prototype proves only that:
-1. a deterministic observer can avoid calling an LLM on every event;
-2. a trigger can produce a compact Direction Gate payload;
-3. the API boundary can be separated from the static client.
+Confirmed by this prototype:
 
-It does not yet prove that real ChatGPT conversation/tool events can be captured automatically. The event adapter is the next unresolved connection.
+1. movement changes can be observed without calling an LLM;
+2. model calls can be deferred until an actual COMMIT/ACTION boundary;
+3. Connection, Commit, and Action concerns can remain separate;
+4. UNKNOWN can be preserved instead of filled;
+5. the OpenAI key stays on the server boundary.
 
-## Preview trigger
+Not yet established:
 
-This branch is intentionally isolated from `main`. A tiny documentation-only change here is used to trigger a Vercel Preview deployment after the project and secret are configured.
+- automatic capture of real ChatGPT/tool events;
+- automatic classification of real-world boundary events;
+- actual tool execution behind Action Gate;
+- independent post-action re-observation.
+
+The next unresolved connection remains the Event Adapter:
+
+```text
+real AI/tool activity
+        |
+        v
+Event Adapter   <- unresolved
+        |
+        v
+Observer / Boundary Control
+```
+
+This branch remains isolated from `main`.
