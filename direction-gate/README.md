@@ -671,3 +671,82 @@ external MCP Execute
 → independent Reality Re-observe
 → VERIFIED / CONFLICT / UNKNOWN
 ```
+
+## Full minimal external-runtime loop — VERIFIED
+
+The independent re-observation stage was completed with the same external target observed through a separate path.
+
+### Why the first re-observe attempt was rejected
+
+An initial probe used `search_openai_docs` and compared search-result text against page-body markers. That produced:
+
+```text
+CONFLICT
+missing_from_execution: require_approval
+```
+
+This was not accepted as proof of a reality conflict because a search result is not required to contain the full page body. The observation target and comparison surface were misaligned.
+
+The probe was corrected without changing the Detector or Gate logic.
+
+### Aligned target probe
+
+Execution target:
+
+```text
+MCP tool: fetch_openai_doc
+URL: https://developers.openai.com/api/docs/guides/tools-connectors-mcp
+```
+
+Observed control path:
+
+```text
+proposal.action: fetch_openai_doc
+proposal.arguments.url: https://developers.openai.com/api/docs/guides/tools-connectors-mcp
+Action Gate: ALLOW
+mcp_call.status: completed
+mcp_call.error: null
+post route: REALITY_REOBSERVE
+```
+
+Independent reality path:
+
+```text
+direct HTTP GET
+→ https://developers.openai.com/api/docs/guides/tools-connectors-mcp
+```
+
+The MCP output and independently fetched page were compared using fixed markers only:
+
+```text
+mcp_approval_request
+require_approval
+```
+
+Observed result:
+
+```text
+reality_reobserve.status: VERIFIED
+reasons: []
+```
+
+This establishes the minimum external-runtime loop:
+
+```text
+External Proposal
+→ automatic PRE_EXECUTION
+→ Boundary Detector
+→ POLICY_GATE
+→ Action Gate ALLOW
+→ mcp_approval_response
+→ MCP Execute
+→ POST_EXECUTION
+→ independent direct reality re-fetch
+→ VERIFIED
+```
+
+Evidence boundary:
+
+This verifies one read-only OpenAI Docs MCP path. It does not establish that every runtime, every tool, or every write action is verified by the same adapter.
+
+The temporary Vercel Sandbox was stopped and the temporary Automation Bypass was revoked after the probe.
