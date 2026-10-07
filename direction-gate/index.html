@@ -96,6 +96,7 @@ function boolOrNull(id){
 function readEvent(){
   return {
     kind:document.querySelector("#kind").value,
+    phase:"PRE_EXECUTION",
     target:document.querySelector("#target").value,
     resultDestination:document.querySelector("#dest").value,
     continuationFrom:document.querySelector("#cont").value,
@@ -174,8 +175,38 @@ async function pushEvent(event){
     lastFact:processed.fact,
     factCount:osState.factLog.length
   },null,2);
-  detector.textContent=JSON.stringify(processed.detection,null,2);
+  detector.textContent=JSON.stringify({...processed.detection,route:processed.route},null,2);
   renderObservation(processed.observation);
+
+  if(processed.route==="REALITY_REOBSERVE"){
+    policy.textContent=JSON.stringify({
+      gate:"NONE",
+      decision:"NOT_APPLICABLE_POST_EXECUTION",
+      reasons:[]
+    },null,2);
+    gate.textContent="Post-execution fact: pre-action Gate is not called.";
+    control.textContent=JSON.stringify({
+      route:"REALITY_REOBSERVE",
+      decision:"UNKNOWN",
+      reasons:["REALITY_REOBSERVE_REQUIRED"]
+    },null,2);
+    return;
+  }
+
+  if(processed.route==="HOLD_UNKNOWN_PHASE"){
+    policy.textContent=JSON.stringify({
+      gate:"PHASE",
+      decision:"UNKNOWN",
+      reasons:["EXECUTION_PHASE_UNSPECIFIED"]
+    },null,2);
+    gate.textContent="No API call. Execution phase is unknown.";
+    control.textContent=JSON.stringify({
+      gate:"PHASE",
+      decision:"UNKNOWN",
+      reasons:["EXECUTION_PHASE_UNSPECIFIED"]
+    },null,2);
+    return;
+  }
 
   const boundaryDecision=boundaryPolicyFor(event,processed.detection);
   policy.textContent=JSON.stringify(boundaryDecision,null,2);
@@ -241,10 +272,11 @@ async function pushEvent(event){
 document.querySelector("#add").onclick=()=>pushEvent(readEvent());
 
 document.querySelector("#sample").onclick=async()=>{
-  await pushEvent({kind:"search",target:"B",source:"sample"});
-  await pushEvent({kind:"draft_edit",target:"B",continuationFrom:"B",source:"sample"});
+  await pushEvent({kind:"search",phase:"PRE_EXECUTION",target:"B",source:"sample"});
+  await pushEvent({kind:"draft_edit",phase:"PRE_EXECUTION",target:"B",continuationFrom:"B",source:"sample"});
   await pushEvent({
     kind:"commit",
+    phase:"PRE_EXECUTION",
     target:"B",
     continuationFrom:"B",
     source:"sample",
@@ -254,6 +286,7 @@ document.querySelector("#sample").onclick=async()=>{
 
 document.querySelector("#unknown").onclick=()=>pushEvent({
   kind:"mystery_operation",
+  phase:"PRE_EXECUTION",
   target:"B",
   source:"sample"
 });
