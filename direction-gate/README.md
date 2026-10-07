@@ -481,3 +481,67 @@ PRE_EXECUTION runtime event
 ```
 
 The next integration target is therefore a controllable pre-execution runtime surface, not further changes to the GitHub post-execution detector.
+
+## PRE_EXECUTION → real write → automatic Reality Re-observe probe
+
+A controlled real GitHub file write was executed only after the existing PRE_EXECUTION policy path was evaluated first.
+
+Proposal:
+
+```text
+kind: file_write
+phase: PRE_EXECUTION
+target: direction-gate/runtime-probes/preexec-reality-v0.txt
+```
+
+Pre-execution result:
+
+```text
+Boundary Detector: COMMIT
+route: POLICY_GATE
+Commit Gate: ALLOW
+```
+
+After ALLOW, the real GitHub write produced commit:
+
+```text
+8cae6cb195e3a71cd5688aeecbc6e800033f2321
+```
+
+The existing automatic post-execution runtime then observed:
+
+```text
+record_status: RECORDED
+factType: file_write
+phase: POST_EXECUTION
+classification: COMMIT
+route: REALITY_REOBSERVE
+reality_source: github-rest-refetch
+reobserve.status: VERIFIED
+```
+
+This establishes one real controlled path:
+
+```text
+PRE_EXECUTION
+→ deterministic boundary detection
+→ Commit Gate ALLOW
+→ real GitHub write
+→ automatic POST_EXECUTION fact
+→ independent GitHub re-fetch
+→ VERIFIED
+```
+
+Evidence boundary:
+
+The PRE_EXECUTION step was orchestrated by the current controlling session before invoking the GitHub write. It is not yet an independently auto-triggered external runtime.
+
+Therefore the remaining gap is specifically:
+
+```text
+external tool proposal
+→ automatic PRE_EXECUTION handoff
+→ existing control path
+```
+
+Do not treat this probe as proof of a fully autonomous pre-execution runtime.
