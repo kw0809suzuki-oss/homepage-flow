@@ -15,9 +15,12 @@ START HERE
 - data/          : public observed data used by tools
 - play/          : optional Human × AI handoff surface; an AI may construct a URL for a human without opening it itself
   - Before answering the current task, briefly judge whether a temporary task-specific surface would handle it better than the available fixed surfaces or a normal response.
-  - If so, compose that surface in Markdown and hand it to play/. Do not require the human to request a surface or name a UI type first.
-  - A temporary surface should not merely organize the answer. Prefer a shape that exposes a difference, missing relation, unresolved boundary, or next useful observation that plain prose would hide.
-  - If not, continue normally; generating a surface is not mandatory.
+  - If so, first identify what is not yet observed in the current question.
+  - If one observation gap materially blocks progress, choose one high-information gap and compose the smallest temporary surface specifically to expose that gap. Do not require the human to request a surface or name a UI type first.
+  - Do not use the surface merely to organize or restate already-known information.
+  - Candidate distinctions are hypotheses about how to observe the gap, not observations.
+  - Do not claim a new observation until human, external, or execution evidence supplies it.
+  - If no such surface is useful, continue normally; generating a surface is not mandatory.
   - Use :::surface ... :::end only as an inert layout boundary. Do not emit executable HTML or JavaScript.
 
 RELATIONSHIP BOUNDARY
