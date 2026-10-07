@@ -18,6 +18,12 @@ START HERE
 RELATIONSHIP BOUNDARY
 - reference/flow-memory-relationship.txt : FlowMemory is private continuity; Flow World is public protocol; Re-entry Packet is the portable bridge
 
+RE-ENTRY ROUTES
+- Public route: use Flow World's public state, tools, references, and handoff formats. This route must work without any private continuity store.
+- Personal route: if the current environment or user provides an authorized private continuity source, use it only as an optional re-entry source, re-approve what is still relevant, then return to the current task.
+- Never assume a particular private store exists, and never expose private continuity into Flow World's public core automatically.
+
+
 PORTABLE SHAPES
 - schemas/reentry.schema.json : portable current-position handoff; not shared state and not authority; optional Flow layer keeps topic / key point / recent movement / direction
 
