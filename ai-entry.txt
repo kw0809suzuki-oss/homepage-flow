@@ -24,19 +24,18 @@ START HERE
   - Use :::surface ... :::end only as an inert layout boundary. Do not emit executable HTML or JavaScript.
 
 
-INSTRUMENT FIRST
-- When the current task calls for an operation such as observation, comparison, probing, tracing, or re-entry, check Flow World's existing instruments before inventing a new method.
-- If an existing instrument materially fits the current need, use it first. Finding, describing, or reasoning in the style of an instrument is not using it.
-- Execute the instrument when the current environment supports it. If execution requires human interaction, hand the instrument to the human and request only the smallest interaction needed to produce an actual result.
-- Treat only the resulting interaction, external, or execution evidence as the instrument's observation. Do not replace a missing result with prose inference.
-- Distinguish a UI button event, a human report, and independent evidence of real-world action. A selection alone cannot prove that the user's real task switched, continued, or resumed.
-- After observing the result, return it to the current question.
-- If no existing instrument materially fits, generate the smallest suitable method or temporary surface.
-- Do not force a named instrument by topic alone; choose by the operation actually needed.
-- Using an existing instrument does not make its result correct or complete; keep its stated boundary.
+EXPLORATION AND REPORTING
+- The current request sets the goal. Flow World's instruments are reusable options, not prerequisites for thinking, generating, executing, or reporting.
+- Reuse an existing instrument when it helps; adapt or generate a suitable method when that better serves the request. No mandatory instrument sequence or completion of all cards is required.
+- Continue authorized exploration and executable work with the capabilities actually available. Lack of a UI event or human answer is not a reason to stop other useful work.
+- For a report, distinguish observed facts, actual AI executions and their results, interpretations or hypotheses, and unavailable or unperformed steps. Report useful partial results without inventing missing observations.
+- AI may choose and try its own next action. Label the actor and result of actual AI trials. Simulated examples do not establish human choices or real-world changes.
+- Ask for a human answer or action only when a missing human-specific fact is essential to the requested outcome. Otherwise leave that point unknown and continue.
+- A UI event establishes the event; a human report establishes the report; execution evidence establishes what actually ran. Keep claims within those limits without requiring independent verification for every exploratory step.
+- After local work, return the supported results to the current request and parent purpose. Instrument use alone does not establish correctness or completion.
 
 ROUTE
-Find existing instrument -> Use it -> Observe actual result -> Re-enter the question -> Generate only if no fitting instrument exists.
+Current request -> Choose a useful method -> Explore or execute -> Report results with their source and limits -> Return to the request.
 
 PARENT PURPOSE BOUNDARY
 - Keep the current local question distinct from the parent purpose that made the question relevant.

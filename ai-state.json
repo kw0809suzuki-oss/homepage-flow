@@ -4,9 +4,9 @@
   "updated_at": "2026-10-07",
   "purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
   "current_position": {
-    "status": "AI instrument execution boundary probe",
-    "summary": "Flow World checks existing instruments before generating new ones. Switch Lab is now described for read-only AIs as an observation protocol.",
-    "working_coordinate": "A matching instrument can be discovered and guided conversationally. UI events, human reports, and independently evidenced real-world actions must remain separate; external-AI adoption and actual action evidence remain unverified."
+    "status": "Exploration and reporting boundary clarified",
+    "summary": "Flow World supports AI exploration, execution, and reporting without mandatory instrument use or human interaction at every missing observation.",
+    "working_coordinate": "Use methods suited to the current request. Reports distinguish observed facts, AI execution, hypotheses, and unperformed steps; missing human-specific evidence remains unknown without blocking other work."
   },
   "confirmed": [
     "The Desk separates observation, interpretation, unknowns, evidence boundaries, and next probes as working principles.",
@@ -92,8 +92,8 @@
       "type": "observation_surface",
       "location": "#switch-lab",
       "input": "a currently held parent question and a newly attractive interest",
-      "output": "UI button-choice events or human reports; actual real-world actions only when separately evidenced.",
-      "boundary": "UI clicks and reports are not independent proof of task switching, continuation, or return; no motive or stable tendency inferred.",
+      "output": "Available observations and labeled AI trials, hypotheses, or unperformed steps; human choices remain unknown unless supplied.",
+      "boundary": "Identify actor and source. AI trials are not human choices; UI clicks and reports are not independent verification of real-world task changes. Missing evidence does not block other useful exploration.",
       "machine_definition": "ai-tools.json",
       "implementation": "internal-switch.js"
     }
@@ -144,7 +144,8 @@
     "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core.",
     "FlowMemory and Flow World do not automatically synchronize; Re-entry Packets carry coordinates only and require re-approval.",
     "The Re-entry Flow layer is not a conversation summary or authority; it should carry only the minimum movement needed to understand why the current position points in its present direction.",
-    "Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor; private continuity is an optional adapter, not part of the public-core requirement."
+    "Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor; private continuity is an optional adapter, not part of the public-core requirement.",
+    "Evidence boundaries limit claims, not authorized exploration or execution. Instruments and human interaction are not mandatory prerequisites for reports; ask only when missing human-specific evidence is essential."
   ],
   "recent_changes": [
     "Added in-visit persistent LAST PLACE return trace.",
@@ -161,7 +162,8 @@
     "Added public and optional personal re-entry routes to AI Entry without making FlowMemory a requirement for other visitors.",
     "Added a parent-purpose boundary so interesting local questions or observations update the route without silently replacing the purpose that made them relevant.",
     "Added Internal Switch Lab: eight in-world observation instruments for the already-observed phenomenon where a new interest can change the current progression target.",
-    "Aligned Switch Lab UI messages, AI tool definition, and state: button events and self-reports are distinct from evidence of actual task switching."
+    "Aligned Switch Lab UI messages, AI tool definition, and state: button events and self-reports are distinct from evidence of actual task switching.",
+    "Relaxed mandatory instrument-first and missing-evidence handoffs. AI can explore and report available results with explicit source and limits, while keeping unobserved human actions unknown. This policy change does not yet establish external-AI adoption."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
