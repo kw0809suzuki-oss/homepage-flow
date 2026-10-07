@@ -201,7 +201,6 @@ module.exports = async function handler(req, res) {
           type: "mcp_approval_response",
           approve: true,
           approval_request_id: approval.id,
-          reason: "Execution OS Action Gate returned ALLOW for the exact read-only OpenAI docs probe.",
         },
       ],
       reasoning: { effort: "none" },
