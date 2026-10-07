@@ -50,3 +50,14 @@ export function composeStance(stances = []) {
   }
   return weakest;
 }
+
+
+export function promoteBranch(packet, nextPosition = "") {
+  const promotedPosition = String(nextPosition || packet?.current_position || "").trim();
+
+  return {
+    ...packet,
+    current_position: promotedPosition,
+    return_point: null,
+  };
+}
