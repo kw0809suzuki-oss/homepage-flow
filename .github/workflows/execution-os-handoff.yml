@@ -1,0 +1,26 @@
+name: Execution OS Handoff
+
+on:
+  push:
+    branches:
+      - direction-gate-v0
+
+permissions:
+  contents: read
+
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pushed revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Emit execution facts
+        env:
+          GITHUB_BEFORE: ${{ github.event.before }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF: ${{ github.ref }}
+        run: node --experimental-default-type=module scripts/execution-os-github-handoff.mjs
