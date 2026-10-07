@@ -18,7 +18,8 @@
     "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API.",
     "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources.",
     "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid.",
-    "A connected external AI can reach Flow World through its public URL and read ai-entry.txt, ai-state.json, ai-tools.json, and reference/flow-memory-relationship.txt through a compatible web-reading plugin."
+    "A connected external AI can reach Flow World through its public URL and read ai-entry.txt, ai-state.json, ai-tools.json, and reference/flow-memory-relationship.txt through a compatible web-reading plugin.",
+    "Flow World keeps a public re-entry route that works without private continuity, while allowing an optional personal route to an authorized private continuity source when one exists."
   ],
   "unknowns": [
     "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
@@ -130,7 +131,8 @@
     "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements.",
     "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core.",
     "FlowMemory and Flow World do not automatically synchronize; Re-entry Packets carry coordinates only and require re-approval.",
-    "The Re-entry Flow layer is not a conversation summary or authority; it should carry only the minimum movement needed to understand why the current position points in its present direction."
+    "The Re-entry Flow layer is not a conversation summary or authority; it should carry only the minimum movement needed to understand why the current position points in its present direction.",
+    "Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor; private continuity is an optional adapter, not part of the public-core requirement."
   ],
   "recent_changes": [
     "Added in-visit persistent LAST PLACE return trace.",
@@ -143,7 +145,8 @@
     "Added play/ as a serverless URL-fragment Markdown handoff surface.",
     "Added the first SHAPE schema: a portable Re-entry Packet format.",
     "Added an optional lightweight Flow layer to the Re-entry Packet without invalidating existing v0 packets.",
-    "Observed a real external re-entry path: a connected web-reading plugin reached Flow World and followed its static AI entry resources; updated only the public current position and related observations."
+    "Observed a real external re-entry path: a connected web-reading plugin reached Flow World and followed its static AI entry resources; updated only the public current position and related observations.",
+    "Added public and optional personal re-entry routes to AI Entry without making FlowMemory a requirement for other visitors."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
