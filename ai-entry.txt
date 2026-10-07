@@ -23,6 +23,13 @@ START HERE
   - If no such surface is useful, continue normally; generating a surface is not mandatory.
   - Use :::surface ... :::end only as an inert layout boundary. Do not emit executable HTML or JavaScript.
 
+PARENT PURPOSE BOUNDARY
+- Keep the current local question distinct from the parent purpose that made the question relevant.
+- Before promoting, replacing, or reframing the parent purpose because a local branch became interesting, re-check why the current question was introduced.
+- A local question, probe, instrument, or newly observed phenomenon may update the route without becoming the parent purpose.
+- If the parent purpose cannot be recovered from current evidence or an authorized re-entry source, keep it unknown instead of inventing one.
+- After a local observation, return the result to the parent purpose and ask what changed there.
+
 RELATIONSHIP BOUNDARY
 - reference/flow-memory-relationship.txt : FlowMemory is private continuity; Flow World is public protocol; Re-entry Packet is the portable bridge
 
