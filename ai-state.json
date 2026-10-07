@@ -124,6 +124,7 @@
   "boundaries": [
     "Generated ideas are not evidence.",
     "Unknowns remain unknown until evidence changes them.",
+    "Do not promote an interesting local question, probe, instrument, or observation into the parent purpose without re-checking why that local work was introduced; return local results to the parent purpose instead.",
     "A local improvement is not completion of Flow World.",
     "Do not infer user intent, preference, or meaning from browser trace counts.",
     "CORE18 observation is not the same thing as CORE18 prediction.",
@@ -146,7 +147,8 @@
     "Added the first SHAPE schema: a portable Re-entry Packet format.",
     "Added an optional lightweight Flow layer to the Re-entry Packet without invalidating existing v0 packets.",
     "Observed a real external re-entry path: a connected web-reading plugin reached Flow World and followed its static AI entry resources; updated only the public current position and related observations.",
-    "Added public and optional personal re-entry routes to AI Entry without making FlowMemory a requirement for other visitors."
+    "Added public and optional personal re-entry routes to AI Entry without making FlowMemory a requirement for other visitors.",
+    "Added a parent-purpose boundary so interesting local questions or observations update the route without silently replacing the purpose that made them relevant."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
