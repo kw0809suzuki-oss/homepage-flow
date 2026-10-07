@@ -19,7 +19,8 @@
     "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources.",
     "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid.",
     "A connected external AI can reach Flow World through its public URL and read ai-entry.txt, ai-state.json, ai-tools.json, and reference/flow-memory-relationship.txt through a compatible web-reading plugin.",
-    "Flow World keeps a public re-entry route that works without private continuity, while allowing an optional personal route to an authorized private continuity source when one exists."
+    "Flow World keeps a public re-entry route that works without private continuity, while allowing an optional personal route to an authorized private continuity source when one exists.",
+    "An Internal Switch Lab now provides eight small in-world instruments that can make choice, switching, postponement, continuation, and re-reference events directly observable without inferring their meaning."
   ],
   "unknowns": [
     "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
@@ -85,6 +86,14 @@
       "input": "URL fragment: #type=markdown&data=<UTF-8 Base64URL>",
       "output": "locally rendered Markdown in the visitor browser",
       "boundary": "content is not stored server-side; current probe supports markdown only; embedded HTML is escaped rather than executed."
+    },
+    {
+      "id": "internal-switch-lab",
+      "type": "observation_surface",
+      "location": "#switch-lab",
+      "input": "a currently held parent question and a newly attractive interest",
+      "output": "user-executed choice/switch/re-reference events",
+      "boundary": "records interaction facts only; does not infer motive, value, true purpose, personality, or stable tendency."
     }
   ],
   "data_sources": [
@@ -148,7 +157,8 @@
     "Added an optional lightweight Flow layer to the Re-entry Packet without invalidating existing v0 packets.",
     "Observed a real external re-entry path: a connected web-reading plugin reached Flow World and followed its static AI entry resources; updated only the public current position and related observations.",
     "Added public and optional personal re-entry routes to AI Entry without making FlowMemory a requirement for other visitors.",
-    "Added a parent-purpose boundary so interesting local questions or observations update the route without silently replacing the purpose that made them relevant."
+    "Added a parent-purpose boundary so interesting local questions or observations update the route without silently replacing the purpose that made them relevant.",
+    "Added Internal Switch Lab: eight in-world observation instruments for the already-observed phenomenon where a new interest can change the current progression target."
   ],
   "reentry_hint": "If capability is uncertain, start with ai-entry.txt. Then read ai-state.json and ai-tools.json. Use browser UI only when the environment actually supports it.",
   "compatibility_policy": {
