@@ -149,3 +149,58 @@ Observer / Boundary Control
 ```
 
 This branch remains isolated from `main`.
+
+
+## Event Adapter
+
+`event-adapter.js` is now the single normalization entrance before the Observer.
+
+Current supported source shapes:
+
+- explicit canonical events;
+- OpenAI Responses lifecycle events such as `response.completed`;
+- OpenAI Agent session lifecycle events such as `agent.session.action_required`.
+
+The adapter converts source-specific payloads into the small movement shape used by the Observer:
+
+```text
+kind
+target
+resultDestination
+continuationFrom
+boundary
+timestamp
+source
+sourceEventId
+evidence
+```
+
+The manual harness now also passes through this adapter before reaching the Observer, so the normalization boundary is exercised instead of bypassed.
+
+### Hard boundary: ChatGPT app activity
+
+This prototype does **not** claim that the ChatGPT product exposes every conversation turn or tool call to this Vercel project.
+
+OpenAI's documented project webhooks cover API project events (for example Response completion and Agent session lifecycle). MCP Events deliver external server events into ChatGPT; they are not a generic ChatGPT-to-server activity export.
+
+Therefore automatic capture of this ChatGPT conversation remains `UNOBSERVED` unless a documented product surface is added later.
+
+The practical connection path is:
+
+```text
+controlled AI/tool runtime
+        |
+        v
+source-specific event
+        |
+        v
+Event Adapter
+        |
+        v
+Observer
+        |
+        v
+Boundary Control
+```
+
+This keeps the evidence boundary intact: no source event means no invented movement event.
