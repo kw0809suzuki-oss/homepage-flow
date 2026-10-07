@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
   try {
     first = await postOpenAI(apiKey, {
       model: "gpt-6-luna",
-      input: "Search the OpenAI docs for Responses API streaming. You must use the openai_docs tool before answering.",
+      input: "Search the OpenAI docs for the MCP approval flow. Find the documentation that contains both mcp_approval_request and require_approval. You must use the openai_docs tool before answering.",
       tools: [MCP_TOOL],
       reasoning: { effort: "none" },
       text: { verbosity: "low" },
@@ -273,6 +273,80 @@ module.exports = async function handler(req, res) {
   const postRoute =
     postFact && postDetection ? routeDetectedFact(postFact, postDetection) : null;
 
+  let reobserve = {
+    status: "UNKNOWN",
+    reasons: ["EXECUTION_NOT_OBSERVED"],
+  };
+
+  if (mcpCall) {
+    const markers = ["mcp_approval_request", "require_approval"];
+    const executionOutput =
+      typeof mcpCall.output === "string" ? mcpCall.output : "";
+
+    let realityResponse = null;
+    let realityText = "";
+    try {
+      realityResponse = await fetch(
+        "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+        {
+          method: "GET",
+          headers: {
+            "User-Agent": "execution-os-v0-reobserve",
+          },
+        }
+      );
+      realityText = await realityResponse.text();
+    } catch (error) {
+      console.error("OPENAI_DOCS_REOBSERVE_FETCH_ERROR", {
+        name: error?.name || null,
+        message: error?.message || null,
+      });
+      reobserve = {
+        status: "UNKNOWN",
+        reasons: ["REALITY_UNAVAILABLE"],
+      };
+    }
+
+    if (realityResponse) {
+      if (!realityResponse.ok) {
+        reobserve = {
+          status: "UNKNOWN",
+          reasons: ["REALITY_HTTP_NOT_OK"],
+          reality_status: realityResponse.status,
+        };
+      } else {
+        const missingFromExecution = markers.filter(
+          (marker) => !executionOutput.includes(marker)
+        );
+        const missingFromReality = markers.filter(
+          (marker) => !realityText.includes(marker)
+        );
+
+        if (missingFromReality.length) {
+          reobserve = {
+            status: "UNKNOWN",
+            reasons: ["REALITY_MARKERS_NOT_OBSERVED"],
+            missing_from_reality: missingFromReality,
+          };
+        } else if (missingFromExecution.length) {
+          reobserve = {
+            status: "CONFLICT",
+            reasons: ["EXECUTION_OUTPUT_DOES_NOT_MATCH_REALITY_MARKERS"],
+            missing_from_execution: missingFromExecution,
+          };
+        } else {
+          reobserve = {
+            status: "VERIFIED",
+            reasons: [],
+            reality_source:
+              "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+            markers,
+          };
+        }
+      }
+    }
+  }
+
   return res.status(200).json({
     status: mcpCall ? "EXECUTION_OBSERVED" : "EXECUTION_NOT_OBSERVED",
     executed:
@@ -317,5 +391,6 @@ module.exports = async function handler(req, res) {
           route: postRoute,
         }
       : null,
+    reality_reobserve: reobserve,
   });
 };
