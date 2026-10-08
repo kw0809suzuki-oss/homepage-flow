@@ -1,0 +1,11 @@
+FLOW WORLD / AI STATIC ENTRY
+
+Start with:
+https://kw0809suzuki-oss.github.io/homepage-flow/FLOW_WORLD_STATE.json
+
+Full routing, only when needed:
+https://kw0809suzuki-oss.github.io/homepage-flow/ai-entry.txt
+
+This file is a static landing point, not authority.
+The current request sets the goal.
+Do not infer missing information.
