@@ -98,11 +98,11 @@ test('projects public sources without promoting the compiled view to authority',
   assert.equal(result.TOOLS.machine_definitions[0].id, 'tool-a');
 });
 
-test('surfaces coverage differences without treating them as resolved semantic conflict', () => {
+test('keeps machine-definition coverage differences in visibility without promoting them to conflict', () => {
   const root = fixture();
   const result = compileFlowWorldState(root);
 
-  assert.equal(result.CONFLICTS.detected, true);
+  assert.equal(result.CONFLICTS.detected, false);
   assert.equal(result.CONFLICTS.semantic_conflict, 'unverified');
   assert.equal(result.CONFLICTS.resolution, null);
   assert.deepEqual(
