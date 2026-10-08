@@ -52,6 +52,7 @@ PARENT PURPOSE BOUNDARY
 - A local question, probe, instrument, or newly observed phenomenon may update the route without becoming the parent purpose.
 - If the parent purpose cannot be recovered from current evidence or an authorized re-entry source, keep it unknown instead of inventing one.
 - After a local observation, return the result to the parent purpose and ask what changed there.
+- When choosing the next action, identify what remains unfinished in the current parent purpose and select a step from that gap, not solely from the latest local result. If the unfinished part is unknown, do not invent it; keep exploring only within the current request.
 
 RELATIONSHIP BOUNDARY
 - reference/flow-memory-relationship.txt : FlowMemory is private continuity; Flow World is public protocol; Re-entry Packet is the portable bridge
