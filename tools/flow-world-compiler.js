@@ -123,13 +123,6 @@ function compileFlowWorldState(rootDir) {
     });
   }
 
-  if (stateOnlyToolIds.length) {
-    conflicts.push({
-      kind: 'machine_definition_coverage_difference',
-      note: 'Coverage difference only; not treated as a semantic contradiction.',
-      state_tool_ids_without_ai_tools_definition: stateOnlyToolIds
-    });
-  }
 
   const sources = [
     [SOURCE_PATHS.entry, entryText, null],
