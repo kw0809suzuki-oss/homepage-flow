@@ -17,6 +17,12 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Test direction observer control
+        run: |
+          node --experimental-default-type=module --test direction-gate/connection-control.test.mjs
+          node --check api/direction-check.js
+          node --check api/openai-approval-execute-probe.js
+
       - name: Emit execution facts and re-observe reality
         env:
           GITHUB_BEFORE: ${{ github.event.before }}
