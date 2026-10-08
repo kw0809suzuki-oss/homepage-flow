@@ -1,3 +1,13 @@
+# CLOSED — 2026-10-08
+
+**Status:** CLOSED / historical experiment only.
+
+This branch is not an active control path for ChatGPT or Flow World. It must not be treated as evidence that ordinary ChatGPT can be globally intercepted or compelled through a custom MCP/Gateway. The observed MCP approval and re-observation results apply only to the specific controlled runtime/tool paths described below.
+
+Do not continue, merge to main, or auto-expand this experiment unless a future task explicitly reopens it for a separate self-owned runtime question.
+
+---
+
 # Execution OS v0
 
 Experimental branch-only implementation.
