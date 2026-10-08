@@ -7,6 +7,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const {
+  START_HERE,
   compileFlowWorldState,
   gitBlobSha
 } = require('./flow-world-compiler.js');
@@ -18,14 +19,20 @@ function fixture() {
 
   fs.writeFileSync(path.join(root, 'ai-entry.txt'), `FLOW WORLD / AI ENTRY v0
 
+NORMAL ENTRY
+Start with FLOW_WORLD_STATE.json.
+
 PURPOSE
 Public orientation.
 
 EXPLORATION AND REPORTING
 - The current request sets the goal. Tools are options.
 
+ROUTE
+Current request -> result.
+
 PARENT PURPOSE BOUNDARY
-- Return local results to the parent purpose.
+- A local question may update the route without becoming the parent purpose.
 
 RELATIONSHIP BOUNDARY
 - FlowMemory is optional private continuity.
@@ -33,16 +40,7 @@ RELATIONSHIP BOUNDARY
 RE-ENTRY ROUTES
 - Public route: use public state and tools.
 - Personal route: use an authorized private source only when it exists.
-
-AUTHORIZED CONNECTIONS / 実物への辿り方
-- GitHub: read only what the task needs.
-- FlowMemory: optional and authorized only.
-
-PORTABLE SHAPES
-- schemas/reentry.schema.json
-
-TOOL RULE
-Keep tools reproducible.
+- Never assume a particular private store exists.
 
 BOUNDARY
 Do not pretend unavailable browser state exists.
@@ -51,24 +49,28 @@ Do not pretend unavailable browser state exists.
   fs.writeFileSync(path.join(root, 'ai-state.json'), JSON.stringify({
     world: 'Flow World',
     updated_at: '2026-10-08',
-    purpose: 'Compact public re-entry.',
-    current_position: { status: 'test' },
-    confirmed: ['confirmed-a'],
-    unknowns: ['unknown-a'],
+    current_position: {
+      status: 'test status',
+      summary: 'test summary',
+      working_coordinate: 'test coordinate'
+    },
     available_tools: [
-      { id: 'tool-a', type: 'local_utility', boundary: 'no cause' },
-      { id: 'tool-b', type: 'observer', boundary: 'candidate only' }
+      { id: 'tool-a', type: 'local_utility', location: '#a' },
+      { id: 'tool-b', type: 'observer', location: '#b' }
     ],
-    boundaries: ['Unknown stays unknown.']
+    boundaries: [
+      'Generated ideas are not evidence.',
+      'Unknowns remain unknown until evidence changes them.',
+      'A local improvement is not completion of Flow World.',
+      'Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor.'
+    ]
   }, null, 2));
 
   fs.writeFileSync(path.join(root, 'ai-tools.json'), JSON.stringify({
     updated_at: '2026-10-08',
     tools: [
-      { id: 'tool-a', version: 'v0', status: 'available', implementation: 'tool-a.js', human_ui: '#a' }
-    ],
-    shapes: [],
-    compatibility_policy: { baseline: 'read-only' }
+      { id: 'tool-a', version: 'v0', status: 'available' }
+    ]
   }, null, 2));
 
   fs.writeFileSync(
@@ -84,31 +86,69 @@ Do not pretend unavailable browser state exists.
   return root;
 }
 
-test('projects public sources without promoting the compiled view to authority', () => {
+test('projects a thin non-authoritative public first view', () => {
   const root = fixture();
   const result = compileFlowWorldState(root);
 
-  assert.equal(result.schema, 'flow-world-state/v0.1');
+  assert.equal(result.schema, 'flow-world-state/v0.2');
   assert.equal(result.IDENTITY.authority, false);
-  assert.equal(result.IDENTITY.private_continuity.assumed, false);
-  assert.equal(result.PRIVATE_CONTINUITY.public_core_requires_private_store, false);
-  assert.deepEqual(result.POSITION.current_position, { status: 'test' });
-  assert.deepEqual(result.POSITION.unknowns, ['unknown-a']);
-  assert.equal(result.ROUTES.public_route, 'Public route: use public state and tools.');
-  assert.equal(result.TOOLS.machine_definitions[0].id, 'tool-a');
+  assert.equal(result.IDENTITY.private_continuity_assumed, false);
+  assert.deepEqual(result.START_HERE, START_HERE);
+  assert.equal(result.START_HERE.length, 5);
+  assert.deepEqual(result.POSITION, {
+    source: 'ai-state.json',
+    updated_at: '2026-10-08',
+    status: 'test status',
+    summary: 'test summary',
+    working_coordinate: 'test coordinate'
+  });
 });
 
-test('keeps machine-definition coverage differences in visibility without promoting them to conflict', () => {
+test('keeps the top-level state surface intentionally small', () => {
   const root = fixture();
   const result = compileFlowWorldState(root);
 
-  assert.equal(result.CONFLICTS.detected, false);
-  assert.equal(result.CONFLICTS.semantic_conflict, 'unverified');
-  assert.equal(result.CONFLICTS.resolution, null);
+  assert.deepEqual(Object.keys(result), [
+    'schema',
+    'IDENTITY',
+    'START_HERE',
+    'POSITION',
+    'BOUNDARY',
+    'SURFACES',
+    'VISIBILITY',
+    'DESCENT',
+    'SOURCES'
+  ]);
+  assert.equal('TOOLS' in result, false);
+  assert.equal('ROUTES' in result, false);
+  assert.equal('PRIVATE_CONTINUITY' in result, false);
+  assert.equal('PROJECTION_RULES' in result, false);
+});
+
+test('shows available surfaces without copying tool contracts', () => {
+  const root = fixture();
+  const result = compileFlowWorldState(root);
+
+  assert.deepEqual(result.SURFACES, [
+    { id: 'tool-a', type: 'local_utility', location: '#a', machine_definition: true },
+    { id: 'tool-b', type: 'observer', location: '#b', machine_definition: false }
+  ]);
   assert.deepEqual(
-    result.VISIBILITY.machine_definition_coverage.state_tool_ids_without_ai_tools_definition,
+    result.VISIBILITY.coverage_gaps.surface_ids_without_machine_definition,
     ['tool-b']
   );
+  assert.equal(result.DESCENT.tool_contract, 'ai-tools.json');
+});
+
+test('keeps core boundaries visible without copying the full policy', () => {
+  const root = fixture();
+  const result = compileFlowWorldState(root);
+
+  assert.deepEqual(
+    result.BOUNDARY.items.map(item => item.key),
+    ['evidence', 'unknown', 'parent_purpose', 'private_continuity']
+  );
+  assert.deepEqual(result.VISIBILITY.coverage_gaps.missing_boundary_keys, []);
 });
 
 test('source fingerprints use git blob sha and all named sources remain visible', () => {
