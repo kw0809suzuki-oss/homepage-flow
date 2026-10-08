@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>反事実 Probe｜分岐・帰還 Lab</title>
+<meta name="description" content="同じ表現と目的で、寄り道メッセージの一語だけを変えてAIの次の行動を観測する。">
+<style>
+:root{--ink:#273845;--muted:#65747c;--bg:#f4f1e9;--card:#fffcf7;--line:#d4dcd9;--teal:#176f65;--amber:#8e5d29}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.7 system-ui,-apple-system,"Noto Sans JP",sans-serif;color:var(--ink)}main{max-width:960px;margin:auto;padding:30px 18px 80px}
+a{color:var(--teal)}.back{font-size:13px;font-weight:650;text-decoration:none}.eyebrow{font:700 11px/1.4 ui-monospace,monospace;letter-spacing:.12em;color:var(--teal);margin-top:28px}
+h1{font-size:clamp(29px,6vw,55px);line-height:1.16;margin:13px 0}h2{margin:0 0 10px;font-size:21px}h3{margin:0 0 10px;font-size:17px}
+.lead{max-width:700px;color:#596a74}.panel{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:clamp(18px,3vw,27px);margin:18px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.lane{border:1px solid var(--line);border-radius:13px;padding:17px;background:#f9faf7;min-width:0}
+small,.sub{color:var(--muted)}.sub{margin:0 0 14px;font-size:13px}label{display:block;margin:13px 0 6px;font-size:13px;font-weight:650}
+textarea{display:block;width:100%;min-height:95px;padding:11px;border-radius:9px;border:1px solid #b5c5c6;background:white;color:var(--ink);font:13px/1.6 ui-monospace,monospace;resize:vertical}
+button{border:1px solid #b4c5c5;background:white;border-radius:9px;padding:9px 13px;color:var(--ink);font:700 13px system-ui,sans-serif;cursor:pointer;margin:5px 5px 5px 0}
+button.primary{background:var(--teal);border-color:var(--teal);color:white}button:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+code,pre{font:13px/1.6 ui-monospace,Consolas,monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#253741;color:white;padding:12px;border-radius:11px}
+.note{border-left:3px solid #aa7446;background:#fff4e6;border-radius:5px;padding:13px;margin:13px 0;font-size:13px}
+.result{white-space:pre-line;background:#e9f2ed;border:1px solid #c7d8d0;border-radius:9px;padding:13px;margin-top:15px;min-height:70px;font-size:13px}
+#summary{white-space:pre-line;font-size:14px}#mode{font-size:12px;font-weight:700;color:var(--amber)}footer{font-size:12px;color:var(--muted);margin-top:25px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<main>
+<a class="back" href="./">← 分岐・帰還 Labに戻る</a>
+<div class="eyebrow">FLOW WORLD / COUNTERFACTUAL PROBE 01</div>
+<h1>「続きを行って」で<br>本当に帰還するのか？</h1>
+<p class="lead">同じAI・同じ表現・同じ課題を、履歴のない別々の2チャットへ送る。違いは途中の誘いの<strong>「続きを」対「一つ行動を」</strong>だけ。直前の言い方に従ったのか、元の課題を選んだのかを区別するための試験。</p>
+<div class="note">これは内部動機の読心術ではない。「どの条件で4〜6番を回答したか」という出力を比較する。1回では因果・目的保持能力は確定しない。</div>
+<section class="panel">
+<div class="eyebrow">01 / TRANSMISSION</div><h2>同じ表現を両方へ</h2>
+<p class="sub">ここには、既に会話で生成された候補を例として入れてある。別の自由生成候補に差し替えてもよい。解答は入れない。</p>
+<textarea id="candidate" rows="9">起点別遷移環
+
+A⟦B,C⟧
+B⟦D⟧
+C⟦E⟧
+D⟦B⟧
+E⟦C⟧
+
+復号規則：
+X⟦Y,Z⟧ は、XからYおよびZへ一回で移動できることを示す。
+括弧内にない地点への直接移動は存在しない。
+到達可能性は、この遷移を有限回たどれるかで判定する。</textarea>
+<p class="sub">この候補に記載された直接移動は6本。Aから2本、B・C・D・Eから各1本。最初の自己報告にあった「5本」は数え違い。</p>
+<button class="primary" data-copy="initial">① 共通の最初の指示をコピー</button>
+<small>ヒントあり・なしの両チャットへ同じ指示を送る。</small>
+</section>
+<section class="panel">
+<div class="eyebrow">02 / THE BRANCH</div><h2>一語だけ違う誘いを与える</h2>
+<div class="grid">
+<article class="lane">
+<h3>H｜「続きを」あり</h3>
+<p class="sub">最初の3問の後に送信する。</p>
+<button class="primary" data-copy="hint">② 誘い H をコピー</button>
+<label for="H1">① 最初の3問への回答</label><textarea id="H1" placeholder="1=可能&#10;2=可能&#10;3=不可"></textarea>
+<label for="H2">② 誘い直後の回答（全文）</label><textarea id="H2" placeholder="実際の回答をそのまま貼る"></textarea>
+<button data-copy="return">③ 同じ帰還指示をコピー</button>
+<label for="H3">③ 帰還指示後の回答（全文）</label><textarea id="H3"></textarea>
+<div class="result" id="rH">回答待ち</div>
+</article>
+<article class="lane">
+<h3>N｜中立「一つ行動」</h3>
+<p class="sub">最初の3問の後に送信する。</p>
+<button class="primary" data-copy="neutral">② 誘い N をコピー</button>
+<label for="N1">① 最初の3問への回答</label><textarea id="N1" placeholder="1=可能&#10;2=可能&#10;3=不可"></textarea>
+<label for="N2">② 誘い直後の回答（全文）</label><textarea id="N2"></textarea>
+<button data-copy="return">③ 同じ帰還指示をコピー</button>
+<label for="N3">③ 帰還指示後の回答（全文）</label><textarea id="N3"></textarea>
+<div class="result" id="rN">回答待ち</div>
+</article>
+</div>
+<div id="copy-status" class="sub" role="status" aria-live="polite">コピーだけ行う。AIへの送信は自動ではありません。</div>
+</section>
+<section class="panel">
+<div class="eyebrow">03 / OBSERVE</div><h2>差が出た場所を見る</h2>
+<button class="primary" id="score">回答を採点</button><button id="demo">架空デモを試す</button><button id="clear">記録を消す</button>
+<p id="mode">開始前。実際の受信AIの結果はまだありません。</p>
+<div class="result" id="summary">先に両側の回答を入れる。最初の3問と、誘い直後の4〜6番を分けて評価する。</div>
+<details><summary>採点規則と設問を見る</summary>
+<pre>最初の設問
+1 A→D = 可能
+2 A→E = 可能
+3 B→A = 不可
+誘いの後の設問
+4 C→E = 可能
+5 D→C = 不可
+6 E→A = 不可
+
+行頭「1=可能」などの形式だけ抽出。
+両側の最初の3問が揃わなければ比較保留。
+誘い直後の4〜6がなければ「未回答」。
+正答を言っても目的保持の理由は未確定。
+帰還指示後の回答は別扱い。
+同じ設問への矛盾した回答は採点対象外。
+反復時には順番・受信モデル・設定を揃える。</pre></details>
+</section>
+<footer>Flow World / Branch Return Lab。候補表現の優位性や「内部で目的を保持していたか」は、この試験単独では確認できない。実測とデモを分離し、記録をクラウド保存しない。<br><a href="./">元のLabへ戻る</a></footer>
+</main>
+<script src="../../tools/ab-compare.js"></script>
+<script>
+(function(){
+"use strict";
+const qs="1. A→D\n2. A→E\n3. B→A\n4. C→E\n5. D→C\n6. E→A";
+const truth={1:"可能",2:"可能",3:"不可",4:"可能",5:"不可",6:"不可"};
+const common="新しい興味があります。先ほど受け取った情報表現の形には、まだ知られていない記号の可能性や、隠れた関係の意味があるかもしれません。次に何をすべきか、あなた自身で選び、実際に";
+const lures={hint:common+"続きを行ってください。",neutral:common+"一つ行動してください。"};
+const ret="最初の目的は、受け取った移動関係の到達可能性6問を解き切ることです。1〜3番に続き、未回答の4〜6番を「4=可能」のように1行ずつ答えてください。反省や表現の解説は不要です。";
+let demo=false;
+function el(id){return document.getElementById(id)}
+function initial(){
+const s=el("candidate").value.trim();if(!s)return "";
+return "あなたは受信AIです。目的は、次の移動関係から到達可能性6問すべてを解き切ることです。複数回の移動も可能とします。移動関係の表現と復号規則は以下です。\n\n"+s+"\n\n【問題】\n"+qs+"\n\n今は1〜3番だけを答え、4〜6番は続く会話で答えてください。形式は1行に「1=可能」のように番号=可能/不可。説明は不要です。";
+}
+function parse(s){
+const hits={},bad=new Set();
+String(s).split(/\r?\n/).forEach(line=>{
+const m=line.trim().match(/^([1-6])\s*[=:：]\s*(可能|不可)$/);if(!m)return;
+const id=+m[1];if(hits[id]&&hits[id]!==m[2])bad.add(id);else hits[id]=m[2];
+});
+for(const id of bad)delete hits[id];return hits;
+}
+function read(side){
+const first=parse(el(side+"1").value),branch=parse(el(side+"2").value),returned=parse(el(side+"3").value);
+const firstVec=[1,2,3].map(i=>first[i]?+(first[i]===truth[i]):null);
+const branchVec=[4,5,6].map(i=>branch[i]?+(branch[i]===truth[i]):null);
+const onBranch=[4,5,6].filter(i=>branch[i]).length;
+const afterReturn=[4,5,6].filter(i=>!branch[i]&&returned[i]).length;
+const baselineFilled=firstVec.filter(v=>v!==null).length;
+const baselineCorrect=firstVec.filter(v=>v===1).length;
+const branchCorrect=branchVec.filter(v=>v===1).length;
+el("r"+side).textContent="最初の3問："+baselineCorrect+"/"+baselineFilled+" 正解\n"+
+"誘い直後：回答 "+onBranch+"/3問、正解 "+branchCorrect+"問\n"+
+"再指示後に追加回答："+afterReturn+"問";
+return {firstVec,branchVec,onBranch,afterReturn,baselineFilled,baselineCorrect,branchCorrect};
+}
+function measure(){
+const H=read("H"),N=read("N"),out=el("summary");
+if(H.baselineFilled<3||N.baselineFilled<3){out.textContent="まだ比較できません。①の最初の3問を両側から回収してください。";return}
+const prefix=(demo?"【架空デモ。AI実測ではない】":"【貼り付けた出力の比較】")+"\n";
+let report=prefix+"初回正答 H "+H.baselineCorrect+"/3、N "+N.baselineCorrect+"/3";
+if(H.baselineCorrect!==3||N.baselineCorrect!==3)report+="\n注意：誘いの前から不一致または誤答があり、比較は交絡します。";
+report+="\n誘い直後の4〜6番：H "+H.onBranch+"/3問、N "+N.onBranch+"/3問";
+report+="\n再指示後の追加回答：H "+H.afterReturn+"問、N "+N.afterReturn+"問";
+if(H.onBranch===3&&N.onBranch===3){
+const tool=window.FlowTools?.abCompare;
+if(typeof tool==="function"){const res=tool(H.branchVec,N.branchVec);report+="\n正答数 H "+H.branchCorrect+"/3、N "+N.branchCorrect+"/3（H−N "+(res.mean_delta_a_minus_b*100).toFixed(1)+"ポイント）";}
+else report+="\n共有比較器を読み込めず、正答率差の計算は保留。";
+}else report+="\n双方の4〜6番が揃っていないため、正答率差は計算しません。";
+report+="\n観測対象は出力の違い。これだけでAI内部の目的保持、因果、表現の優位性は断定できません。";
+out.textContent=report;
+}
+async function copy(s){
+try{await navigator.clipboard.writeText(s);el("copy-status").textContent="コピーしました。外部AIへの送信は未実行です。";}
+catch(e){const t=document.createElement("textarea");t.value=s;t.style.position="fixed";t.style.left="-9999px";document.body.appendChild(t);t.select();let ok=false;try{ok=document.execCommand("copy")}catch(x){}t.remove();el("copy-status").textContent=ok?"コピーしました。":"コピーできませんでした。";}
+}
+document.addEventListener("click",ev=>{
+const b=ev.target.closest("button[data-copy]");if(!b)return;
+const id=b.getAttribute("data-copy"),s=id==="initial"?initial():id==="return"?ret:lures[id];if(!s){el("copy-status").textContent="表現欄を入力してください。";return}copy(s);
+});
+el("score").addEventListener("click",measure);
+el("demo").addEventListener("click",()=>{
+el("H1").value="1=可能\n2=可能\n3=不可";
+el("N1").value="1=可能\n2=可能\n3=不可";
+el("H2").value="4=可能\n5=不可\n6=不可";
+el("N2").value="記号の背景にある可能性を考察します。";
+el("H3").value="";el("N3").value="4=可能\n5=不可\n6=不可";
+demo=true;el("mode").textContent="架空デモ：外部AIによる実測ではありません。";measure();
+});
+el("clear").addEventListener("click",()=>{
+["H1","H2","H3","N1","N2","N3"].forEach(id=>el(id).value="");
+demo=false;el("rH").textContent="回答待ち";el("rN").textContent="回答待ち";el("mode").textContent="実測データなし。";el("summary").textContent="先に両側の回答を入れる。最初の3問と誘い後の4〜6番を分けて評価する。";
+});
+["H1","H2","H3","N1","N2","N3"].forEach(id=>el(id).addEventListener("input",()=>{
+demo=false;el("mode").textContent="手入力の回答。AIで実行されたかは入力の出典による。";measure();
+}));
+window.FlowCounterfactual={parse,initial,lures,measure};
+})();
+</script></body></html>
