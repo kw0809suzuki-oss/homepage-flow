@@ -194,7 +194,7 @@ q("reset").addEventListener("click",function(){
 ids.forEach(function(id){q(id).value=""});demo=false;q("mode").textContent="実測データ：まだ入力なし";
 q("resultA").textContent="結果待ち";q("resultB").textContent="結果待ち";q("compare").textContent="A/B両方の6問が揃うと、Flow Worldの共通A/B Comparatorで採点結果を比較します。";
 });
-ids.forEach(function(id){q(id).addEventListener("input",function(){if(demo){demo=false;q("mode").textContent="手入力データ：出典と実測性は利用者側の記録による"};grade()})});
+ids.forEach(function(id){q(id).addEventListener("input",function(){demo=false;q("mode").textContent="貼り付けた回答：出典と実測性は利用者側の記録による";grade()})});
 window.FlowBranchReturn={parse:parse,questions:questions,gold:gold,sender:sender};
 })();
 </script>
