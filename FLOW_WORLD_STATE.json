@@ -1,318 +1,140 @@
 {
-  "schema": "flow-world-state/v0.1",
+  "schema": "flow-world-state/v0.2",
   "IDENTITY": {
     "artifact": "FLOW_WORLD_STATE",
     "world": "Flow World",
     "authority": false,
-    "role": "Derived public initial view for AI re-entry. Canonical sources remain authoritative for their own content.",
-    "private_continuity": {
-      "assumed": false,
-      "status": "optional"
-    }
+    "role": "Derived public first view.",
+    "private_continuity_assumed": false
   },
-  "PURPOSE": {
-    "public_purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
-    "current_request_sets_goal": true,
-    "current_request_rule": "The current request sets the goal. Flow World's instruments are reusable options, not prerequisites for thinking, generating, executing, or reporting."
-  },
+  "START_HERE": [
+    "Current request sets the goal.",
+    "This file is the first public view, not authority.",
+    "Use only the surface relevant to the task.",
+    "Descend only when detail or verification is needed.",
+    "Do not assume private continuity exists."
+  ],
   "POSITION": {
     "source": "ai-state.json",
     "updated_at": "2026-10-07",
-    "current_position": {
-      "status": "Exploration and reporting boundary clarified",
-      "summary": "Flow World supports AI exploration, execution, and reporting without mandatory instrument use or human interaction at every missing observation.",
-      "working_coordinate": "Use methods suited to the current request. Reports distinguish observed facts, AI execution, hypotheses, and unperformed steps; missing human-specific evidence remains unknown without blocking other work."
-    },
-    "confirmed": [
-      "The Desk separates observation, interpretation, unknowns, evidence boundaries, and next probes as working principles.",
-      "Browser-local persistent traces exist for loop state, constellation, room-door count, sky garden, selected Desk lens, last observed place, signal count, and CORE18 state inputs.",
-      "Conversation Drift Detector is local-only and flags candidates rather than causes.",
-      "Flow-chan CORE18 currently observes Previous and Current LOTO7 states and reports centroid, variance, range, maxGap, gapCv, and their movement.",
-      "CORE18 automatic web state reads the repository's data/loto7-latest.json; CSV remains a fallback.",
-      "A/B Comparator now uses the same shared implementation exposed at tools/ab-compare.js and described for AI in ai-tools.json.",
-      "Flow World now has a static URL-fragment handoff surface at play/ for locally rendering UTF-8 Base64URL Markdown without a server API.",
-      "The first SHAPE schema is available at schemas/reentry.schema.json; it carries current position, confirmed items, unknowns, boundaries, at most one next probe, and sources.",
-      "The Re-entry Packet now supports an optional lightweight Flow layer with topic, key_point, recent_flow, and direction; existing packets remain valid.",
-      "A connected external AI can reach Flow World through its public URL and read ai-entry.txt, ai-state.json, ai-tools.json, and reference/flow-memory-relationship.txt through a compatible web-reading plugin.",
-      "Flow World keeps a public re-entry route that works without private continuity, while allowing an optional personal route to an authorized private continuity source when one exists.",
-      "Internal Switch Lab has eight UI choices and an AI-readable protocol; button events and human reports do not independently establish real-world task changes."
-    ],
-    "unknowns": [
-      "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
-      "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
-      "How Recent History, Similar Transitions, and CORE18 candidate generation should be connected without inventing unsupported fixed rules.",
-      "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run."
-    ]
-  },
-  "ROUTES": {
-    "public_route": "Public route: use Flow World's public state, tools, references, and handoff formats. This route must work without any private continuity store.",
-    "personal_route": "Personal route: if the current environment or user provides an authorized private continuity source, use it only as an optional re-entry source, re-approve what is still relevant, then return to the current task.",
-    "authorized_connections": [
-      "Use only connections already available and authorized for the current request. These directions do not grant access or require every visitor to have private storage.",
-      "GitHub: open the connected repository kw0809suzuki-oss/homepage-flow (https://github.com/kw0809suzuki-oss/homepage-flow). Read ai-entry.txt, then only the referenced files needed for the task. If the public page cannot be read, use the authorized GitHub connection; report public-page access separately.",
-      "FlowMemory: when an authorized Library contains FlowMemory, search for reentry.md and confirm its location is /FlowMemory/reentry.md. Follow that current entry. Its CURRENT is /FlowMemory/00_Core/CURRENT.json; do not substitute a same-named file at the Library root.",
-      "Drive: with an authorized Drive connection, search for the existing AI再入場入口 (Astra・Flow Entry), read it, and follow its reference to the same FlowMemory reentry.md. Use only task-relevant references after re-entry.",
-      "When a target is missing, inaccessible, or ambiguous, report that exact limit. A missing public link does not establish that the private object is absent. Do not infer a Notion page or app URL.",
-      "Keep private document contents, personal coordinates, file IDs, and private links out of this public repository. Do not add automatic synchronization or write-back."
-    ]
-  },
-  "TOOLS": {
-    "source": "ai-tools.json",
-    "available_surface_tools": [
-      {
-        "id": "desk",
-        "type": "principle_surface",
-        "location": "#desk",
-        "input": "current task context",
-        "output": "selected cognitive lens",
-        "boundary": "guidance only; it does not decide."
-      },
-      {
-        "id": "ab-comparator",
-        "type": "local_utility",
-        "location": "#workbench",
-        "input": "two equal-length numeric lists",
-        "output": "means, point deltas, mean delta",
-        "boundary": "difference only; no causal claim; no server API required.",
-        "machine_definition": "ai-tools.json",
-        "implementation": "tools/ab-compare.js"
-      },
-      {
-        "id": "first-divergence",
-        "type": "local_utility",
-        "location": "#workbench",
-        "input": "two sequences",
-        "output": "first observed differing position",
-        "boundary": "cause remains unknown."
-      },
-      {
-        "id": "astra-lens",
-        "type": "local_utility",
-        "location": "#workbench",
-        "input": "observation, interpretation, boundary, missing",
-        "output": "separated fields",
-        "boundary": "does not generate the next probe."
-      },
-      {
-        "id": "conversation-drift",
-        "type": "local_observer",
-        "location": "#drift",
-        "input": "conversation text",
-        "output": "candidate corrections, unresolved questions, topic movement",
-        "boundary": "candidate detection only; no causal judgment."
-      },
-      {
-        "id": "core18-state-observer",
-        "type": "state_observer",
-        "location": "#core18",
-        "input": "Previous and Current LOTO7 states, usually auto-loaded",
-        "output": "centroid, variance, range, maxGap, gapCv, observed movement",
-        "boundary": "not a predictor; Recent History, Similar Transitions, and CORE18 generation remain unconnected."
-      },
-      {
-        "id": "static-handoff-play",
-        "type": "url_fragment_renderer",
-        "location": "play/",
-        "input": "URL fragment: #type=markdown&data=<UTF-8 Base64URL>",
-        "output": "locally rendered Markdown in the visitor browser",
-        "boundary": "content is not stored server-side; current probe supports markdown only; embedded HTML is escaped rather than executed."
-      },
-      {
-        "id": "internal-switch-lab",
-        "type": "observation_surface",
-        "location": "#switch-lab",
-        "input": "a currently held parent question and a newly attractive interest",
-        "output": "Available observations and labeled AI trials, hypotheses, or unperformed steps; human choices remain unknown unless supplied.",
-        "boundary": "Identify actor and source. AI trials are not human choices; UI clicks and reports are not independent verification of real-world task changes. Missing evidence does not block other useful exploration.",
-        "machine_definition": "ai-tools.json",
-        "implementation": "internal-switch.js"
-      }
-    ],
-    "machine_definitions": [
-      {
-        "id": "ab-comparator",
-        "version": "v0",
-        "status": "available",
-        "implementation": "tools/ab-compare.js",
-        "human_ui": "#workbench"
-      },
-      {
-        "id": "static-handoff-play",
-        "version": "v0",
-        "status": "available",
-        "implementation": [
-          "play/index.html",
-          "play/play.js"
-        ],
-        "human_ui": "play/"
-      },
-      {
-        "id": "internal-switch-lab",
-        "version": "v0",
-        "status": "available",
-        "implementation": "internal-switch.js",
-        "human_ui": "#switch-lab"
-      }
-    ],
-    "shapes": [
-      {
-        "id": "reentry-packet",
-        "type": "json_schema",
-        "location": "schemas/reentry.schema.json",
-        "purpose": "Carry current working coordinates to another AI or human without treating prior conclusions as authority.",
-        "fields": [
-          "current_position",
-          "confirmed",
-          "unknown",
-          "boundary",
-          "next_probe",
-          "sources"
-        ],
-        "boundary": [
-          "This is a shape, not an automated judgment tool.",
-          "Packet contents must be re-evaluated against current evidence on re-entry.",
-          "Do not write personal packet contents into the public core automatically."
-        ],
-        "optional_flow_layer": {
-          "fields": [
-            "topic",
-            "key_point",
-            "recent_flow",
-            "direction"
-          ],
-          "purpose": "Preserve the minimum movement needed to avoid turning the packet into a static parts list.",
-          "boundary": [
-            "Do not use it as a retrospective narrative.",
-            "Do not promote prior interpretation to authority.",
-            "Keep recent_flow short and directional."
-          ]
-        }
-      }
-    ],
-    "compatibility_policy": {
-      "baseline": "read-only static web access",
-      "execution_preference": [
-        "reproduce deterministic operation from this file",
-        "use shared JavaScript implementation when executable",
-        "use human browser UI only when interaction is available"
-      ],
-      "unavailable_capability_rule": "Report the unavailable step, use a suitable alternative when possible, and continue other authorized work. Ask for human interaction only when essential to the requested outcome."
-    }
+    "status": "Exploration and reporting boundary clarified",
+    "summary": "Flow World supports AI exploration, execution, and reporting without mandatory instrument use or human interaction at every missing observation.",
+    "working_coordinate": "Use methods suited to the current request. Reports distinguish observed facts, AI execution, hypotheses, and unperformed steps; missing human-specific evidence remains unknown without blocking other work."
   },
   "BOUNDARY": {
-    "source_state_boundaries": [
-      "Generated ideas are not evidence.",
-      "Unknowns remain unknown until evidence changes them.",
-      "Do not promote an interesting local question, probe, instrument, or observation into the parent purpose without re-checking why that local work was introduced; return local results to the parent purpose instead.",
-      "A local improvement is not completion of Flow World.",
-      "Do not infer user intent, preference, or meaning from browser trace counts.",
-      "CORE18 observation is not the same thing as CORE18 prediction.",
-      "Prefer one small high-information probe over broad uncontrolled expansion.",
-      "Browser interaction, JavaScript execution, and localStorage are optional capabilities, not baseline requirements.",
-      "Re-entry packets are portable personal/temporary artifacts; they are not automatically written back into Flow World's public core.",
-      "FlowMemory and Flow World do not automatically synchronize; Re-entry Packets carry coordinates only and require re-approval.",
-      "The Re-entry Flow layer is not a conversation summary or authority; it should carry only the minimum movement needed to understand why the current position points in its present direction.",
-      "Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor; private continuity is an optional adapter, not part of the public-core requirement.",
-      "Evidence boundaries limit claims, not authorized exploration or execution. Instruments and human interaction are not mandatory prerequisites for reports; ask only when missing human-specific evidence is essential."
+    "sources": [
+      "ai-state.json",
+      "ai-entry.txt"
     ],
-    "parent_purpose": [
-      "Keep the current local question distinct from the parent purpose that made the question relevant.",
-      "Before promoting, replacing, or reframing the parent purpose because a local branch became interesting, re-check why the current question was introduced.",
-      "A local question, probe, instrument, or newly observed phenomenon may update the route without becoming the parent purpose.",
-      "If the parent purpose cannot be recovered from current evidence or an authorized re-entry source, keep it unknown instead of inventing one.",
-      "After a local observation, return the result to the parent purpose and ask what changed there."
-    ],
-    "relationship": [
-      "reference/flow-memory-relationship.txt : FlowMemory is private continuity; Flow World is public protocol; Re-entry Packet is the portable bridge"
-    ],
-    "final_entry_boundary": "If a task requires browser-only state, button interaction, localStorage, or another unavailable capability, report that boundary instead of pretending the action occurred."
+    "items": [
+      {
+        "key": "evidence",
+        "statement": "Generated ideas are not evidence."
+      },
+      {
+        "key": "unknown",
+        "statement": "Unknowns remain unknown until evidence changes them."
+      },
+      {
+        "key": "parent_purpose",
+        "statement": "A local improvement is not completion of Flow World."
+      },
+      {
+        "key": "private_continuity",
+        "statement": "Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor; private continuity is an optional adapter, not part of the public-core requirement."
+      }
+    ]
   },
-  "PRIVATE_CONTINUITY": {
-    "assumed": false,
-    "optional": true,
-    "public_core_requires_private_store": false,
-    "relationship_reference": "reference/flow-memory-relationship.txt",
-    "personal_route": "Personal route: if the current environment or user provides an authorized private continuity source, use it only as an optional re-entry source, re-approve what is still relevant, then return to the current task."
-  },
+  "SURFACES": [
+    {
+      "id": "desk",
+      "type": "principle_surface",
+      "location": "#desk",
+      "machine_definition": false
+    },
+    {
+      "id": "ab-comparator",
+      "type": "local_utility",
+      "location": "#workbench",
+      "machine_definition": true
+    },
+    {
+      "id": "first-divergence",
+      "type": "local_utility",
+      "location": "#workbench",
+      "machine_definition": false
+    },
+    {
+      "id": "astra-lens",
+      "type": "local_utility",
+      "location": "#workbench",
+      "machine_definition": false
+    },
+    {
+      "id": "conversation-drift",
+      "type": "local_observer",
+      "location": "#drift",
+      "machine_definition": false
+    },
+    {
+      "id": "core18-state-observer",
+      "type": "state_observer",
+      "location": "#core18",
+      "machine_definition": false
+    },
+    {
+      "id": "static-handoff-play",
+      "type": "url_fragment_renderer",
+      "location": "play/",
+      "machine_definition": true
+    },
+    {
+      "id": "internal-switch-lab",
+      "type": "observation_surface",
+      "location": "#switch-lab",
+      "machine_definition": true
+    }
+  ],
   "VISIBILITY": {
-    "scope": [
+    "sources_read": [
       "ai-entry.txt",
       "ai-state.json",
       "ai-tools.json",
       "reference/flow-memory-relationship.txt",
       "schemas/reentry.schema.json"
     ],
+    "source_versions": {
+      "ai_state": "2026-10-07",
+      "ai_tools": "2026-10-07"
+    },
+    "source_versions_aligned": true,
     "complete_asset_inventory": false,
+    "browser_state_read": false,
+    "deployment_verified": false,
     "private_sources_read": false,
-    "deployment_state_verified": false,
-    "verification_required": true,
-    "machine_definition_coverage": {
-      "state_tool_ids": [
-        "desk",
-        "ab-comparator",
-        "first-divergence",
-        "astra-lens",
-        "conversation-drift",
-        "core18-state-observer",
-        "static-handoff-play",
-        "internal-switch-lab"
-      ],
-      "ai_tools_defined_ids": [
-        "ab-comparator",
-        "static-handoff-play",
-        "internal-switch-lab"
-      ],
-      "state_tool_ids_without_ai_tools_definition": [
+    "coverage_gaps": {
+      "surface_ids_without_machine_definition": [
         "desk",
         "first-divergence",
         "astra-lens",
         "conversation-drift",
         "core18-state-observer"
-      ]
-    },
-    "note": "Compiler reads only the named public canonical sources. It does not crawl deployments, browser-local state, external services, or private continuity."
-  },
-  "CONFLICTS": {
-    "detected": false,
-    "semantic_conflict": "unverified",
-    "items": [],
-    "resolution": null,
-    "rule": "Literal differences are surfaced for review. The compiler does not resolve semantic conflicts or decide which source should replace another."
-  },
-  "DESCENT_HINTS": [
-    {
-      "when": "Full AI entry or route policy is needed",
-      "read": "ai-entry.txt"
-    },
-    {
-      "when": "Public current-position detail or freshness is in question",
-      "read": "ai-state.json"
-    },
-    {
-      "when": "A tool operation, precondition, output contract, or compatibility detail is needed",
-      "read": "ai-tools.json"
-    },
-    {
-      "when": "The boundary between public Flow World and optional private continuity is in question",
-      "read": "reference/flow-memory-relationship.txt"
-    },
-    {
-      "when": "A portable re-entry packet must be validated or constructed",
-      "read": "schemas/reentry.schema.json"
+      ],
+      "missing_boundary_keys": []
     }
-  ],
-  "PROJECTION_RULES": [
-    "FLOW_WORLD_STATE is derived and is not authority, permission, or proof of freshness.",
-    "The current request sets the goal; projected routes and tools remain options.",
-    "Do not infer missing browser state, private continuity, deployment state, or user intent.",
-    "Do not resolve source differences inside the compiler.",
-    "Descend only to the canonical source needed by the current request."
-  ],
+  },
+  "DESCENT": {
+    "routing_policy": "ai-entry.txt",
+    "public_state_detail": "ai-state.json",
+    "tool_contract": "ai-tools.json",
+    "public_private_boundary": "reference/flow-memory-relationship.txt",
+    "reentry_packet_schema": "schemas/reentry.schema.json"
+  },
   "SOURCES": [
     {
       "path": "ai-entry.txt",
       "status": "read",
-      "git_blob_sha": "3815aaadb73878f638883e551839d5638f2a983b",
+      "git_blob_sha": "d77d747637f523494df209995fb0238d3aa7cd54",
       "source_version": null
     },
     {
