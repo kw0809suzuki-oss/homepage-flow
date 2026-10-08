@@ -1,5 +1,11 @@
 FLOW WORLD / AI ENTRY v0
 
+NORMAL ENTRY
+Start with FLOW_WORLD_STATE.json.
+It is the derived public first view, not authority.
+Use this file when the current task needs fuller routing or operating policy.
+Descend to canonical sources only when detail or verification is needed.
+
 PURPOSE
 Use Flow World without assuming browser control, JavaScript execution, or localStorage access.
 
@@ -9,8 +15,8 @@ BASELINE COMPATIBILITY
 3. Treat browser UI, button presses, JavaScript execution, and localStorage as optional capabilities.
 4. Do not infer unavailable browser state.
 
-START HERE
-- ai-state.json  : current position, confirmed items, unknowns, boundaries, recent changes
+DETAIL SOURCES
+- ai-state.json  : fuller public position, confirmed items, unknowns, boundaries, recent changes
 - ai-tools.json  : machine-readable tool definitions and reproducible operations
 - data/          : public observed data used by tools
 - play/          : 受け渡し画面 / Human × AI handoff; separate from the #play star playground (遊び場). Open https://kw0809suzuki-oss.github.io/homepage-flow/play/ or use the top navigation's 受け渡し画面 link. An AI may construct a URL for a human without opening it itself
@@ -55,7 +61,7 @@ RE-ENTRY ROUTES
 
 AUTHORIZED CONNECTIONS / 実物への辿り方
 - Use only connections already available and authorized for the current request. These directions do not grant access or require every visitor to have private storage.
-- GitHub: open the connected repository kw0809suzuki-oss/homepage-flow (https://github.com/kw0809suzuki-oss/homepage-flow). Read ai-entry.txt, then only the referenced files needed for the task. If the public page cannot be read, use the authorized GitHub connection; report public-page access separately.
+- GitHub: open the connected repository kw0809suzuki-oss/homepage-flow (https://github.com/kw0809suzuki-oss/homepage-flow). Read FLOW_WORLD_STATE.json first. Read ai-entry.txt only when fuller routing or operating policy is needed, then read only the task-relevant canonical sources. If the public page cannot be read, use the authorized GitHub connection; report public-page access separately.
 - FlowMemory: when an authorized Library contains FlowMemory, search for reentry.md and confirm its location is /FlowMemory/reentry.md. Follow that current entry. Its CURRENT is /FlowMemory/00_Core/CURRENT.json; do not substitute a same-named file at the Library root.
 - Drive: with an authorized Drive connection, search for the existing AI再入場入口 (Astra・Flow Entry), read it, and follow its reference to the same FlowMemory reentry.md. Use only task-relevant references after re-entry.
 - When a target is missing, inaccessible, or ambiguous, report that exact limit. A missing public link does not establish that the private object is absent. Do not infer a Notion page or app URL.
