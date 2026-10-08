@@ -273,21 +273,9 @@
     "note": "Compiler reads only the named public canonical sources. It does not crawl deployments, browser-local state, external services, or private continuity."
   },
   "CONFLICTS": {
-    "detected": true,
+    "detected": false,
     "semantic_conflict": "unverified",
-    "items": [
-      {
-        "kind": "machine_definition_coverage_difference",
-        "note": "Coverage difference only; not treated as a semantic contradiction.",
-        "state_tool_ids_without_ai_tools_definition": [
-          "desk",
-          "first-divergence",
-          "astra-lens",
-          "conversation-drift",
-          "core18-state-observer"
-        ]
-      }
-    ],
+    "items": [],
     "resolution": null,
     "rule": "Literal differences are surfaced for review. The compiler does not resolve semantic conflicts or decide which source should replace another."
   },
