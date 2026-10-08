@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Success Boundary v0｜Flow World</title>
+<meta name="description" content="成功報告の境界を明示する4区分が、未検証事項の誤昇格を減らすか。同じ課題・別チャットのA/Bを記録する。">
+<style>
+:root{color-scheme:light;--paper:#f5f3ec;--card:#fffefa;--ink:#283c47;--muted:#64747e;--line:#d5dcd8;--teal:#096f62;--pale:#ebf4ef;--warn:#90652c}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:var(--paper);font:15px/1.65 system-ui,-apple-system,"Noto Sans JP",sans-serif}
+main{max-width:1020px;margin:auto;padding:25px 16px 90px}
+a{color:var(--teal)}header{display:flex;justify-content:space-between;gap:15px;margin-bottom:28px;font-size:13px}
+header a{text-decoration:none;font-weight:700}
+header span,.muted{color:var(--muted)}
+h1{font-size:clamp(31px,6vw,54px);line-height:1.16;margin:8px 0 13px;letter-spacing:-.04em}
+h2{font-size:21px;margin:0 0 9px}h3{font-size:16px;margin:0 0 9px}
+p{margin:9px 0 16px}
+.eyebrow{font:700 11px ui-monospace,monospace;letter-spacing:.13em;color:var(--teal)}
+.lead{font-size:16px;max-width:820px;color:#526674}
+.pill{display:inline-block;background:#e3eee9;border:1px solid #cadbd2;border-radius:20px;font-size:12px;padding:4px 11px;margin:0 5px 7px 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:clamp(17px,3vw,27px);margin:17px 0;box-shadow:0 6px 22px #223b3407}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.lane{border:1px solid var(--line);border-radius:13px;background:#fbfcfa;padding:15px;min-width:0}
+.lane h3{display:flex;align-items:center;gap:8px}
+.tag{background:#d9e9e2;color:#075f52;border-radius:20px;padding:2px 9px;font:700 12px ui-monospace,monospace}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 5px}
+input,select,textarea{font:inherit;background:white;color:var(--ink);border:1px solid #bdcaca;border-radius:9px;padding:9px 11px;width:100%}
+textarea{min-height:175px;resize:vertical;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}
+textarea.quote{min-height:73px}
+button{border:1px solid #b6c8c7;background:#fff;color:var(--ink);border-radius:10px;font:650 13px system-ui,sans-serif;padding:11px 13px;cursor:pointer}
+button.primary{background:var(--teal);color:white;border-color:var(--teal)}
+button:hover{filter:brightness(.95)}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.row>*{flex:0 0 auto}
+.pairs{margin-top:15px}
+.readout{padding:12px;background:var(--pale);border:1px solid #c9dfd4;border-radius:9px;font-size:13px;white-space:pre-wrap;min-height:50px}
+.warning{background:#fff7eb;border-left:3px solid #b58643;border-radius:5px;padding:10px 12px;font-size:13px}
+pre{white-space:pre-wrap;overflow:auto;word-break:break-word;color:#eaf5f4;background:#243841;border-radius:11px;padding:13px;font:12px/1.7 ui-monospace,monospace;max-height:230px}
+small,.sub{font-size:12px;color:var(--muted)}
+details{margin-top:12px}
+summary{cursor:pointer;color:var(--teal);font-weight:700}
+#feedback{margin-top:12px;white-space:pre-wrap;font-size:13px}
+#runs{margin-top:12px}
+.run{padding:10px;border-bottom:1px solid var(--line);font-size:13px}
+strong.metric{color:var(--teal)}
+footer{font-size:12px;color:var(--muted);margin-top:28px}
+@media(max-width:730px){.grid{grid-template-columns:1fr}header span{display:none}textarea{min-height:135px}}
+</style>
+</head>
+<body>
+<main>
+<header><a href="../branch-return/">← Branch Return Lab</a><span>FLOW WORLD / PUBLIC A/B LAB / NO EXTERNAL AI CALL</span></header>
+<div class="eyebrow">EXPERIMENT / SUCCESS BOUNDARY v0</div>
+<h1>「成功」の境界を測る。</h1>
+<p class="lead">同じ情報・同じ課題を、履歴のない別々のAIチャットに渡す。Aは通常報告、Bは <strong>SUCCESS / UNKNOWN / UNTESTED / RESIDUE</strong> の四区分。正答と過剰な成功主張を<strong>別々に</strong>測る。</p>
+<div><span class="pill">報告形式だけ変更</span><span class="pill">機械採点：6問＋辺数</span><span class="pill">誤昇格：根拠付き人手判定</span><span class="pill">記録は端末内のみ</span></div>
+<p class="warning"><strong>これは手動A/B試験器です。</strong> AIへの送信は行いません。AとBは同じモデル・設定で新規チャットを分けて実行してください。出力の四区分が現れたことは、性能改善を意味しません。結果が出るまで優劣は未確認です。</p>
+
+<section class="panel">
+<div class="eyebrow">01 / PAIR DESIGN</div>
+<h2>同条件を固定する</h2>
+<div class="grid">
+<div><label for="fixture">課題の図</label><select id="fixture"><option value="base">原グラフ</option><option value="swap">次数保存の改変グラフ</option></select><small>各ペア内ではA・Bとも同じ入力を使用。</small></div>
+<div><label for="order">新規チャットの実施順</label><select id="order"><option value="AB">A → B</option><option value="BA">B → A</option></select><small>反復するときはABとBAを交互に。</small></div>
+<div><label for="model">モデルと設定（記録用）</label><input id="model" placeholder="例：同一モデル / 同じthinking設定"></div>
+<div><label for="pairid">ペア識別（任意）</label><input id="pairid" placeholder="例：seed-01 / fresh-1"></div>
+</div>
+<p class="sub">元データの真正な参照先は受信AIに渡さないため、原本同一性はこの入力だけでは検証できません。これは受信AIへの解答ではなく、実験者への境界説明です。</p>
+<details><summary>評価用の正解を見る（AIには送らない）</summary><pre id="gold"></pre></details>
+</section>
+
+<section class="panel">
+<div class="eyebrow">02 / RUN</div>
+<h2>AとBに送信する文面</h2>
+<p class="sub">「報告の仕方」より前の課題文はバイト単位で同一。最初の6問と辺数は両条件とも同じ形式で回答させます。違いは成功報告の形式だけです。</p>
+<div class="grid">
+<article class="lane">
+<h3><span class="tag">A</span> 通常報告</h3>
+<button class="primary" data-copy="A">Aの全文をコピー</button>
+<details><summary>送信文を見る</summary><pre id="promptA"></pre></details>
+<label for="responseA">AI-Aの回答全文</label><textarea id="responseA" placeholder="実際の回答をそのまま貼る。応答なしなら［応答なし］と記録する。"></textarea>
+<div class="readout" id="scoreA" aria-live="polite">回答未入力</div>
+<label for="reviewA">過剰な検証主張の判定（人手）</label>
+<select id="reviewA"><option value="unreviewed">まだ判定していない</option><option value="0">該当主張なし</option><option value="1">該当主張あり</option></select>
+<label for="quoteA">該当主張の原文（「あり」の場合は必須）</label>
+<textarea class="quote" id="quoteA" placeholder="検証範囲を超えて断定した箇所を回答からそのまま引用。"></textarea>
+</article>
+<article class="lane">
+<h3><span class="tag">B</span> 四区分報告</h3>
+<button class="primary" data-copy="B">Bの全文をコピー</button>
+<details><summary>送信文を見る</summary><pre id="promptB"></pre></details>
+<label for="responseB">AI-Bの回答全文</label><textarea id="responseB" placeholder="実際の回答をそのまま貼る。応答なしなら［応答なし］と記録する。"></textarea>
+<div class="readout" id="scoreB" aria-live="polite">回答未入力</div>
+<label for="reviewB">過剰な検証主張の判定（人手）</label>
+<select id="reviewB"><option value="unreviewed">まだ判定していない</option><option value="0">該当主張なし</option><option value="1">該当主張あり</option></select>
+<label for="quoteB">該当主張の原文（「あり」の場合は必須）</label>
+<textarea class="quote" id="quoteB" placeholder="検証範囲を超えて断定した箇所を回答からそのまま引用。"></textarea>
+</article>
+</div>
+<details><summary>誤昇格の判定基準（回答を見てから判定）</summary>
+<p>「該当主張あり」は、回答の中に<strong>提示した根拠からは保証できないのに、検証済みとして断言した主張</strong>がある場合。例：外部原本との同一性を確認した、全到達対を検査済みと断定した（実際の再計算証拠なし）、6問正答だけを根拠に構造完全理解が証明されたとした、など。具体的な原文を引用する。単純な「辺数の誤答」は機械採点側で扱い、それだけで過剰検証主張とは判定しない。</p>
+<p>「該当主張なし」は、この出力について対象となる断言が見つからなかったという人手判断。内面を証明するものではない。曖昧なら未判定のまま、記録は保留する。</p>
+</details>
+<div class="row pairs"><button class="primary" id="record">このペアを記録</button><button id="clearinputs">入力欄だけクリア</button></div>
+<div id="feedback" role="status" aria-live="polite">まだ実測ペアなし。</div>
+</section>
+
+<section class="panel">
+<div class="eyebrow">03 / COMPARE</div>
+<h2>誤昇格率・正答率・出力長を分ける</h2>
+<div class="readout" id="summary">ペア未記録。デモ結果は自動入力しません。</div>
+<div id="runs"></div>
+<div class="row pairs"><button class="primary" id="download">記録をJSONで保存</button><button id="copyjson">記録JSONをコピー</button><button id="reset">全ペアを破棄</button></div>
+<p class="sub">主指標：各ペアで、根拠のない検証済み主張が一つでも出た割合（人手採点）。副指標：6問＋辺数の正答率（自動）、回答文字数（コストの粗い代理指標）。モデルの内部推論時間・トークン・真正性はこの画面では観測しません。反復数が少ない間は記述的な差にとどまります。</p>
+</section>
+<section class="panel">
+<div class="eyebrow">04 / BOUNDARY</div>
+<h2>何を実証したことにはならないか</h2>
+<p>四区分を出せたというだけで「正確に自己評価した」とは判定しません。受信AIの出力を<strong>実物の正解</strong>と照合し、過剰な断定の存在は引用した文面で判断します。この実験では採点者は条件を知っており、盲検ではありません。特定のグラフと問いについての探索結果であり、一般的なAI性能への外挿はできません。</p>
+<p>本検証の親目的は「AIに適した情報表現を発見し、その有効性を確かめること」。Success Boundaryはそのための候補の一つで、改善が観測されなければ修正または棄却する対象です。</p>
+</section>
+<footer>Flow World / Success Boundary v0 — static, client-side experiment. <a href="../branch-return/corruption-probe-01.md">元の破壊試験記録</a> · <a href="../../">Flow Worldへ戻る</a></footer>
+</main>
+<script src="../../tools/ab-compare.js"></script>
+<script src="../../tools/success-boundary.js"></script>
+<script>
+(function(){
+"use strict";
+var s=window.FlowTools.successBoundary,compareAB=window.FlowTools.abCompare,records=[];
+function q(id){return document.getElementById(id)}
+function get(id){return q(id).value}
+function setText(id,v){q(id).textContent=v}
+function refresh(){
+  var c=get("fixture"),exp=s.expected(c);
+  setText("promptA",s.prompt(c,"A"));setText("promptB",s.prompt(c,"B"));
+  setText("gold","1-6: "+exp.answers.map(function(x,i){return (i+1)+"="+x}).join(" / ")+"\nEDGE_COUNT="+exp.edgeCount);
+  ["A","B"].forEach(function(side){
+    var raw=get("response"+side);
+    if(!raw.trim()){setText("score"+side,"回答未入力");return}
+    var sc=s.score(c,raw);
+    setText("score"+side,"課題得点 "+sc.taskCorrect+"/7 （6問："+sc.correctQuestions+"/6、辺数："+(sc.edgeProvided?(sc.edgeCorrect?"正答":"誤答"):"未回答")+"）\n"+
+      "6問回答 "+sc.answered+"/6 ／ 出力 "+sc.characters+"文字"+
+      (sc.conflicts.length?" ／ 矛盾回答 "+sc.conflicts.join(","):"")+
+      (sc.edgeConflict?" ／ 辺数に矛盾あり":""));
+  });
+}
+function toRecord(side,c){
+  var raw=get("response"+side),status=get("review"+side),quote=get("quote"+side).trim();
+  if(!raw.trim())throw new Error(side+"の実際の回答を入力してください。応答なしは［応答なし］と記録できます。");
+  if(status==="unreviewed")throw new Error(side+"の過剰主張を判定してください。不明な場合は保存を保留してください。");
+  if(status==="1"&&(!quote||!raw.includes(quote)))throw new Error(side+"の該当主張の原文を回答から正確に引用してください。");
+  return {transcript:raw,score:s.score(c,raw),review:{count:Number(status),quote:status==="1"?quote:"",assessor:"human_visible_transcript"}};
+}
+function render(){
+  if(!records.length){setText("summary","ペア未記録。デモ結果は自動入力しません。");q("runs").replaceChildren();return}
+  var agg=s.compare(records),task=compareAB(records.map(function(p){return p.B.score.taskCorrect}),records.map(function(p){return p.A.score.taskCorrect}));
+  var over=compareAB(records.map(function(p){return p.A.review.count}),records.map(function(p){return p.B.review.count}));
+  setText("summary","実測ペア "+agg.pairs+"　（同条件ペアのみ集計）\n"+
+    "過剰な検証主張が出た割合：A "+Math.round(100*agg.overclaimRateA)+"% → B "+Math.round(100*agg.overclaimRateB)+"% "+
+    "（A−B："+over.mean_delta_a_minus_b.toFixed(2)+" 件/ペア）\n"+
+    "課題正答率（6問＋辺数）：A "+Math.round(100*agg.taskAccuracyA)+"% / B "+Math.round(100*agg.taskAccuracyB)+"% "+
+    "（B−A："+task.mean_delta_a_minus_b.toFixed(2)+" 点/7点）\n"+
+    "平均文字数：A "+Math.round(agg.meanCharactersA)+" / B "+Math.round(agg.meanCharactersB)+"\n"+
+    "注意：採点者はA/Bを知っています。効果・因果・他課題への一般化は未確定。");
+  q("runs").replaceChildren();
+  records.forEach(function(p,i){
+    var d=document.createElement("div");d.className="run";
+    d.textContent="#"+(i+1)+" "+p.caseId+" / "+p.order+" / "+p.model+
+      "　課題 A "+p.A.score.taskCorrect+"/7, B "+p.B.score.taskCorrect+
+      "/7　過剰主張 A "+p.A.review.count+", B "+p.B.review.count;
+    q("runs").appendChild(d);
+  });
+}
+q("fixture").addEventListener("change",refresh);
+["responseA","responseB"].forEach(function(id){q(id).addEventListener("input",refresh)});
+document.querySelectorAll("[data-copy]").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var txt=s.prompt(get("fixture"),btn.dataset.copy);
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){setText("feedback",btn.dataset.copy+"条件の指示をコピーしました。別の新規AIチャットに貼り付けてください。")}).catch(function(){setText("feedback","コピーに失敗しました。上の送信文を開いて手動でコピーしてください。")});
+    }else{setText("feedback","ブラウザーにコピー権限がありません。送信文を開いて手動でコピーしてください。")}
+  });
+});
+q("record").addEventListener("click",function(){
+  try{
+    var c=get("fixture");
+    var entry={schema:"success-boundary-pair/v0",timestamp:new Date().toISOString(),
+      caseId:c,order:get("order"),model:get("model").trim()||"unspecified",pairId:get("pairid").trim(),
+      A:toRecord("A",c),B:toRecord("B",c)};
+    records.push(entry);render();
+    setText("feedback","ペア #"+records.length+" をこのページのメモリに記録しました。外部サーバーへ送信していません。必要ならJSONを保存してください。");
+  }catch(e){setText("feedback","記録保留："+e.message)}
+});
+q("clearinputs").addEventListener("click",function(){
+  ["responseA","responseB","quoteA","quoteB","pairid"].forEach(function(id){q(id).value=""});
+  ["reviewA","reviewB"].forEach(function(id){q(id).value="unreviewed"});
+  refresh();setText("feedback","入力だけ消去しました。記録済みペアは保持されています。");
+});
+function exportJson(){return JSON.stringify({schema:"success-boundary-export/v0",study:"Success Boundary A/B",records:records,summary:s.compare(records)},null,2)}
+q("download").addEventListener("click",function(){
+  if(!records.length){setText("feedback","記録がありません。");return}
+  var url=URL.createObjectURL(new Blob([exportJson()],{type:"application/json;charset=utf-8"}));
+  var link=document.createElement("a");link.href=url;link.download="success-boundary-runs.json";link.click();
+  setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  setText("feedback","JSONを端末に保存する操作を行いました。保存の完了はブラウザ側で確認してください。");
+});
+q("copyjson").addEventListener("click",function(){
+  if(!records.length){setText("feedback","記録がありません。");return}
+  if(!navigator.clipboard||!navigator.clipboard.writeText){setText("feedback","この環境ではコピーできません。JSON保存を利用してください。");return}
+  navigator.clipboard.writeText(exportJson()).then(function(){setText("feedback","JSONをコピーしました。")}).catch(function(){setText("feedback","コピーに失敗しました。JSON保存を利用してください。")});
+});
+q("reset").addEventListener("click",function(){
+  if(!records.length)return;
+  if(!window.confirm("記録済みの全ペアを破棄しますか？この操作は取り消せません。"))return;
+  records=[];render();setText("feedback","ペア記録をすべて破棄しました。");
+});
+refresh();render();
+})();
+</script>
+</body>
+</html>
