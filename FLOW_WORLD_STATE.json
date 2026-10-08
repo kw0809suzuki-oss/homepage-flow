@@ -1,0 +1,165 @@
+{
+  "schema": "flow-world-state/v0.2",
+  "IDENTITY": {
+    "artifact": "FLOW_WORLD_STATE",
+    "world": "Flow World",
+    "authority": false,
+    "role": "Derived public first view.",
+    "private_continuity_assumed": false
+  },
+  "START_HERE": [
+    "Current request sets the goal.",
+    "This file is the first public view, not authority.",
+    "Use only the surface relevant to the task.",
+    "Descend only when detail or verification is needed.",
+    "Do not assume private continuity exists."
+  ],
+  "POSITION": {
+    "source": "ai-state.json",
+    "updated_at": "2026-10-07",
+    "status": "Exploration and reporting boundary clarified",
+    "summary": "Flow World supports AI exploration, execution, and reporting without mandatory instrument use or human interaction at every missing observation.",
+    "working_coordinate": "Use methods suited to the current request. Reports distinguish observed facts, AI execution, hypotheses, and unperformed steps; missing human-specific evidence remains unknown without blocking other work."
+  },
+  "BOUNDARY": {
+    "sources": [
+      "ai-state.json",
+      "ai-entry.txt"
+    ],
+    "items": [
+      {
+        "key": "evidence",
+        "statement": "Generated ideas are not evidence."
+      },
+      {
+        "key": "unknown",
+        "statement": "Unknowns remain unknown until evidence changes them."
+      },
+      {
+        "key": "parent_purpose",
+        "statement": "A local improvement is not completion of Flow World."
+      },
+      {
+        "key": "private_continuity",
+        "statement": "Flow World must not assume that FlowMemory or any other private continuity store exists for every visitor; private continuity is an optional adapter, not part of the public-core requirement."
+      }
+    ]
+  },
+  "SURFACES": [
+    {
+      "id": "desk",
+      "type": "principle_surface",
+      "location": "#desk",
+      "machine_definition": false
+    },
+    {
+      "id": "ab-comparator",
+      "type": "local_utility",
+      "location": "#workbench",
+      "machine_definition": true
+    },
+    {
+      "id": "first-divergence",
+      "type": "local_utility",
+      "location": "#workbench",
+      "machine_definition": false
+    },
+    {
+      "id": "astra-lens",
+      "type": "local_utility",
+      "location": "#workbench",
+      "machine_definition": false
+    },
+    {
+      "id": "conversation-drift",
+      "type": "local_observer",
+      "location": "#drift",
+      "machine_definition": false
+    },
+    {
+      "id": "core18-state-observer",
+      "type": "state_observer",
+      "location": "#core18",
+      "machine_definition": false
+    },
+    {
+      "id": "static-handoff-play",
+      "type": "url_fragment_renderer",
+      "location": "play/",
+      "machine_definition": true
+    },
+    {
+      "id": "internal-switch-lab",
+      "type": "observation_surface",
+      "location": "#switch-lab",
+      "machine_definition": true
+    }
+  ],
+  "VISIBILITY": {
+    "sources_read": [
+      "ai-entry.txt",
+      "ai-state.json",
+      "ai-tools.json",
+      "reference/flow-memory-relationship.txt",
+      "schemas/reentry.schema.json"
+    ],
+    "source_versions": {
+      "ai_state": "2026-10-07",
+      "ai_tools": "2026-10-07"
+    },
+    "source_versions_aligned": true,
+    "complete_asset_inventory": false,
+    "browser_state_read": false,
+    "deployment_verified": false,
+    "private_sources_read": false,
+    "coverage_gaps": {
+      "surface_ids_without_machine_definition": [
+        "desk",
+        "first-divergence",
+        "astra-lens",
+        "conversation-drift",
+        "core18-state-observer"
+      ],
+      "missing_boundary_keys": []
+    }
+  },
+  "DESCENT": {
+    "routing_policy": "ai-entry.txt",
+    "public_state_detail": "ai-state.json",
+    "tool_contract": "ai-tools.json",
+    "public_private_boundary": "reference/flow-memory-relationship.txt",
+    "reentry_packet_schema": "schemas/reentry.schema.json"
+  },
+  "SOURCES": [
+    {
+      "path": "ai-entry.txt",
+      "status": "read",
+      "git_blob_sha": "d77d747637f523494df209995fb0238d3aa7cd54",
+      "source_version": null
+    },
+    {
+      "path": "ai-state.json",
+      "status": "read",
+      "git_blob_sha": "aff30ee8e560978403d519306608e5c611b2fd55",
+      "source_version": "2026-10-07"
+    },
+    {
+      "path": "ai-tools.json",
+      "status": "read",
+      "git_blob_sha": "6e41224936c65e211def71f47ab722fcd7b2db6a",
+      "source_version": "2026-10-07"
+    },
+    {
+      "path": "reference/flow-memory-relationship.txt",
+      "status": "read",
+      "git_blob_sha": "e64fc90b08aad27d58149818e26b607f676d75cd",
+      "source_version": null
+    },
+    {
+      "path": "schemas/reentry.schema.json",
+      "status": "read",
+      "git_blob_sha": "6a9f9cb0a49992d7fc632985f2837edee7cd597f",
+      "source_version": "https://kw0809suzuki-oss.github.io/homepage-flow/schemas/reentry.schema.json"
+    }
+  ]
+}
