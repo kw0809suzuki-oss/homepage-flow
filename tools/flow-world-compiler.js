@@ -14,10 +14,12 @@ const SOURCE_PATHS = {
 };
 
 const ENTRY_HEADINGS = [
+  'NORMAL ENTRY',
   'PURPOSE',
   'BASELINE COMPATIBILITY',
-  'START HERE',
+  'DETAIL SOURCES',
   'EXPLORATION AND REPORTING',
+  'ROUTE',
   'PARENT PURPOSE BOUNDARY',
   'RELATIONSHIP BOUNDARY',
   'RE-ENTRY ROUTES',
@@ -25,6 +27,14 @@ const ENTRY_HEADINGS = [
   'PORTABLE SHAPES',
   'TOOL RULE',
   'BOUNDARY'
+];
+
+const START_HERE = [
+  'Current request sets the goal.',
+  'This file is the first public view, not authority.',
+  'Use only the surface relevant to the task.',
+  'Descend only when detail or verification is needed.',
+  'Do not assume private continuity exists.'
 ];
 
 function readText(root, rel) {
@@ -73,17 +83,16 @@ function bullets(text) {
     .map(line => line.slice(2));
 }
 
-function firstBulletContaining(items, needle) {
-  return items.find(item => item.includes(needle)) || null;
+function firstMatching(items, patterns) {
+  return items.find(item => patterns.some(pattern => pattern.test(item))) || null;
 }
 
-function compactToolDefinition(tool) {
+function compactSurface(tool, machineToolIds) {
   return {
     id: tool.id,
-    version: tool.version ?? null,
-    status: tool.status ?? null,
-    implementation: tool.implementation ?? null,
-    human_ui: tool.human_ui ?? null
+    type: tool.type ?? null,
+    location: tool.location ?? null,
+    machine_definition: machineToolIds.has(tool.id)
   };
 }
 
@@ -98,31 +107,42 @@ function compileFlowWorldState(rootDir) {
 
   const state = stateDoc.value;
   const tools = toolsDoc.value;
-
-  const exploration = bullets(section(entryText, 'EXPLORATION AND REPORTING'));
+  const stateBoundaries = state.boundaries || [];
+  const parentBoundaries = bullets(section(entryText, 'PARENT PURPOSE BOUNDARY'));
   const reentryRoutes = bullets(section(entryText, 'RE-ENTRY ROUTES'));
-  const authorizedConnections = bullets(section(entryText, 'AUTHORIZED CONNECTIONS / 実物への辿り方'));
-  const parentBoundary = bullets(section(entryText, 'PARENT PURPOSE BOUNDARY'));
-  const relationshipBoundary = bullets(section(entryText, 'RELATIONSHIP BOUNDARY'));
-  const finalBoundary = section(entryText, 'BOUNDARY').trim();
 
-  const stateToolIds = (state.available_tools || []).map(tool => tool.id);
-  const machineToolIds = (tools.tools || []).map(tool => tool.id);
-  const machineToolSet = new Set(machineToolIds);
-  const stateOnlyToolIds = stateToolIds.filter(id => !machineToolSet.has(id));
+  const machineToolIds = new Set((tools.tools || []).map(tool => tool.id));
+  const surfaces = (state.available_tools || []).map(tool => compactSurface(tool, machineToolIds));
+  const surfaceIdsWithoutMachineDefinition = surfaces
+    .filter(surface => !surface.machine_definition)
+    .map(surface => surface.id);
 
-  const conflicts = [];
-  if (state.updated_at !== tools.updated_at) {
-    conflicts.push({
-      kind: 'literal_updated_at_difference',
-      sources: [SOURCE_PATHS.state, SOURCE_PATHS.tools],
-      values: {
-        [SOURCE_PATHS.state]: state.updated_at ?? null,
-        [SOURCE_PATHS.tools]: tools.updated_at ?? null
-      }
-    });
-  }
+  const boundaryItems = [
+    {
+      key: 'evidence',
+      statement: firstMatching(stateBoundaries, [/Generated ideas are not evidence/i])
+    },
+    {
+      key: 'unknown',
+      statement: firstMatching(stateBoundaries, [/Unknowns remain unknown/i])
+    },
+    {
+      key: 'parent_purpose',
+      statement:
+        firstMatching(stateBoundaries, [/A local improvement is not completion/i]) ||
+        firstMatching(parentBoundaries, [/may update the route without becoming the parent purpose/i])
+    },
+    {
+      key: 'private_continuity',
+      statement:
+        firstMatching(stateBoundaries, [/must not assume.*private continuity/i]) ||
+        firstMatching(reentryRoutes, [/Never assume a particular private store exists/i])
+    }
+  ];
 
+  const missingBoundaryKeys = boundaryItems
+    .filter(item => !item.statement)
+    .map(item => item.key);
 
   const sources = [
     [SOURCE_PATHS.entry, entryText, null],
@@ -138,105 +158,50 @@ function compileFlowWorldState(rootDir) {
   }));
 
   return {
-    schema: 'flow-world-state/v0.1',
+    schema: 'flow-world-state/v0.2',
     IDENTITY: {
       artifact: 'FLOW_WORLD_STATE',
       world: state.world || 'Flow World',
       authority: false,
-      role: 'Derived public initial view for AI re-entry. Canonical sources remain authoritative for their own content.',
-      private_continuity: {
-        assumed: false,
-        status: 'optional'
-      }
+      role: 'Derived public first view.',
+      private_continuity_assumed: false
     },
-    PURPOSE: {
-      public_purpose: state.purpose ?? null,
-      current_request_sets_goal: true,
-      current_request_rule: firstBulletContaining(exploration, 'current request sets the goal') ||
-        firstBulletContaining(exploration, 'current request') ||
-        null
-    },
+    START_HERE,
     POSITION: {
       source: SOURCE_PATHS.state,
       updated_at: state.updated_at ?? null,
-      current_position: state.current_position ?? null,
-      confirmed: state.confirmed ?? [],
-      unknowns: state.unknowns ?? []
-    },
-    ROUTES: {
-      public_route: firstBulletContaining(reentryRoutes, 'Public route') || null,
-      personal_route: firstBulletContaining(reentryRoutes, 'Personal route') || null,
-      authorized_connections: authorizedConnections
-    },
-    TOOLS: {
-      source: SOURCE_PATHS.tools,
-      available_surface_tools: state.available_tools ?? [],
-      machine_definitions: (tools.tools || []).map(compactToolDefinition),
-      shapes: tools.shapes ?? [],
-      compatibility_policy: tools.compatibility_policy ?? null
+      status: state.current_position?.status ?? null,
+      summary: state.current_position?.summary ?? null,
+      working_coordinate: state.current_position?.working_coordinate ?? null
     },
     BOUNDARY: {
-      source_state_boundaries: state.boundaries ?? [],
-      parent_purpose: parentBoundary,
-      relationship: relationshipBoundary,
-      final_entry_boundary: finalBoundary || null
+      sources: [SOURCE_PATHS.state, SOURCE_PATHS.entry],
+      items: boundaryItems
     },
-    PRIVATE_CONTINUITY: {
-      assumed: false,
-      optional: true,
-      public_core_requires_private_store: false,
-      relationship_reference: SOURCE_PATHS.relationship,
-      personal_route: firstBulletContaining(reentryRoutes, 'Personal route') || null
-    },
+    SURFACES: surfaces,
     VISIBILITY: {
-      scope: sources.map(source => source.path),
+      sources_read: sources.map(source => source.path),
+      source_versions: {
+        ai_state: state.updated_at ?? null,
+        ai_tools: tools.updated_at ?? null
+      },
+      source_versions_aligned: state.updated_at === tools.updated_at,
       complete_asset_inventory: false,
+      browser_state_read: false,
+      deployment_verified: false,
       private_sources_read: false,
-      deployment_state_verified: false,
-      verification_required: true,
-      machine_definition_coverage: {
-        state_tool_ids: stateToolIds,
-        ai_tools_defined_ids: machineToolIds,
-        state_tool_ids_without_ai_tools_definition: stateOnlyToolIds
-      },
-      note: 'Compiler reads only the named public canonical sources. It does not crawl deployments, browser-local state, external services, or private continuity.'
-    },
-    CONFLICTS: {
-      detected: conflicts.length > 0,
-      semantic_conflict: 'unverified',
-      items: conflicts,
-      resolution: null,
-      rule: 'Literal differences are surfaced for review. The compiler does not resolve semantic conflicts or decide which source should replace another.'
-    },
-    DESCENT_HINTS: [
-      {
-        when: 'Full AI entry or route policy is needed',
-        read: SOURCE_PATHS.entry
-      },
-      {
-        when: 'Public current-position detail or freshness is in question',
-        read: SOURCE_PATHS.state
-      },
-      {
-        when: 'A tool operation, precondition, output contract, or compatibility detail is needed',
-        read: SOURCE_PATHS.tools
-      },
-      {
-        when: 'The boundary between public Flow World and optional private continuity is in question',
-        read: SOURCE_PATHS.relationship
-      },
-      {
-        when: 'A portable re-entry packet must be validated or constructed',
-        read: SOURCE_PATHS.reentry_schema
+      coverage_gaps: {
+        surface_ids_without_machine_definition: surfaceIdsWithoutMachineDefinition,
+        missing_boundary_keys: missingBoundaryKeys
       }
-    ],
-    PROJECTION_RULES: [
-      'FLOW_WORLD_STATE is derived and is not authority, permission, or proof of freshness.',
-      'The current request sets the goal; projected routes and tools remain options.',
-      'Do not infer missing browser state, private continuity, deployment state, or user intent.',
-      'Do not resolve source differences inside the compiler.',
-      'Descend only to the canonical source needed by the current request.'
-    ],
+    },
+    DESCENT: {
+      routing_policy: SOURCE_PATHS.entry,
+      public_state_detail: SOURCE_PATHS.state,
+      tool_contract: SOURCE_PATHS.tools,
+      public_private_boundary: SOURCE_PATHS.relationship,
+      reentry_packet_schema: SOURCE_PATHS.reentry_schema
+    },
     SOURCES: sources
   };
 }
@@ -257,6 +222,7 @@ if (require.main === module) {
 
 module.exports = {
   SOURCE_PATHS,
+  START_HERE,
   compileFlowWorldState,
   writeCompiledState,
   gitBlobSha,
