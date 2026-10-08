@@ -681,3 +681,87 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
   .core18-metrics-grid{grid-template-columns:1fr 1fr}
   .core18-boundary{text-align:left}
 }
+
+
+/* Flow World Human Entry Polish v0 */
+.how-to-enter{
+  position:relative;
+  padding:64px 7vw 72px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.46);
+}
+.how-to-enter-head{
+  display:grid;
+  grid-template-columns:.7fr 1.3fr;
+  column-gap:8vw;
+  row-gap:14px;
+  align-items:start;
+}
+.how-to-enter-head .eyebrow{
+  grid-column:1;
+  margin:6px 0 0;
+}
+.how-to-enter h2{
+  grid-column:2;
+  margin:0;
+  font:500 clamp(30px,4vw,52px)/1.15 Georgia,"Noto Serif JP",serif;
+  letter-spacing:-.035em;
+}
+.how-to-enter-note{
+  grid-column:2;
+  max-width:720px;
+  margin:0;
+  color:#536577;
+  line-height:1.9;
+}
+.how-to-enter-steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  margin-top:42px;
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.how-to-enter-steps article{
+  min-height:176px;
+  padding:22px 24px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+}
+.how-to-enter-steps span{
+  font:10px monospace;
+  letter-spacing:.13em;
+  color:#718096;
+}
+.how-to-enter-steps b{
+  margin-top:auto;
+  font:500 25px/1.35 Georgia,"Noto Serif JP",serif;
+}
+.how-to-enter-steps p{
+  margin:8px 0 0;
+  color:#617284;
+  font-size:14px;
+  line-height:1.75;
+}
+.how-to-enter-agent{
+  margin:18px 0 0;
+  text-align:right;
+  color:#718096;
+  font:10px monospace;
+  letter-spacing:.08em;
+}
+.how-to-enter-agent a{
+  border-bottom:1px solid rgba(49,93,156,.4);
+}
+@media(max-width:820px){
+  .how-to-enter{padding:54px 24px 62px}
+  .how-to-enter-head{grid-template-columns:1fr;gap:14px}
+  .how-to-enter-head .eyebrow,
+  .how-to-enter h2,
+  .how-to-enter-note{grid-column:1}
+  .how-to-enter-steps{grid-template-columns:1fr;margin-top:32px}
+  .how-to-enter-steps article{min-height:132px}
+  .how-to-enter-agent{text-align:left}
+}
