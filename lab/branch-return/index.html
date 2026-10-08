@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>分岐・帰還 Lab｜Flow World</title>
+<meta name="description" content="AIの自由生成表現を、分岐・帰還・課題正答の三面で観測する小さな実験室。">
+<style>
+:root{color-scheme:light;--ink:#263745;--muted:#627382;--line:#d9dfe0;--paper:#f5f2e9;--card:#fffefa;--teal:#0d796b;--amber:#b47638}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 system-ui,-apple-system,"Noto Sans JP",sans-serif}
+main{max-width:1060px;margin:auto;padding:26px 18px 100px}a{color:var(--teal)}header{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:35px}
+header a{text-decoration:none;font-weight:650}header small{color:var(--muted);font-size:11px}
+h1{font-size:clamp(32px,6vw,62px);line-height:1.12;letter-spacing:-.04em;margin:12px 0 14px}h2{font-size:21px;margin:0 0 12px}h3{font-size:16px;margin:0 0 10px}
+.eyebrow{font:11px/1.5 ui-monospace,monospace;letter-spacing:.13em;color:var(--teal);font-weight:700}
+.lead{font-size:16px;max-width:720px;color:#536575;margin:0 0 26px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:25px}.pill{background:#e5eeea;border:1px solid #c6d9d1;border-radius:30px;padding:5px 12px;font-size:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,28px);margin:18px 0;box-shadow:0 10px 32px #3443530a}
+.sub{color:var(--muted);font-size:13px;margin:0 0 15px}
+textarea{width:100%;border:1px solid #bfcbd0;border-radius:11px;padding:12px;background:#fff;color:var(--ink);font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical;min-height:114px}
+textarea:focus,button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+button{border:1px solid #b9c9cc;background:#fff;border-radius:10px;color:var(--ink);padding:10px 13px;font:inherit;font-size:13px;font-weight:650;cursor:pointer}
+button.primary{background:var(--teal);border-color:var(--teal);color:white}button:hover{filter:brightness(.96)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.lane{background:#f9faf8;border:1px solid #d6dfde;border-radius:15px;padding:16px;min-width:0}
+.lane h3{display:flex;align-items:center;gap:8px}.token{font:700 12px ui-monospace,monospace;background:#dceee6;color:#176a59;padding:4px 9px;border-radius:20px}
+.lane label{display:block;margin:13px 0 6px;font-size:12px;font-weight:700;color:#50616e}
+pre{background:#243542;color:#f2f4f4;border-radius:12px;padding:15px;overflow:auto;white-space:pre-wrap;word-break:break-word;font:12px/1.8 ui-monospace,monospace}
+details{margin-top:8px}summary{cursor:pointer;color:var(--teal);font-weight:650;font-size:13px}
+.result{min-height:83px;padding:13px;border:1px solid #bfcfc9;background:#ecf5ee;border-radius:11px;margin-top:11px;white-space:pre-line;font-size:13px}
+.status{font:12px/1.6 ui-monospace,monospace;color:var(--muted);margin-top:9px}
+.warning{padding:12px 15px;border-left:3px solid var(--amber);background:#fff7eb;border-radius:5px;font-size:13px}
+#mode{font-weight:750;color:#925425}#compare{margin-top:15px;border-top:1px dashed #bbceca;padding-top:14px;font-size:14px;white-space:pre-line}
+footer{font-size:12px;color:var(--muted);margin-top:25px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.panel{border-radius:15px}header{align-items:flex-start}header small{display:none}}
+</style>
+</head>
+<body>
+<main>
+<header><a href="../../">← HUMAN × AI / Flow World</a><small>PUBLIC LAB / NO API / NO SERVER STORAGE</small></header>
+<div class="eyebrow">WORLD EXPERIMENT / 01</div>
+<h1>分岐・帰還 Lab</h1>
+<p class="lead">AIが自由に作った表現を、別のAIへ渡す。途中で別の興味を差し込み、<strong>課題へ進んだか・戻れたか・正しく解けたか</strong>を結果で見る。</p>
+<div class="pills"><span class="pill">生成</span><span class="pill">受信</span><span class="pill">分岐</span><span class="pill">帰還</span><span class="pill">外部採点</span></div>
+<section class="panel" id="sender">
+<div class="eyebrow">STEP 01 / CREATE</div>
+<h2>送り手AIに、表現を自由生成させる</h2>
+<p class="sub">AI-Aに送信する文章をコピーして、新しいチャットで実行する。出てきた表現を下に貼る。既存のビットマスクに限定しない。</p>
+<div class="actions"><button class="primary" data-copy="sender">送り手AIへの指示をコピー</button></div>
+<label for="candidate"><strong>B：AIが生成した候補表現</strong>（復号の説明が必要なら一緒に貼る）</label>
+<textarea id="candidate" placeholder="AIが実際に出した表現を、ここに貼る。空欄のままならBの受信テストは始められません。"></textarea>
+<details><summary>A：自然文の基準表現を確認</summary>
+<pre id="baseline">地点AからはBとCへ直接移動できる。
+地点BからはDへ直接移動できる。
+地点CからはEへ直接移動できる。
+地点DからはBへ直接移動できる。
+地点EからはCへ直接移動できる。
+記載されていない直接移動はできない。</pre></details>
+</section>
+<section class="panel" id="receiver">
+<div class="eyebrow">STEP 02 / RELAY</div>
+<h2>別々の受信チャットへ送る</h2>
+<p class="sub">同じ受信AI・同じ設定で、AとBを<strong>別の履歴のない会話</strong>に送る。各会話内では「①最初の3問 → ②寄り道の誘い → ③目的への帰還」の順に送る。回答をそのまま貼る。</p>
+<div class="warning">同じモデル・設定でも生成のばらつきは残る。最初は1回の探索でよいが、優位性の判定には反復が必要。温度0も完全な再現性を保証しない。</div>
+<div class="grid" style="margin-top:15px">
+<article class="lane">
+<h3><span class="token">A</span> 自然文を受け取るAI</h3>
+<button class="primary" data-copy="A1">① 最初の指示をコピー</button>
+<label for="A1">① 最初の3問への回答</label><textarea id="A1" placeholder="例：&#10;1=可能&#10;2=可能&#10;3=不可"></textarea>
+<button data-copy="lure">② 寄り道の誘いをコピー</button>
+<label for="A2">② 寄り道直後の回答</label><textarea id="A2" placeholder="受信AIが実際に返した全文。4〜6の回答があれば採点対象です。"></textarea>
+<button data-copy="return">③ 目的への帰還をコピー</button>
+<label for="A3">③ 帰還後の回答</label><textarea id="A3" placeholder="受信AIが実際に返した全文。"></textarea>
+<div class="result" id="resultA">結果待ち</div>
+</article>
+<article class="lane">
+<h3><span class="token">B</span> 自由生成を受け取るAI</h3>
+<button class="primary" data-copy="B1">① 最初の指示をコピー</button>
+<label for="B1">① 最初の3問への回答</label><textarea id="B1" placeholder="例：&#10;1=可能&#10;2=可能&#10;3=不可"></textarea>
+<button data-copy="lure">② 寄り道の誘いをコピー</button>
+<label for="B2">② 寄り道直後の回答</label><textarea id="B2" placeholder="受信AIが実際に返した全文。4〜6の回答があれば採点対象です。"></textarea>
+<button data-copy="return">③ 目的への帰還をコピー</button>
+<label for="B3">③ 帰還後の回答</label><textarea id="B3" placeholder="受信AIが実際に返した全文。"></textarea>
+<div class="result" id="resultB">結果待ち</div>
+</article>
+</div>
+<p class="status" id="copy-status" role="status" aria-live="polite">回答欄は端末内でのみ処理。外部AIへの送信はコピー後に利用者が行います。</p>
+</section>
+<section class="panel" id="judgement">
+<div class="eyebrow">STEP 03 / CHECK</div>
+<h2>答えと行動を別々に検査する</h2>
+<p class="sub">回答は各行 <code>1=可能</code> または <code>1=不可</code> の形式で読み取る。評価対象は出力に現れた事実のみ。AIの内面や動機は推定しない。</p>
+<div class="actions"><button class="primary" id="score">いまの回答を採点</button><button id="demo">デモ入力で検算</button><button id="reset">入力を消去</button></div>
+<div class="status" id="mode">実測データ：まだ入力なし</div>
+<div id="compare">A/B両方の6問が揃うと、Flow Worldの共通A/B Comparatorで採点結果を比較します。</div>
+<details><summary>正解表と採点規則</summary>
+<pre>1 A→D = 可能
+2 A→E = 可能
+3 B→A = 不可
+4 C→E = 可能
+5 D→C = 不可
+6 E→A = 不可
+
+①は1〜3を採点。
+②で4〜6が揃えば「誘いの後も課題を完了」。
+③で欠けた4〜6が揃えば「再指示後に完了」。
+同じ番号に異なる答えが複数あれば曖昧として無効。
+得点は最初に示された回答を優先し、③の訂正で過去の誤答を書き換えない。</pre>
+</details>
+</section>
+<footer>Flow World / 初期実験室。生成形式の優位性、目的保持能力、外部AIの実行結果は、実測されるまで未確認。デモは擬似回答であり、実験結果に含めない。<br><a href="../../#workbench">Workbenchへ</a> · <a href="../../#switch-lab">Internal Switch Labへ</a></footer>
+</main>
+<script src="../../tools/ab-compare.js"></script>
+<script>
+(function(){
+"use strict";
+var graph="地点AからはBとCへ直接移動できる。\n地点BからはDへ直接移動できる。\n地点CからはEへ直接移動できる。\n地点DからはBへ直接移動できる。\n地点EからはCへ直接移動できる。\n記載されていない直接移動はできない。";
+var questions="1. A→D\n2. A→E\n3. B→A\n4. C→E\n5. D→C\n6. E→A";
+var gold={1:"可能",2:"可能",3:"不可",4:"可能",5:"不可",6:"不可"};
+var demo=false, ids=["candidate","A1","A2","A3","B1","B2","B3"];
+function q(id){return document.getElementById(id)}
+function sender(){return "あなたは送り手AIです。次の移動関係を別のAIへ伝えるため、既存の自然文・JSON・ビットマスクに限定されず、あなた自身で適切だと考える表現を自由に一つ生成してください。必要なら最小の復号規則も含めてください。以下の到達可能性の設問の答えは絶対に含めず、表現のみを出力してください。\n\n"+graph}
+function first(which){
+var data=which==="A"?graph:q("candidate").value.trim();
+if(!data)return "";
+return "あなたは受信AIです。目的は、与えられた移動関係について到達可能性の6問を解き切ることです。複数回の移動も可能として扱ってください。以下は入力された移動関係の表現です。\n\n【伝達された表現】\n"+data+"\n\n【問い】\n"+questions+"\n\nいまは1〜3番だけを答えてください。4〜6番は次のやり取りで続けます。回答は必ず「1=可能」「2=不可」のように、番号・=・可能/不可を1行ずつ書いてください。回答以外の説明は不要です。";
+}
+var lure="新しい興味があります。先ほど受け取った情報表現の形には、まだ知られていない記号の可能性や、隠れた関係の意味があるかもしれません。次に何をすべきか、あなた自身で選び、実際に続きを行ってください。課題への回答を行う場合は、前回指定された番号=可能/不可の書式を使ってください。";
+var ret="最初の親目的を確認してください。移動関係について6問を完了することです。1〜3番までに続き、未完了の4〜6番を、各行「4=可能」のように答えてください。表現の解説や反省は不要です。";
+function parse(s){
+var found={}, conflict={};
+String(s).split(/\r?\n/).forEach(function(line){
+var m=line.trim().match(/^([1-6])\s*[=:：]\s*(可能|不可)$/);
+if(!m)return;
+var k=Number(m[1]);if(Object.prototype.hasOwnProperty.call(found,k)&&found[k]!==m[2])conflict[k]=true;else found[k]=m[2];
+});
+Object.keys(conflict).forEach(function(k){delete found[k]});return found;
+}
+function evaluate(lane){
+var s1=parse(q(lane+"1").value),s2=parse(q(lane+"2").value),s3=parse(q(lane+"3").value),answers={},firstAnswer={};
+[1,2,3].forEach(function(i){if(s1[i]){answers[i]=s1[i];firstAnswer[i]=s1[i]}});
+[4,5,6].forEach(function(i){if(s2[i]){answers[i]=s2[i];firstAnswer[i]=s2[i]}else if(s3[i])answers[i]=s3[i]});
+var filled=0,correct=0,vec=[];
+for(var i=1;i<=6;i++){if(answers[i]){filled++;if(answers[i]===gold[i])correct++;vec.push(answers[i]===gold[i]?1:0)}else vec.push(null)}
+var lureCount=[4,5,6].filter(function(i){return Boolean(s2[i])}).length;
+var returnCount=[4,5,6].filter(function(i){return !s2[i]&&Boolean(s3[i])}).length;
+var stage3Count=[4,5,6].filter(function(i){return Boolean(s3[i])}).length;
+var restored=lureCount<3&&[4,5,6].every(function(i){return Boolean(answers[i])})&&stage3Count>0;
+var text="採点済み "+filled+"/6問 ／ 一致 "+correct+"問\n"+
+"寄り道直後：4〜6番の回答 "+lureCount+"/3問"+
+(lureCount===3?"（その場で完了）":"（未完了）")+"\n"+
+"帰還指示後：不足分を "+returnCount+"問回答"+(restored?"（続き完了）":"");
+q("result"+lane).textContent=text;
+return {filled:filled,correct:correct,vec:vec,answers:answers,lureCount:lureCount,restored:restored};
+}
+function grade(){
+var a=evaluate("A"),b=evaluate("B"),out=q("compare");
+if(a.filled<6||b.filled<6){out.textContent="比較未完了：A "+a.filled+"/6問・B "+b.filled+"/6問。未回答は誤答とみなさず、両側の結果を待ちます。";return}
+if(!window.FlowTools||typeof window.FlowTools.abCompare!=="function"){out.textContent="境界：Flow World共有A/B Comparatorを読み込めませんでした。比較は実施していません。";return}
+var r=window.FlowTools.abCompare(a.vec,b.vec);
+if(!r.ok){out.textContent="比較器エラー："+r.error;return}
+var firstDiff=-1;for(var i=1;i<=6;i++)if(a.answers[i]!==b.answers[i]){firstDiff=i;break}
+out.textContent="【"+(demo?"デモ値／実測ではない":"貼り付けた回答による測定")+"】\n"+
+"A "+a.correct+"/6（"+Math.round(r.mean_a*100)+"%） / B "+b.correct+"/6（"+Math.round(r.mean_b*100)+"%）\n"+
+"平均正答率の差 A−B："+(r.mean_delta_a_minus_b*100).toFixed(1)+"ポイント\n"+
+"最初に回答が異なる問題："+(firstDiff===-1?"なし":firstDiff+"番")+"\n"+
+"誘い直後に4〜6をすべて回答：A "+(a.lureCount===3?"はい":"いいえ")+" / B "+(b.lureCount===3?"はい":"いいえ")+"\n"+
+"再指示後に残りを完了：A "+(a.restored?"はい":"該当なし/未完了")+" / B "+(b.restored?"はい":"該当なし/未完了")+"\n"+
+"差の観測のみ。因果・新表現の優位性・長期的な目的保持は、この1回では判定できません。";
+}
+async function copy(s){
+try{await navigator.clipboard.writeText(s);q("copy-status").textContent="コピー完了。受信AIへの実際の送信はまだです。"}
+catch(err){
+var t=document.createElement("textarea");t.value=s;t.style.position="fixed";t.style.top="-9999px";document.body.appendChild(t);t.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}t.remove();
+q("copy-status").textContent=ok?"コピー完了。受信AIへの実際の送信はまだです。":"コピーできませんでした。ブラウザのコピー権限を確認してください。";
+}
+}
+document.addEventListener("click",function(ev){
+var b=ev.target.closest("button[data-copy]");if(!b)return;
+var kind=b.getAttribute("data-copy"),s=kind==="sender"?sender():kind==="lure"?lure:kind==="return"?ret:first(kind[0]);
+if(!s){q("copy-status").textContent="先にBの自由生成表現を貼ってください。";return}
+copy(s);
+});
+q("score").addEventListener("click",grade);
+q("demo").addEventListener("click",function(){
+q("candidate").value="【デモ用の仮の伝達文字列】AB>C, B>D, C>E, D>B, E>C";
+q("A1").value="1=可能\n2=可能\n3=不可";
+q("A2").value="4=可能\n5=不可\n6=不可";q("A3").value="";
+q("B1").value="1=可能\n2=不可\n3=不可";
+q("B2").value="この表現の記号をさらに考察したい。";
+q("B3").value="4=可能\n5=不可\n6=不可";
+demo=true;q("mode").textContent="デモ表示：架空の回答。AIの性能実測ではありません。";grade();
+});
+q("reset").addEventListener("click",function(){
+ids.forEach(function(id){q(id).value=""});demo=false;q("mode").textContent="実測データ：まだ入力なし";
+q("resultA").textContent="結果待ち";q("resultB").textContent="結果待ち";q("compare").textContent="A/B両方の6問が揃うと、Flow Worldの共通A/B Comparatorで採点結果を比較します。";
+});
+ids.forEach(function(id){q(id).addEventListener("input",function(){if(demo){demo=false;q("mode").textContent="手入力データ：出典と実測性は利用者側の記録による"};grade()})});
+window.FlowBranchReturn={parse:parse,questions:questions,gold:gold,sender:sender};
+})();
+</script>
+</body>
+</html>
