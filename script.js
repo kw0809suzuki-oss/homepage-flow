@@ -287,13 +287,53 @@ if(garden){
 }
 
 
-// The Desk: principles are lenses, not commandments. The selected lens persists locally.
+// The Desk: preserve the current lens; footsteps record only actual lens changes.
+// The trail is a browser-local observation, not evidence of preference or intent.
 const deskCards=[...document.querySelectorAll('.desk-card')];
 const deskTitle=document.querySelector('.desk-lens-title');
 const deskCopy=document.querySelector('.desk-lens-copy');
+const deskFootstepsTrack=document.querySelector('.desk-footsteps-track');
+const deskFootstepsNote=document.querySelector('.desk-footsteps-note');
 const DESK_KEY='flow-world-desk-lens-v1';
+const DESK_FOOTSTEPS_KEY='flow-world-desk-footsteps-v1';
+let deskFootsteps=[];
+try{
+  const saved=JSON.parse(localStorage.getItem(DESK_FOOTSTEPS_KEY)||'[]');
+  if(Array.isArray(saved)){
+    deskFootsteps=saved.filter(n=>Number.isInteger(n)&&n>=0&&n<deskCards.length).slice(-5);
+  }
+}catch(e){}
 
-const selectDeskLens=(index)=>{
+const renderDeskFootsteps=(returned=false)=>{
+  if(!deskFootstepsTrack||!deskFootstepsNote)return;
+  deskFootstepsTrack.replaceChildren();
+  deskFootsteps.forEach((index,i)=>{
+    if(i){
+      const arrow=document.createElement('i');
+      arrow.textContent='→';
+      arrow.setAttribute('aria-hidden','true');
+      deskFootstepsTrack.appendChild(arrow);
+    }
+    const step=document.createElement('span');
+    step.className='desk-footstep'+(i===deskFootsteps.length-1?' current':'');
+    step.setAttribute('role','listitem');
+    step.setAttribute('aria-label',deskCards[index].querySelector('b')?.textContent||'レンズ '+(index+1));
+    step.textContent=String(index+1).padStart(2,'0');
+    deskFootstepsTrack.appendChild(step);
+  });
+  deskFootstepsNote.textContent=!deskFootsteps.length
+    ?'まだ足跡はない。レンズを切り替えるとここに残る。'
+    :returned
+      ?'↶ 最近の足跡にあるレンズへ戻った。理由はまだ分からない。'
+      :'実際に切り替えた順番。理由や好みは推測しない。';
+  deskFootstepsTrack.classList.remove('returning');
+  if(returned){
+    void deskFootstepsTrack.offsetWidth;
+    deskFootstepsTrack.classList.add('returning');
+  }
+};
+
+const selectDeskLens=(index,record=false)=>{
   if(!deskCards.length||!deskTitle||!deskCopy)return;
   const safe=Math.max(0,Math.min(deskCards.length-1,index));
   deskCards.forEach((card,i)=>card.classList.toggle('active',i===safe));
@@ -301,6 +341,13 @@ const selectDeskLens=(index)=>{
   deskTitle.textContent=card.dataset.title||'';
   deskCopy.textContent=card.dataset.copy||'';
   try{ localStorage.setItem(DESK_KEY,String(safe)); }catch(e){}
+  if(record&&deskFootsteps[deskFootsteps.length-1]!==safe){
+    const returned=deskFootsteps.includes(safe);
+    deskFootsteps.push(safe);
+    deskFootsteps=deskFootsteps.slice(-5);
+    try{localStorage.setItem(DESK_FOOTSTEPS_KEY,JSON.stringify(deskFootsteps));}catch(e){}
+    renderDeskFootsteps(returned);
+  }
 };
 if(deskCards.length){
   let saved=0;
@@ -308,9 +355,10 @@ if(deskCards.length){
     const raw=Number(localStorage.getItem(DESK_KEY));
     if(Number.isInteger(raw))saved=raw;
   }catch(e){}
-  selectDeskLens(saved);
+  selectDeskLens(saved); // Restoring a lens is not a new user selection.
+  renderDeskFootsteps();
   deskCards.forEach((card,i)=>{
-    card.addEventListener('click',()=>selectDeskLens(i));
+    card.addEventListener('click',()=>selectDeskLens(i,true));
   });
 }
 

@@ -553,6 +553,18 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
 }
 
 
+/* Desk footsteps: only observed lens switches, not inferred preferences. */
+.desk-footsteps{position:relative;z-index:2;margin-top:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
+.desk-footsteps-label{font:10px monospace;letter-spacing:.12em;color:#88b6dc}
+.desk-footsteps-track{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-height:34px;margin-top:10px}
+.desk-footsteps-track i{font:12px monospace;color:#6687a3;font-style:normal}
+.desk-footstep{display:grid;place-items:center;width:29px;height:29px;border:1px solid rgba(164,205,255,.28);border-radius:50%;font:11px monospace;color:#a9c1d6}
+.desk-footstep.current{background:rgba(164,205,255,.2);border-color:#b5d8ff;color:#fff}
+.desk-footsteps-note{display:block;margin-top:6px;color:#8daac2;font:11px/1.5 "Noto Sans JP",sans-serif}
+.desk-footsteps-track.returning .desk-footstep.current{animation:desk-return-glow .9s ease-out}
+@keyframes desk-return-glow{0%{box-shadow:0 0 0 0 rgba(164,205,255,.7)}100%{box-shadow:0 0 0 14px rgba(164,205,255,0)}}
+@media(prefers-reduced-motion:reduce){.desk-footsteps-track.returning .desk-footstep.current{animation:none}}
+
 /* Flow World — small persistent return trace */
 .flow-return-mark{
   position:fixed;
