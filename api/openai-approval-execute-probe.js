@@ -33,9 +33,9 @@ async function postOpenAI(apiKey, body) {
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "GET only" });
+  if (!["GET", "POST"].includes(req.method)) {
+    res.setHeader("Allow", "GET, POST");
+    return res.status(405).json({ error: "GET or POST only" });
   }
 
   const apiKey = process.env.OPENAI_API_KEY;
@@ -46,16 +46,36 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  const directionContext =
+    req.method === "POST" ? req.body?.direction_context || null : null;
+
+  if (
+    req.method === "POST" &&
+    (!String(directionContext?.placed_direction || "").trim() ||
+      !Array.isArray(directionContext?.recent_movement))
+  ) {
+    return res.status(400).json({
+      status: "UNKNOWN",
+      reason: "DIRECTION_CONTEXT_REQUIRED",
+      required: [
+        "direction_context.placed_direction",
+        "direction_context.recent_movement",
+      ],
+    });
+  }
+
   const [
     { collectExecutionFact, appendExecutionFact },
     { detectBoundary },
     { routeDetectedFact },
     { evaluateBoundaryPolicy },
+    { observeBoundaryConnection, combineBoundaryAndConnection },
   ] = await Promise.all([
     import("../direction-gate/execution-facts.js"),
     import("../direction-gate/boundary-detector.js"),
     import("../direction-gate/execution-os.js"),
     import("../direction-gate/boundary-policy.js"),
+    import("../direction-gate/connection-control.js"),
   ]);
 
   let first;
@@ -193,7 +213,69 @@ module.exports = async function handler(req, res) {
           reasons: ["NOT_PRE_EXECUTION_POLICY_ROUTE"],
         };
 
-  if (preRecord.status !== "RECORDED" || policy.decision !== "ALLOW") {
+  let control = policy;
+  let connection = {
+    context_provided: Boolean(directionContext),
+    required: false,
+    observation: null,
+    gate_called: false,
+    gate_result: null,
+  };
+
+  if (directionContext) {
+    const observed = observeBoundaryConnection({
+      placedDirection: directionContext.placed_direction,
+      recentMovement: directionContext.recent_movement,
+      boundaryEvent: {
+        kind: "external_action",
+        target: proposal.target,
+        resultDestination: directionContext.result_destination || null,
+        continuationFrom: directionContext.continuation_from || null,
+        boundary: detection.classification,
+      },
+    });
+
+    connection = {
+      ...connection,
+      required: observed.connectionRequired,
+      observation: observed.observation
+        ? {
+            observation: observed.observation.observation,
+            reasons: observed.observation.reasons,
+            pendingReasons: observed.observation.pendingReasons,
+            boundary: observed.observation.boundary,
+          }
+        : null,
+    };
+
+    if (!observed.valid) {
+      control = {
+        gate: policy.gate,
+        decision: "UNKNOWN",
+        reasons: [observed.reason || "DIRECTION_OBSERVATION_INVALID"],
+      };
+    } else if (
+      policy.decision === "ALLOW" &&
+      observed.connectionRequired
+    ) {
+      const { runConnectionGate } = require("./direction-check.js");
+      const gate = await runConnectionGate(observed.payload, { apiKey });
+
+      connection = {
+        ...connection,
+        gate_called: true,
+        gate_result: gate.body,
+      };
+
+      control = combineBoundaryAndConnection(
+        policy,
+        gate.statusCode === 200 ? gate.body?.state : null,
+        true
+      );
+    }
+  }
+
+  if (preRecord.status !== "RECORDED" || control.decision !== "ALLOW") {
     return res.status(200).json({
       status: "CONTROLLED_STOP",
       executed: false,
@@ -206,6 +288,8 @@ module.exports = async function handler(req, res) {
         route,
         policy_input: actionPolicyInput,
         policy,
+        connection,
+        control,
       },
     });
   }
@@ -238,7 +322,7 @@ module.exports = async function handler(req, res) {
       stage: "APPROVAL_CONTINUATION",
       approval_sent: true,
       reason: "OPENAI_RUNTIME_UNAVAILABLE",
-      pre_execution: { detection, route, policy },
+      pre_execution: { detection, route, policy, connection, control },
     });
   }
 
@@ -257,7 +341,7 @@ module.exports = async function handler(req, res) {
       reason: "OPENAI_RUNTIME_ERROR",
       openai_status: second.status,
       error: second.data?.error?.message || second.parseError || null,
-      pre_execution: { detection, route, policy },
+      pre_execution: { detection, route, policy, connection, control },
     });
   }
 
@@ -306,15 +390,12 @@ module.exports = async function handler(req, res) {
     let realityResponse = null;
     let realityText = "";
     try {
-      realityResponse = await fetch(
-        expectedRealityUrl,
-        {
-          method: "GET",
-          headers: {
-            "User-Agent": "execution-os-v0-reobserve",
-          },
-        }
-      );
+      realityResponse = await fetch(expectedRealityUrl, {
+        method: "GET",
+        headers: {
+          "User-Agent": "execution-os-v0-reobserve",
+        },
+      });
       realityText = await realityResponse.text();
     } catch (error) {
       console.error("OPENAI_DOCS_REOBSERVE_FETCH_ERROR", {
@@ -381,6 +462,8 @@ module.exports = async function handler(req, res) {
       route,
       policy_input: actionPolicyInput,
       policy,
+      connection,
+      control,
     },
     approval_response: {
       approve: true,
