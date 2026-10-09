@@ -1,0 +1,77 @@
+:root{
+  --bg:#081018;
+  --panel:#0d1822;
+  --panel-2:#111f2b;
+  --ink:#edf5fb;
+  --muted:#8fa4b5;
+  --line:rgba(220,238,250,.13);
+  --green:#85d5a6;
+  --red:#ff8d8d;
+  --amber:#e8c77f;
+}
+*{box-sizing:border-box}
+html{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
+body{margin:0;background:
+  radial-gradient(circle at 15% 0%,rgba(70,121,164,.14),transparent 34%),
+  linear-gradient(180deg,#071018,#0a141d 62%,#081018)}
+a{color:inherit}
+.topbar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;gap:20px;padding:16px 5vw;border-bottom:1px solid var(--line);background:rgba(8,16,24,.88);backdrop-filter:blur(12px);font:10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;color:var(--muted)}
+.back{text-decoration:none;color:#cde4f5}
+main{width:min(1380px,100%);margin:auto;padding:0 5vw 88px}
+.hero{padding:92px 0 62px;border-bottom:1px solid var(--line)}
+.eyebrow{margin:0;color:#78a5c6;font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em}
+.hero h1{margin:14px 0 22px;max-width:900px;font:500 clamp(46px,7vw,98px)/.98 Georgia,"Noto Serif JP",serif;letter-spacing:-.045em}
+.lead{max-width:720px;margin:0;color:#a8bac8;font-size:16px;line-height:1.9}
+.hero-meta{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:34px}
+.hero-meta span,.hero-meta button{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#c3d4e0;padding:10px 12px;font:10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}
+.hero-meta button{cursor:pointer}
+.hero-meta button:hover,.hero-meta button:focus-visible{background:#17314d;outline:none}
+#overall-status[data-tone="confirmed"]{border-color:rgba(133,213,166,.5);color:var(--green)}
+#overall-status[data-tone="failure"]{border-color:rgba(255,141,141,.5);color:var(--red)}
+.dashboard{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:22px}
+.panel{border:1px solid var(--line);background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.018));padding:26px;min-height:430px}
+.current{grid-column:span 6}.motion{grid-column:span 6}.health{grid-column:span 12;min-height:360px}
+.panel-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.panel h2{margin:8px 0 0;font:500 clamp(30px,3.2vw,48px)/1.05 Georgia,"Noto Serif JP",serif}
+.source,.health-badge{border:1px solid var(--line);padding:7px 9px;color:#8fa4b5;font:9px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;white-space:nowrap}
+.primary{margin:56px 0 12px;font:500 clamp(24px,3vw,42px)/1.25 Georgia,"Noto Serif JP",serif}
+.copy{margin:0;max-width:840px;color:#a2b3c1;line-height:1.8}
+.coordinate{margin-top:34px;padding-top:16px;border-top:1px solid var(--line)}
+.coordinate span,.health-grid dt{font:9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#71899c}
+.coordinate p{margin:8px 0 0;color:#c7d8e3;line-height:1.7}
+.motion-list{margin:42px 0 0;padding:0;list-style:none}
+.motion-list li{padding:13px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:start}
+.motion-list time{font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#71899c}
+.motion-list b{font-weight:500;line-height:1.55}
+.boundary{margin-top:24px;color:#71899c;font:10px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace}
+.health[data-tone="confirmed"]{border-color:rgba(133,213,166,.38);box-shadow:inset 0 0 50px rgba(73,156,106,.045)}
+.health[data-tone="failure"]{border-color:rgba(255,141,141,.45);box-shadow:inset 0 0 50px rgba(180,64,64,.045)}
+.health[data-tone="confirmed"] .health-badge{color:var(--green);border-color:rgba(133,213,166,.42)}
+.health[data-tone="failure"] .health-badge{color:var(--red);border-color:rgba(255,141,141,.42)}
+.health[data-tone="unknown"] .health-badge{color:var(--amber);border-color:rgba(232,199,127,.35)}
+.health-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:34px 0 24px}
+.health-grid>div{border-top:1px solid var(--line);padding-top:13px;min-height:76px}
+.health-grid dd{margin:8px 0 0;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#d2e0e9;overflow-wrap:anywhere}
+.ledger{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.ledger article{border:1px solid var(--line);background:rgba(255,255,255,.025);padding:20px;min-height:176px}
+.ledger span{font:9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:#71899c}
+.ledger strong{display:block;margin:26px 0 10px;font:500 27px/1.25 Georgia,"Noto Serif JP",serif}
+.ledger p{margin:0;color:#8499a9;font-size:12px;line-height:1.65}
+.unobserved{border-style:dashed!important}
+.rules{margin-top:42px;padding:26px 0;border-top:1px solid var(--line)}
+.rules>p:not(.eyebrow){margin:11px 0;color:#9eb1bf;line-height:1.75}
+.rules b{color:#e7f0f6}
+@media(max-width:900px){
+  .current,.motion,.health{grid-column:1/-1}
+  .health-grid,.ledger{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .topbar{padding:13px 18px}.topbar span{display:none}
+  main{padding:0 18px 64px}
+  .hero{padding:70px 0 42px}
+  .panel{padding:20px;min-height:0}
+  .panel-head{display:block}.source,.health-badge{display:inline-block;margin-top:14px}
+  .primary{margin-top:34px}
+  .health-grid,.ledger{grid-template-columns:1fr}
+  .motion-list li{grid-template-columns:1fr;gap:4px}
+}
