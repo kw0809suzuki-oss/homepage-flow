@@ -35,6 +35,10 @@ jobs:
               "ai-entry.txt",
               "ai-state.json",
               "FLOW_WORLD_STATE.json",
+              "observatory/index.html",
+              "observatory/model.js",
+              "observatory/app.js",
+              "observatory/styles.css",
           ]
 
           print("Flow World Integrity Check")
@@ -97,3 +101,6 @@ jobs:
               sys.exit(1)
 
           print("\nIntegrity check PASSED.")
+
+      - name: Test Flow Observatory status model
+        run: node observatory/model.test.js
