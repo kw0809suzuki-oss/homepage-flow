@@ -1,0 +1,79 @@
+/* Flow Atlas v0 — a loose map of the GitHub town */
+.flow-atlas{
+  position:relative;
+  padding:108px 7vw 116px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(circle at 72% 18%,rgba(77,122,166,.09),transparent 27%),
+    linear-gradient(180deg,#eef3f6 0%,#f8fafb 100%);
+  overflow:hidden;
+}
+.flow-atlas:before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(26,58,84,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(26,58,84,.045) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.72),transparent 96%);
+  pointer-events:none;
+}
+.atlas-head,.atlas-map,.atlas-note{position:relative;z-index:1}
+.atlas-head{display:grid;grid-template-columns:.85fr 1.15fr;gap:7vw;align-items:end}
+.atlas-head h2{font:500 clamp(44px,6vw,82px)/1.02 Georgia,"Noto Serif JP",serif;letter-spacing:-.04em;margin:12px 0 0}
+.atlas-head>p{max-width:620px;color:#536577;line-height:1.9}
+.atlas-map{
+  margin-top:62px;
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:12px;
+}
+.atlas-place{
+  position:relative;
+  min-height:210px;
+  padding:22px;
+  border:1px solid rgba(13,27,42,.14);
+  background:rgba(255,255,255,.66);
+  color:var(--ink);
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  transition:.22s ease;
+}
+.atlas-place:hover,.atlas-place:focus-visible{
+  transform:translateY(-4px);
+  border-color:rgba(35,82,119,.42);
+  box-shadow:0 18px 38px rgba(24,55,80,.08);
+  outline:none;
+}
+.atlas-place span{font:10px monospace;letter-spacing:.13em;color:#718096}
+.atlas-place b{margin-top:auto;font:500 29px/1.15 Georgia,"Noto Serif JP",serif}
+.atlas-place p{margin:10px 0 0;color:#607284;font-size:13px;line-height:1.7}
+.atlas-observatory{grid-column:span 7;background:linear-gradient(145deg,rgba(31,68,98,.08),rgba(255,255,255,.75))}
+.atlas-workbench{grid-column:span 5}
+.atlas-hand,.atlas-factory,.atlas-astra{grid-column:span 4}
+.atlas-garden{grid-column:span 12;min-height:170px}
+.atlas-path{
+  position:relative;z-index:1;
+  margin:22px 0 0;
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  color:#708394;font:10px/1.5 monospace;letter-spacing:.09em;
+}
+.atlas-path span{border:1px solid rgba(13,27,42,.12);background:rgba(255,255,255,.5);padding:8px 10px}
+.atlas-path i{font-style:normal;opacity:.42}
+.atlas-note{
+  margin:28px 0 0;
+  max-width:900px;
+  color:#718096;
+  font:11px/1.8 monospace;
+}
+@media(max-width:880px){
+  .atlas-head{grid-template-columns:1fr;gap:22px}
+  .atlas-observatory,.atlas-workbench,.atlas-hand,.atlas-factory,.atlas-astra,.atlas-garden{grid-column:1/-1}
+}
+@media(max-width:620px){
+  .flow-atlas{padding:86px 24px 92px}
+  .atlas-map{margin-top:42px}
+  .atlas-place{min-height:170px}
+}
