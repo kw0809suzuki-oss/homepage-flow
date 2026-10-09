@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="astra-loop.css">
   <link rel="stylesheet" href="internal-switch.css">
+  <link rel="stylesheet" href="flow-atlas.css">
 </head>
 <body>
   <header class="nav">
@@ -25,7 +26,8 @@
       <a href="#garden">Garden</a>
       <a href="#desk">Desk</a>
       <a href="#core18">CORE18</a>
-      <a href="#workbench">Workbench</a>\n      <a href="observatory/">Observatory</a>
+      <a href="#workbench">Workbench</a>
+      <a href="#atlas">Atlas</a>\n      <a href="observatory/">Observatory</a>
       <a href="lab/branch-return/">実験 Lab</a>
       <a href="lab/success-boundary/">成功境界Lab</a>
       <a href="#drift">Drift</a>\n      <a href="#switch-lab">Switch Lab</a>\n      <a href="#astra">Astra</a>
@@ -77,6 +79,54 @@
         </article>
       </div>
       <p class="how-to-enter-agent">For AI / agents → <a href="FLOW_WORLD_STATE.json">FLOW_WORLD_STATE.json</a></p>
+    </section>
+
+    <section class="flow-atlas" id="atlas" aria-labelledby="atlas-title">
+      <div class="atlas-head">
+        <div>
+          <p class="eyebrow">FLOW ATLAS / GITHUB TOWN</p>
+          <h2 id="atlas-title">つながっている。<br>でも、縛られていない。</h2>
+        </div>
+        <p>同じものを一つにまとめる地図ではなく、必要な時だけ渡れる場所の地図。それぞれのrepoは単独で立ち、別の場所が止まっても仕事を続けられる。</p>
+      </div>
+
+      <div class="atlas-map">
+        <a class="atlas-place atlas-observatory" href="observatory/">
+          <span>01 / OBSERVE</span>
+          <b>Observatory</b>
+          <p>現在地・動き・健全性を見る観測塔。修理はしない。</p>
+        </a>
+        <a class="atlas-place atlas-workbench" href="https://github.com/kw0809suzuki-oss/flow-workbench">
+          <span>02 / ROUTE</span>
+          <b>Workbench</b>
+          <p>仕事がすでに住んでいる場所へ、薄く案内する道具置き場。</p>
+        </a>
+        <a class="atlas-place atlas-hand" href="https://github.com/kw0809suzuki-oss/flow-hand">
+          <span>03 / ACT</span>
+          <b>Hand</b>
+          <p>Actionsまで伸びて、外で実行し、結果をGitHubへ返す腕。</p>
+        </a>
+        <a class="atlas-place atlas-factory" href="https://github.com/kw0809suzuki-oss/flow-factory">
+          <span>04 / EXPERIMENT</span>
+          <b>Factory</b>
+          <p>観測した関係を、小さく作って試して壊す工房。</p>
+        </a>
+        <a class="atlas-place atlas-astra" href="https://github.com/kw0809suzuki-oss/Astra">
+          <span>05 / CLOSE</span>
+          <b>Astra</b>
+          <p>採れた決定的ルールだけを機械的に閉じ、Unknownを残す判定機。</p>
+        </a>
+        <a class="atlas-place atlas-garden" href="https://github.com/kw0809suzuki-oss/Judgment-Garden">
+          <span>06 / GROW</span>
+          <b>Judgment Garden</b>
+          <p>既存の本体から隔離して、判断の候補をEvidenceから育てる実験庭。</p>
+        </a>
+      </div>
+
+      <div class="atlas-path" aria-label="Loose flow between repositories">
+        <span>SEE</span><i>→</i><span>ROUTE</span><i>→</i><span>ACT</span><i>→</i><span>EXPERIMENT</span><i>→</i><span>JUDGE</span><i>→</i><span>TRACE</span><i>→</i><span>SEE AGAIN</span>
+      </div>
+      <p class="atlas-note">BOUNDARY — これは自動連携図ではない。各repoのREADMEと現在の役割から見える「渡り道」の地図。接続を必須依存へ変えない。</p>
     </section>
 
     <section class="panel intro" id="concept">
