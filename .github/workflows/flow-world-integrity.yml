@@ -1,0 +1,99 @@
+name: Flow World Integrity Check
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Flow World integrity
+        shell: python
+        run: |
+          from __future__ import annotations
+
+          import json
+          import re
+          import sys
+          from pathlib import Path
+          from urllib.parse import urlsplit
+
+          root = Path(".")
+          errors: list[str] = []
+
+          required_files = [
+              "index.html",
+              "ai-entry.txt",
+              "ai-state.json",
+              "FLOW_WORLD_STATE.json",
+          ]
+
+          print("Flow World Integrity Check")
+          print("==========================")
+
+          for name in required_files:
+              path = root / name
+              if path.is_file():
+                  print(f"OK   required file: {name}")
+              else:
+                  errors.append(f"Missing required file: {name}")
+                  print(f"FAIL required file: {name}")
+
+          for name in ["ai-state.json", "FLOW_WORLD_STATE.json"]:
+              path = root / name
+              if not path.is_file():
+                  continue
+              try:
+                  json.loads(path.read_text(encoding="utf-8"))
+                  print(f"OK   valid JSON: {name}")
+              except Exception as exc:
+                  errors.append(f"Invalid JSON: {name}: {exc}")
+                  print(f"FAIL valid JSON: {name}: {exc}")
+
+          index = root / "index.html"
+          if index.is_file():
+              html = index.read_text(encoding="utf-8", errors="replace")
+              refs = re.findall(
+                  r"""(?:href|src)\s*=\s*["']([^"'#?]+)(?:[?#][^"']*)?["']""",
+                  html,
+                  flags=re.IGNORECASE,
+              )
+
+              checked: set[str] = set()
+              for ref in refs:
+                  parts = urlsplit(ref)
+                  if parts.scheme or parts.netloc or ref.startswith(("//", "mailto:", "tel:", "javascript:", "data:")):
+                      continue
+
+                  local = parts.path.strip()
+                  if not local or local == "/":
+                      continue
+
+                  local = local.lstrip("/")
+                  if local in checked:
+                      continue
+                  checked.add(local)
+
+                  target = root / local
+                  if target.exists():
+                      print(f"OK   local reference: {ref}")
+                  else:
+                      errors.append(f"Broken local reference in index.html: {ref}")
+                      print(f"FAIL local reference: {ref}")
+
+          if errors:
+              print("\nIntegrity check FAILED:")
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+
+          print("\nIntegrity check PASSED.")
