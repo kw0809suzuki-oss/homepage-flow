@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>観測以前の庭</title>
+<style>
+  :root{color-scheme:dark;--ink:#f4f1ea;--dim:#aaa69c;--glass:rgba(10,12,18,.42)}
+  *{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#05060a;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans JP",monospace;color:var(--ink)}
+  canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+  #veil{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 45%,transparent 0 28%,rgba(0,0,0,.28) 70%,rgba(0,0,0,.72) 100%),linear-gradient(120deg,rgba(41,26,80,.12),rgba(0,100,120,.08));mix-blend-mode:screen}
+  .ui{position:fixed;z-index:3;left:max(20px,env(safe-area-inset-left));top:max(18px,env(safe-area-inset-top));max-width:min(520px,calc(100vw - 40px));pointer-events:none;text-shadow:0 1px 12px #000}
+  h1{font-size:clamp(17px,2.2vw,27px);font-weight:500;letter-spacing:.18em;margin:0 0 8px}
+  .sub{font-size:11px;line-height:1.8;letter-spacing:.08em;color:var(--dim);max-width:47ch}
+  #state{margin-top:14px;font-size:10px;letter-spacing:.13em;color:#d9ffd5;opacity:.78}
+  .panel{position:fixed;z-index:4;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 28px)}
+  button{appearance:none;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:var(--glass);backdrop-filter:blur(12px);color:#ece9df;padding:9px 12px;font:10px/1 ui-monospace,monospace;letter-spacing:.1em;cursor:pointer;transition:.2s transform,.2s background,.2s border-color}
+  button:hover{transform:translateY(-2px);background:rgba(80,90,120,.35);border-color:rgba(255,255,255,.4)}
+  button.on{background:rgba(105,190,155,.24);border-color:rgba(180,255,220,.55)}
+  #oracle{position:fixed;z-index:3;left:50%;bottom:max(68px,calc(env(safe-area-inset-bottom) + 58px));transform:translateX(-50%);font-size:clamp(10px,1.25vw,13px);letter-spacing:.22em;color:rgba(255,255,255,.72);text-align:center;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity 1s}
+  #help{position:fixed;inset:0;z-index:8;display:grid;place-items:center;background:rgba(1,2,5,.76);backdrop-filter:blur(18px);transition:.8s opacity}
+  #help.hide{opacity:0;pointer-events:none}
+  .card{width:min(560px,calc(100vw - 36px));border:1px solid rgba(255,255,255,.15);background:rgba(12,14,22,.55);padding:26px;border-radius:22px;box-shadow:0 30px 100px #000}
+  .card b{font-size:17px;letter-spacing:.15em;font-weight:500}.card p{color:#bbb8b0;font-size:12px;line-height:2}.card button{margin-top:8px;padding:12px 18px}
+  kbd{border:1px solid #555;padding:2px 6px;border-radius:5px;color:#ddd}
+</style>
+</head>
+<body>
+<canvas id="world"></canvas><div id="veil"></div>
+<div class="ui"><h1>観測以前の庭</h1><div class="sub">触れるまで、現象に意味はない。触れた地点だけが過去を持ち、過去同士が一時的な法則を発明する。</div><div id="state">未観測 / 0 記憶</div></div>
+<div id="oracle"></div>
+<div class="panel"><button id="sound">音を開く</button><button id="reverse">時間反転</button><button id="forget">忘却</button><button id="capture">標本保存</button></div>
+<div id="help"><div class="card"><b>説明より先に、触れてください。</b><p>ドラッグで「観測」を置く。速さ、曲率、滞在時間がそれぞれ違う法則になる。<br>二本指・右クリック・<kbd>Space</kbd> は、観測ではなく「空白」を置く。<br>しばらく何もしないと、庭があなたの癖を誤解し始める。</p><button id="enter">庭に入る</button></div></div>
+<script>
+(()=>{
+'use strict';
+const c=document.querySelector('#world'),x=c.getContext('2d',{alpha:false});
+const state=document.querySelector('#state'), oracle=document.querySelector('#oracle');
+let W=0,H=0,D=1,t=0,last=performance.now(),reverse=1,quiet=0,seed=Math.random()*9999;
+let points=[], ghosts=[], voids=[], ripples=[]; const pointers=new Map();
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), rnd=(a,b)=>a+Math.random()*(b-a);
+function resize(){D=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(D,0,0,D,0,0)} addEventListener('resize',resize);resize();
+class P{constructor(px,py,vx=0,vy=0,kind=0){this.x=px;this.y=py;this.px=px;this.py=py;this.vx=vx;this.vy=vy;this.life=rnd(.6,1);this.age=0;this.kind=kind;this.h=(px/W*190+py/H*90+seed)%360;this.mass=rnd(.6,1.8);this.phase=rnd(0,7)} }
+function observe(px,py,dx=0,dy=0,kind=0){quiet=0;const speed=Math.hypot(dx,dy);for(let i=0;i<clamp(2+speed/7,2,16);i++){let a=Math.atan2(dy,dx)+rnd(-1.1,1.1),s=rnd(.15,1.2)*(1+speed*.08);points.push(new P(px+rnd(-4,4),py+rnd(-4,4),Math.cos(a)*s,Math.sin(a)*s,kind))}ripples.push({x:px,y:py,r:2,a:.45,h:(px/W*190+py/H*90+seed)%360});if(points.length>1300)points.splice(0,points.length-1300);tone(px/W,py/H,speed)}
+function addVoid(px,py){voids.push({x:px,y:py,r:8,life:1});if(voids.length>12)voids.shift();}
+function pointerPos(e){const r=c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+c.addEventListener('pointerdown',e=>{c.setPointerCapture(e.pointerId);let q=pointerPos(e);pointers.set(e.pointerId,{...q,ox:q.x,oy:q.y,time:performance.now()});if(e.button===2||pointers.size>1)addVoid(q.x,q.y);else observe(q.x,q.y)});
+c.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;let q=pointerPos(e),p=pointers.get(e.pointerId);if(Math.hypot(q.x-p.x,q.y-p.y)>3){if(pointers.size>1)addVoid(q.x,q.y);else observe(q.x,q.y,q.x-p.x,q.y-p.y);p.x=q.x;p.y=q.y}});
+c.addEventListener('pointerup',e=>pointers.delete(e.pointerId));c.addEventListener('pointercancel',e=>pointers.delete(e.pointerId));c.addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();addVoid(W/2,H/2)}if(e.key==='r')toggleReverse()});
+let ac,master,lastTone=0;
+function initAudio(){if(ac){ac.resume();return}ac=new (AudioContext||webkitAudioContext)();master=ac.createGain();master.gain.value=.12;master.connect(ac.destination);document.querySelector('#sound').classList.add('on');document.querySelector('#sound').textContent='音：開いている'}
+function tone(nx,ny,sp){if(!ac||ac.state!=='running'||performance.now()-lastTone<45)return;lastTone=performance.now();const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type=['sine','triangle','sine'][Math.floor(nx*3)%3];o.frequency.value=80*Math.pow(2,Math.round((ny*18+nx*5))/12);o.detune.value=(nx-.5)*22;f.type='lowpass';f.frequency.value=500+sp*90;g.gain.setValueAtTime(.0001,ac.currentTime);g.gain.exponentialRampToValueAtTime(.035+Math.min(sp,20)/900,ac.currentTime+.012);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.35);o.connect(f).connect(g).connect(master);o.start();o.stop(ac.currentTime+.38)}
+document.querySelector('#sound').onclick=initAudio;
+function toggleReverse(){reverse*=-1;document.querySelector('#reverse').classList.toggle('on',reverse<0)}document.querySelector('#reverse').onclick=toggleReverse;
+document.querySelector('#forget').onclick=()=>{points.forEach(p=>ghosts.push({...p,a:.3}));points=[];voids=[];ripples=[];seed=Math.random()*9999;state.textContent='未観測 / 0 記憶'};
+document.querySelector('#capture').onclick=()=>{const a=document.createElement('a');a.download='観測標本-'+Date.now()+'.png';a.href=c.toDataURL('image/png');a.click()};
+document.querySelector('#enter').onclick=()=>document.querySelector('#help').classList.add('hide');
+const phrases=['似たものは、まだ同じではない','庭はあなたの直線を疑っている','空白がいちばん長く残った','いま法則が一つ、撤回された','観測者の速度だけが記憶された','中心は、触れるたび移動する','これは反応ではなく、誤解かもしれない'];
+function showOracle(){oracle.textContent=phrases[(Math.random()*phrases.length)|0];oracle.style.opacity=1;setTimeout(()=>oracle.style.opacity=0,3300)}
+function field(p,dt){let ax=Math.sin(p.y*.009+t*.00018+p.phase)*.018,ay=Math.cos(p.x*.008-t*.00014+p.phase)*.018;for(const v of voids){let dx=p.x-v.x,dy=p.y-v.y,d2=dx*dx+dy*dy+80,s=170/d2;ax+=dx*s;ay+=dy*s}if(points.length>18){const q=points[(Math.abs((p.x*7+p.y*3+p.age*19)|0))%points.length];let dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy)+1;if(d<150){ax+=(-dy/d)*.006*reverse;ay+=(dx/d)*.006*reverse}}p.vx=(p.vx+ax*dt)*.994;p.vy=(p.vy+ay*dt)*.994;p.px=p.x;p.py=p.y;p.x+=p.vx*dt*reverse;p.y+=p.vy*dt*reverse;if(p.x<-20)p.x=W+20;if(p.x>W+20)p.x=-20;if(p.y<-20)p.y=H+20;if(p.y>H+20)p.y=-20;p.age+=dt*.002;p.life-=dt*.000035*(reverse>0?1:-.25)}
+function draw(now){requestAnimationFrame(draw);let dt=clamp((now-last)/16.67,.2,2.2);last=now;t+=16.67*dt;quiet+=16.67*dt;
+ x.globalCompositeOperation='source-over';x.fillStyle='rgba(4,6,10,.105)';x.fillRect(0,0,W,H);
+ let bg=x.createRadialGradient(W*.5+Math.sin(t*.0001)*W*.15,H*.45,10,W*.5,H*.5,Math.max(W,H)*.75);bg.addColorStop(0,'rgba(15,22,35,.055)');bg.addColorStop(1,'rgba(2,3,7,.13)');x.fillStyle=bg;x.fillRect(0,0,W,H);
+ x.globalCompositeOperation='lighter';
+ for(let i=points.length-1;i>=0;i--){let p=points[i];field(p,dt);let a=clamp(p.life,0,.32);x.strokeStyle=`hsla(${p.h+Math.sin(p.age)*24},80%,${62+p.kind*8}%,${a})`;x.lineWidth=.45+p.mass*.45;x.beginPath();x.moveTo(p.px,p.py);x.lineTo(p.x,p.y);x.stroke();if(p.life<=0)points.splice(i,1)}
+ for(let i=ripples.length-1;i>=0;i--){let r=ripples[i];r.r+=dt*(.8+r.r*.018);r.a-=dt*.004;x.strokeStyle=`hsla(${r.h},90%,72%,${Math.max(0,r.a)})`;x.lineWidth=.6;x.beginPath();x.arc(r.x,r.y,r.r,0,7);x.stroke();if(r.a<=0)ripples.splice(i,1)}
+ for(const v of voids){v.r+=dt*.12;v.life*=.9994;x.strokeStyle=`rgba(220,230,255,${.16*v.life})`;x.setLineDash([1,5]);x.beginPath();x.arc(v.x,v.y,v.r,0,7);x.stroke();x.setLineDash([])}
+ x.globalCompositeOperation='source-over';
+ if(quiet>4500&&points.length){quiet=0;const p=points[(Math.random()*points.length)|0];for(let i=0;i<28;i++)observe(p.x+rnd(-25,25),p.y+rnd(-25,25),rnd(-3,3),rnd(-3,3),1);showOracle()}
+ state.textContent=`${reverse<0?'逆向きの':''}観測 / ${points.length} 記憶 / ${voids.length} 空白`;
+ }
+x.fillStyle='#05060a';x.fillRect(0,0,W,H);requestAnimationFrame(draw);
+})();
+</script>
+</body></html>

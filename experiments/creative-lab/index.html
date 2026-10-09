@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Flow Worldの独立した実験作品を、そのまま触れる場所。">
+<title>作品室 — Flow World</title>
+<style>
+:root{color-scheme:dark;--ink:#e9f1ee;--muted:#a2b4b0;--line:#35504b;--bg:#080f15}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 18% 5%,#17362e 0,transparent 38%),radial-gradient(ellipse at 90% 65%,#142235 0,transparent 35%),var(--bg);color:var(--ink);font:16px/1.7 system-ui,"Noto Sans JP",sans-serif;min-height:100vh}
+a{color:inherit}
+.wrap{width:min(1080px,calc(100% - 36px));margin:auto;padding:28px 0 78px}
+.back{display:inline-flex;align-items:center;color:#bad5ca;text-decoration:none;font-size:13px;padding:8px 0}
+.back:hover,.entry:hover{color:#fff}
+header{padding:46px 0 32px}
+.eyebrow{font:12px/1.4 ui-monospace,monospace;letter-spacing:.16em;color:#9adfc8}
+h1{font-size:clamp(36px,7vw,74px);font-weight:500;line-height:1.2;letter-spacing:.08em;margin:14px 0 20px}
+.lead{max-width:680px;color:#bccbc8;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.card{display:flex;flex-direction:column;min-height:240px;border:1px solid var(--line);border-radius:22px;padding:25px;background:linear-gradient(160deg,rgba(33,61,59,.62),rgba(12,21,29,.76));transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);border-color:#77bda7}
+.card .category{font:11px ui-monospace,monospace;letter-spacing:.16em;color:#98ddc3}
+.card h2{font-size:21px;font-weight:600;margin:18px 0 7px}
+.card p{color:var(--muted);font-size:13px;line-height:1.8;margin:0 0 16px}
+.entry{display:inline-block;margin-top:auto;text-decoration:none;border-bottom:1px solid #77bba5;align-self:flex-start;padding:6px 0;color:#b9efda;font-size:14px}
+.note{border-top:1px solid #324941;margin-top:38px;padding-top:22px;max-width:760px;color:#9dafab;font-size:13px}
+footer{border-top:1px solid #293b37;padding-top:16px;margin-top:52px;color:#6f8880;font:11px ui-monospace,monospace;letter-spacing:.08em}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../../index.html#play">← Flow World に戻る</a>
+<header>
+<p class="eyebrow">FLOW WORLD / OPEN EXPERIMENTS</p>
+<h1>作品室</h1>
+<p class="lead">完成品だけの展示ではありません。遊び、表現、技術実験を、それぞれ独立したHTMLのまま置いています。触れたい作品だけ開いてください。</p>
+</header>
+<section class="grid" aria-label="公開中の5作品">
+<article class="card"><span class="category">01 / PLAY</span><h2>月を飼う群れ</h2><p>触れた位置へ月が現れる。光の群れが、近づいたり離れたりする小さな体験。</p><a class="entry" href="moon-flock.html">作品を開く ↗</a></article>
+<article class="card"><span class="category">02 / PLAY</span><h2>ミクロ庭園</h2><p>画面をタップして栄養を置き、明るさが広がる変化を見る。成長ゲームの原型。</p><a class="entry" href="micro-garden.html">作品を開く ↗</a></article>
+<article class="card"><span class="category">03 / ART</span><h2>観測以前の庭</h2><p>触れる速さや位置から光の軌跡が生まれる。音・反転・忘却・画像保存も備える。</p><a class="entry" href="observation-garden.html">作品を開く ↗</a></article>
+<article class="card"><span class="category">04 / LAB</span><h2>Browser Phenomena Lab</h2><p>CSSコンテナクエリの閾値を、外乱・遅延・履歴でまたぐ視覚実験。</p><a class="entry" href="browser-phenomena-lab.html">実験を開く ↗</a></article>
+<article class="card"><span class="category">05 / LAB</span><h2>最小閉ループ実験</h2><p>ResizeObserverの同期・Microtask・rAFを観察し、イベントログをCSV/JSONで出力。</p><a class="entry" href="minimal-closed-loop.html">実験を開く ↗</a></article>
+</section>
+<p class="note">各作品は提供されたHTMLを変更せず収録した試作品です。表示や動作はブラウザ・端末によって異なります。「最小閉ループ実験」のエラー検出は同時実行中の発生元を厳密に切り分けていないため、条件別エラー数をそのまま比較根拠にはしないでください。成果や有効性の検証済みを意味する展示ではありません。</p>
+<footer>FLOW WORLD — OPEN EXPERIMENTS / PROTOTYPES</footer>
+</main>
+</body>
+</html>

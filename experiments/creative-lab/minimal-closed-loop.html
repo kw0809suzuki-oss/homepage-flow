@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>最小閉ループ実験</title>
+<style>
+:root{color-scheme:dark;--bg:#090b10;--panel:#11151d;--line:#29303d;--text:#ecf0ef;--muted:#8d97a8;--a:#72f2c2;--b:#8db8ff;--warn:#ffb86b;--err:#ff6e87}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans JP",monospace;padding:22px}h1{font-size:clamp(20px,3vw,34px);font-weight:550;letter-spacing:.04em;margin:0}.lead{max-width:76ch;color:var(--muted);font-size:12px;line-height:1.8}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}button,select{border:1px solid var(--line);background:#171c25;color:var(--text);border-radius:999px;padding:9px 13px;font:11px inherit;cursor:pointer}button:hover{border-color:#657083}button.primary{border-color:#4d9d85;background:#17352d}button.danger{border-color:#74404a}.grid{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;min-width:0}.card h2{font-size:14px;margin:0}.mode{color:var(--muted);font-size:10px;margin:4px 0 13px}.stage{height:126px;border-radius:12px;background:linear-gradient(180deg,#0b0e14,#101620);display:grid;place-items:center;overflow:hidden;position:relative}.target{box-sizing:content-box;width:199px;height:44px;padding:0;border:0;background:linear-gradient(90deg,var(--a),var(--b));border-radius:9px;box-shadow:0 0 25px #72f2c233}.threshold{position:absolute;left:calc(50% - 100px);height:86px;border-left:1px dashed #ffffff44}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:11px}.metric{background:#0c1016;border-radius:9px;padding:8px}.metric b{display:block;font-size:16px;font-weight:500}.metric span{font-size:9px;color:var(--muted)}.status{margin-top:10px;font-size:10px;line-height:1.6;color:#b7bfcb;min-height:32px}.status .error{color:var(--err)}.status .running{color:var(--a)}.chart{width:100%;height:76px;margin-top:9px;background:#0b0e14;border-radius:9px}.records{margin-top:15px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}.records h2{font-size:13px;margin:0 0 8px}.tablewrap{overflow:auto;max-height:330px;border-radius:10px;border:1px solid #232a35}table{border-collapse:collapse;width:100%;font-size:10px;white-space:nowrap}th,td{padding:7px 9px;border-bottom:1px solid #202631;text-align:right}th{position:sticky;top:0;background:#171c25;color:#aeb8c7}th:first-child,td:first-child,th:nth-child(4),td:nth-child(4){text-align:left}.note{color:var(--muted);font-size:10px;line-height:1.7;margin-top:10px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>最小閉ループ実験</h1>
+<p class="lead">一度だけ外乱を与え、以後は固定規則に任せる。同期、Microtask、requestAnimationFrame の三条件で、循環応答の回数、フレーム、遅延、実測幅、エラーを記録する。</p>
+<div class="toolbar">
+  <button id="runAll" class="primary">3条件を同時実行</button>
+  <button id="resetAll">リセット</button>
+  <button id="exportJson">JSON保存</button>
+  <button id="exportCsv">CSV保存</button>
+  <label><select id="maxResponses"><option value="30">最大応答 30</option><option value="100" selected>最大応答 100</option><option value="300">最大応答 300</option></select></label>
+  <label><select id="maxFrames"><option value="30">最大 30フレーム</option><option value="120" selected>最大 120フレーム</option><option value="300">最大 300フレーム</option></select></label>
+  <label><select id="maxMs"><option value="1000">最大 1秒</option><option value="3000" selected>最大 3秒</option><option value="10000">最大 10秒</option></select></label>
+</div>
+<div class="grid" id="grid"></div>
+<section class="records"><h2>統合イベントログ</h2><div class="tablewrap"><table><thead><tr><th>条件</th><th>ms</th><th>frame</th><th>種別</th><th>応答#</th><th>指定幅</th><th>実測幅</th><th>遅延ms</th><th>Δframe</th><th>詳細</th></tr></thead><tbody id="rows"></tbody></table></div><div class="note">フレーム番号は、ページ内で継続する requestAnimationFrame カウンター。ERROR は window の error イベントで捕捉された ResizeObserver 関連メッセージ。ブラウザーの開発者ツールにも併せて表示される場合があります。</div></section>
+<script>
+(() => {
+  'use strict';
+  const modes = [
+    {id:'sync', label:'同期', detail:'Observer コールバック内で直接更新'},
+    {id:'microtask', label:'Microtask', detail:'queueMicrotask で更新'},
+    {id:'raf', label:'requestAnimationFrame', detail:'次の rAF で更新'}
+  ];
+  const allLogs = [];
+  const experiments = new Map();
+  let globalFrame = 0;
+  function frameClock(){ globalFrame++; requestAnimationFrame(frameClock); }
+  requestAnimationFrame(frameClock);
+  const grid = document.querySelector('#grid');
+  for (const m of modes) {
+    grid.insertAdjacentHTML('beforeend', `<article class="card" data-mode="${m.id}"><h2>${m.label}</h2><div class="mode">${m.detail}</div><div class="stage"><i class="threshold"></i><div class="target"></div></div><div class="metrics"><div class="metric"><b class="responses">0</b><span>循環応答</span></div><div class="metric"><b class="frames">0</b><span>持続フレーム</span></div><div class="metric"><b class="errors">0</b><span>ROエラー</span></div><div class="metric"><b class="width">199.00</b><span>実測幅 px</span></div></div><canvas class="chart"></canvas><div class="status">待機中</div><div class="toolbar"><button class="run primary">開始</button><button class="reset">リセット</button></div></article>`);
+  }
+  function limits(){ return {responses:+document.querySelector('#maxResponses').value, frames:+document.querySelector('#maxFrames').value, ms:+document.querySelector('#maxMs').value}; }
+  function now(){ return performance.now(); }
+  function csvEscape(v){ const s=String(v ?? ''); return /[",\n]/.test(s) ? '"'+s.replaceAll('"','""')+'"' : s; }
+  function download(name,type,text){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),500); }
+  function addRow(log){
+    allLogs.push(log);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${log.mode}</td><td>${log.ms.toFixed(2)}</td><td>${log.frame}</td><td>${log.type}</td><td>${log.response ?? ''}</td><td>${log.specified ?? ''}</td><td>${log.observed == null ? '' : log.observed.toFixed(3)}</td><td>${log.delay == null ? '' : log.delay.toFixed(3)}</td><td>${log.frameDelta ?? ''}</td><td>${log.detail ?? ''}</td>`;
+    document.querySelector('#rows').prepend(tr);
+  }
+  class Experiment {
+    constructor(card, mode){
+      this.card=card; this.mode=mode; this.el=card.querySelector('.target'); this.cv=card.querySelector('.chart'); this.ctx=this.cv.getContext('2d');
+      this.responseEl=card.querySelector('.responses'); this.framesEl=card.querySelector('.frames'); this.errorsEl=card.querySelector('.errors'); this.widthEl=card.querySelector('.width'); this.status=card.querySelector('.status');
+      this.ro=new ResizeObserver(entries=>this.observe(entries));
+      card.querySelector('.run').onclick=()=>this.start(); card.querySelector('.reset').onclick=()=>this.reset();
+      this.reset();
+    }
+    reset(){
+      this.running=false; this.ro.disconnect(); clearTimeout(this.timer); this.runToken=(this.runToken||0)+1; this.responses=0; this.errorCount=0; this.history=[]; this.startTime=0; this.startFrame=0; this.lastWriteTime=null; this.lastWriteFrame=null; this.stopReason='';
+      this.el.style.width='199px'; this.updateUI(); this.status.textContent='待機中'; this.draw();
+    }
+    log(type, extra={}){ addRow({mode:this.mode.label, ms:this.startTime ? now()-this.startTime : 0, frame:globalFrame, type, ...extra}); }
+    start(){
+      this.reset(); this.running=true; this.startTime=now(); this.startFrame=globalFrame; this.ro.observe(this.el,{box:'content-box'}); this.log('INITIALIZE',{specified:199, observed:this.el.getBoundingClientRect().width});
+      const token=this.runToken;
+      requestAnimationFrame(()=>{
+        if(!this.running || token!==this.runToken) return;
+        this.lastWriteTime=now(); this.lastWriteFrame=globalFrame; this.el.style.width='201px';
+        this.log('INPUT',{specified:201, observed:this.el.getBoundingClientRect().width, detail:'外部入力 1回'});
+      });
+      this.timer=setTimeout(()=>this.stop('最大実行時間'), limits().ms);
+      this.status.innerHTML='<span class="running">実行中</span>';
+    }
+    observe(entries){
+      if(!this.running) return;
+      const entry=entries[0];
+      const observed=entry.contentBoxSize ? entry.contentBoxSize[0].inlineSize : entry.contentRect.width;
+      const delay=this.lastWriteTime==null?null:now()-this.lastWriteTime;
+      const frameDelta=this.lastWriteFrame==null?null:globalFrame-this.lastWriteFrame;
+      this.history.push({frame:globalFrame,width:observed,ms:now()-this.startTime});
+      this.log('OBSERVE',{observed,delay,frameDelta});
+      this.widthEl.textContent=observed.toFixed(2); this.draw();
+      if(this.shouldStop()) return;
+      const next=observed<200?201:199;
+      const token=this.runToken;
+      const apply=()=>{
+        if(!this.running || token!==this.runToken) return;
+        this.responses++; this.lastWriteTime=now(); this.lastWriteFrame=globalFrame; this.el.style.width=next+'px';
+        this.log('RESPONSE',{response:this.responses,specified:next,observed,detail:'固定規則'}); this.updateUI();
+        this.shouldStop();
+      };
+      if(this.mode.id==='sync') apply();
+      else if(this.mode.id==='microtask') queueMicrotask(apply);
+      else requestAnimationFrame(apply);
+    }
+    shouldStop(){
+      const lim=limits(), frames=globalFrame-this.startFrame, elapsed=now()-this.startTime;
+      if(this.responses>=lim.responses){this.stop('最大応答回数');return true}
+      if(frames>=lim.frames){this.stop('最大フレーム数');return true}
+      if(elapsed>=lim.ms){this.stop('最大実行時間');return true}
+      return false;
+    }
+    stop(reason){
+      if(!this.running)return; this.running=false; this.ro.disconnect(); clearTimeout(this.timer); this.stopReason=reason; this.log('STOP',{detail:reason}); this.status.textContent='終了: '+reason; this.updateUI();
+    }
+    error(message){ if(!this.running)return; this.errorCount++; this.log('ERROR',{detail:message}); this.updateUI(); this.status.innerHTML='<span class="error">ROエラー観測中</span>'; }
+    updateUI(){ this.responseEl.textContent=this.responses; this.framesEl.textContent=this.startFrame ? Math.max(0,globalFrame-this.startFrame) : 0; this.errorsEl.textContent=this.errorCount; this.widthEl.textContent=this.el.getBoundingClientRect().width.toFixed(2); }
+    draw(){
+      const d=devicePixelRatio||1, r=this.cv.getBoundingClientRect(); if(!r.width)return; this.cv.width=r.width*d; this.cv.height=r.height*d; const c=this.ctx,W=this.cv.width,H=this.cv.height; c.fillStyle='#0b0e14';c.fillRect(0,0,W,H); c.strokeStyle='#364052';c.lineWidth=d;c.beginPath(); const y=H-(200-198)/4*H;c.moveTo(0,y);c.lineTo(W,y);c.stroke(); if(this.history.length<2)return; const data=this.history.slice(-180), minT=data[0].ms,maxT=data.at(-1).ms||minT+1;c.strokeStyle=this.mode.id==='sync'?'#72f2c2':this.mode.id==='microtask'?'#8db8ff':'#ffb86b';c.lineWidth=1.4*d;c.beginPath();data.forEach((p,i)=>{const px=(p.ms-minT)/Math.max(1,maxT-minT)*W,py=H-(p.width-198)/4*H;i?c.lineTo(px,py):c.moveTo(px,py)});c.stroke();
+    }
+  }
+  for(const m of modes){ const e=new Experiment(document.querySelector(`[data-mode="${m.id}"]`),m); experiments.set(m.id,e); }
+  window.addEventListener('error', e=>{ const msg=String(e.message||''); if(/ResizeObserver|loop limit|undelivered/i.test(msg)){ for(const ex of experiments.values()) ex.error(msg); } });
+  setInterval(()=>{for(const ex of experiments.values())if(ex.running){ex.updateUI();ex.shouldStop();}},50);
+  document.querySelector('#runAll').onclick=()=>{document.querySelector('#rows').innerHTML='';allLogs.length=0;for(const e of experiments.values())e.start()};
+  document.querySelector('#resetAll').onclick=()=>{for(const e of experiments.values())e.reset();document.querySelector('#rows').innerHTML='';allLogs.length=0};
+  document.querySelector('#exportJson').onclick=()=>download('closed-loop-results.json','application/json',JSON.stringify({userAgent:navigator.userAgent,devicePixelRatio,viewport:[innerWidth,innerHeight],exportedAt:new Date().toISOString(),limits:limits(),logs:allLogs},null,2));
+  document.querySelector('#exportCsv').onclick=()=>{const keys=['mode','ms','frame','type','response','specified','observed','delay','frameDelta','detail'];const lines=[keys.join(','),...allLogs.map(x=>keys.map(k=>csvEscape(x[k])).join(','))];download('closed-loop-results.csv','text/csv;charset=utf-8','\ufeff'+lines.join('\n'))};
+})();
+</script>
+</body></html>
