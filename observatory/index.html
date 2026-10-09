@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FLOW OBSERVATORY — Flow World</title>
+  <meta name="description" content="Flow Worldの現在地・直近の動き・健全性を、根拠の境界を保ったまま観測する。">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="../" class="back">← FLOW WORLD</a>
+    <span>OBSERVE ONLY / NO AUTO REPAIR</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">FLOW OBSERVATORY / FLOW TOWER</p>
+      <h1>いまどこにいる。<br>何が動いた。<br>壊れていないか。</h1>
+      <p class="lead">GitHub上の公開事実だけを読む。AIは意味と候補を出せても、ここでは勝手に直さない。</p>
+      <div class="hero-meta">
+        <span id="overall-status" data-tone="unknown">WORLD / 未確認</span>
+        <span id="last-check">LAST CHECK / —</span>
+        <button id="refresh" type="button">再観測</button>
+      </div>
+    </section>
+
+    <section class="dashboard" aria-label="Flow World observation dashboard">
+      <article class="panel current">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">CURRENT</p>
+            <h2>今どこにいる</h2>
+          </div>
+          <span class="source">FLOW_WORLD_STATE.json</span>
+        </div>
+        <p id="current-status" class="primary">読み込み中</p>
+        <p id="current-summary" class="copy">公開現在地を取得しています。</p>
+        <div class="coordinate">
+          <span>WORKING COORDINATE</span>
+          <p id="current-coordinate">—</p>
+        </div>
+      </article>
+
+      <article class="panel motion">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">MOTION</p>
+            <h2>何が動いた</h2>
+          </div>
+          <span id="motion-count" class="source">0 observed</span>
+        </div>
+        <ol id="motion-list" class="motion-list">
+          <li>直近のmain更新を取得しています。</li>
+        </ol>
+        <p class="boundary">commitは「動いた痕跡」。目的達成や改善を意味しない。</p>
+      </article>
+
+      <article class="panel health" id="health-panel" data-tone="unknown">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">HEALTH</p>
+            <h2>壊れていないか</h2>
+          </div>
+          <span id="health-badge" class="health-badge">未確認</span>
+        </div>
+        <p id="health-title" class="primary">Integrity Checkを確認中</p>
+        <dl class="health-grid">
+          <div><dt>TARGET COMMIT</dt><dd id="health-sha">—</dd></div>
+          <div><dt>RUN</dt><dd id="health-run">—</dd></div>
+          <div><dt>AGE</dt><dd id="health-age">—</dd></div>
+          <div><dt>EVIDENCE</dt><dd id="health-evidence">同一commitの実行結果のみ</dd></div>
+        </dl>
+        <p id="health-detail" class="copy">成功履歴があっても、別commit・別branch・古い結果は緑にしません。</p>
+      </article>
+    </section>
+
+    <section class="ledger">
+      <article>
+        <span>EVIDENCE ENTRIES</span>
+        <strong id="evidence-count">—</strong>
+        <p>ai-state.json の confirmed 件数。テスト成功数とは別物。</p>
+      </article>
+      <article>
+        <span>UNKNOWN PRESERVED</span>
+        <strong id="unknown-count">—</strong>
+        <p>公開状態に明示された未確認項目。</p>
+      </article>
+      <article>
+        <span>RECENT STATE CHANGES</span>
+        <strong id="recent-count">—</strong>
+        <p>ai-state.json に記録された recent_changes 件数。</p>
+      </article>
+      <article class="unobserved">
+        <span>UNOBSERVED</span>
+        <strong>DRIVE / PRIVATE EXPERIMENTS</strong>
+        <p>この初版では未接続。見えていないものを「正常」と推定しない。</p>
+      </article>
+    </section>
+
+    <section class="rules">
+      <p class="eyebrow">READING RULE</p>
+      <p><b>緑</b>は、mainの現在commitに対する Flow World Integrity Check が成功し、その結果が5分以内のときだけ。</p>
+      <p><b>赤</b>は、同じcommitのIntegrity Checkが実際に失敗したときだけ。</p>
+      <p><b>未確認</b>は、未実行・別commit・別branch・キャンセル・5分超過・通信失敗。通信が切れたら以前の緑は残さない。</p>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
