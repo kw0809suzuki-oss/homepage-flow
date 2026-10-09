@@ -235,8 +235,11 @@ const loadGarden=()=>{
 const saveGarden=()=>{
   try{ localStorage.setItem(GARDEN_KEY,JSON.stringify(gardenTraces.slice(-60))); }catch(e){}
 };
+// Only saved trace kinds drive this surprise; no preference or intent is inferred.
 const updateGardenCount=()=>{
-  if(gardenCount) gardenCount.textContent=`${gardenTraces.length} trace${gardenTraces.length===1?'':'s'} remain here.`;
+  const allKinds=['light','flower','island'].every(type=>gardenTraces.some(trace=>trace?.type===type));
+  if(garden)garden.dataset.aurora=allKinds?'on':'off';
+  if(gardenCount)gardenCount.textContent=`${gardenTraces.length} trace${gardenTraces.length===1?'':'s'} remain here.${allKinds?' ✦ 光・花・島がそろい、空が淡く光る。':''}`;
 };
 const renderGardenTrace=(trace,animate=true)=>{
   if(!garden)return;

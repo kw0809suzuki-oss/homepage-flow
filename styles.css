@@ -359,6 +359,18 @@ body[data-flow-state="expand"] .loop{background:#1b2940}
   background:#799f79;
   box-shadow:9px 4px 0 #799f79;
 }
+/* Sky Garden: a reversible aurora, derived only from three observed trace kinds. */
+.garden-field[data-aurora="on"] .garden-horizon::before{
+  content:"";position:absolute;inset:-65% 5% 0;
+  background:
+    radial-gradient(ellipse at 24% 44%,rgba(91,188,202,.50),transparent 48%),
+    radial-gradient(ellipse at 74% 35%,rgba(167,151,220,.48),transparent 50%);
+  filter:blur(18px);opacity:.85;pointer-events:none;
+  animation:gardenAurora 7s ease-in-out infinite alternate;
+}
+@keyframes gardenAurora{from{transform:translateX(-2%) scale(.96)}to{transform:translateX(2%) scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.garden-field[data-aurora="on"] .garden-horizon::before{animation:none}}
+
 @keyframes gardenBirth{
   0%{opacity:0;transform:translate(-50%,-50%) scale(.25) translateY(14px)}
   70%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
