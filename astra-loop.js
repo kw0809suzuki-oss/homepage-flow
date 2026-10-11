@@ -31,18 +31,48 @@
     history:[]
   });
 
-  let state=initial();
+  // This is a browser-local trace of lab choices, not evidence of an external result.
+  const STORAGE_KEY='flow-world-astra-loop-v1';
+  const safeText=x=>typeof x==='string'&&x.length<=240;
+  const safeList=(x,max)=>Array.isArray(x)&&x.length<=max&&x.every(safeText);
+  const validSaved=s=>s&&typeof s==='object'
+    &&Number.isSafeInteger(s.turn)&&s.turn>=0&&s.turn<=999
+    &&['ready','await-result','result-ready'].includes(s.phase)
+    &&(s.pending===null||['stable','oscillating'].includes(s.pending))
+    &&(s.phase==='result-ready')===(s.pending!==null)
+    &&['position','candidate','probe','reason'].every(k=>safeText(s[k]))
+    &&safeList(s.observed,10)&&safeList(s.unknown,10)&&safeList(s.history,1000)
+    &&s.history.length===s.turn+(s.phase==='result-ready'?1:0);
 
-  const render=()=>{
+  let state=initial();
+  let restored=false;
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(saved&&saved.version===1&&validSaved(saved.state)){
+      state=saved.state;
+      restored=true;
+    }
+  }catch(e){} // Storage may be disabled, corrupt, or unavailable.
+
+  const save=()=>{
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,state}));}catch(e){}
+  };
+  const showList=(target,tag,items)=>{
+    target.replaceChildren(...items.map(value=>{
+      const node=document.createElement(tag);
+      node.textContent=value;
+      return node;
+    }));
+  };
+
+  const render=(persist=true)=>{
     positionEl.textContent=state.position;
-    observedEl.innerHTML=state.observed.map(x=>'<p>'+x+'</p>').join('');
-    unknownEl.innerHTML=state.unknown.map(x=>'<p>'+x+'</p>').join('');
+    showList(observedEl,'p',state.observed);
+    showList(unknownEl,'p',state.unknown);
     candidateEl.textContent=state.candidate;
     probeEl.textContent=state.probe;
     reasonEl.textContent=state.reason;
-    historyEl.innerHTML=state.history.length
-      ? state.history.map(x=>'<li>'+x+'</li>').join('')
-      : '<li>No result observed yet.</li>';
+    showList(historyEl,'li',state.history.length?state.history:['No result observed yet.']);
     turnEl.textContent='TURN '+state.turn;
 
     runBtn.disabled=state.phase!=='ready';
@@ -62,6 +92,11 @@
     }
     if(state.phase==='await-result')worldStatus.textContent='Probe executed. The world must return one concrete result.';
     if(state.phase==='result-ready')worldStatus.textContent='Result observed. It is not a global rule yet. Re-enter to update the current position.';
+    if(restored){
+      worldStatus.textContent+=' / このブラウザの試行履歴から再開しました。';
+      restored=false;
+    }
+    if(persist)save();
   };
 
   runBtn.addEventListener('click',()=>{
@@ -112,8 +147,9 @@
 
   resetBtn.addEventListener('click',()=>{
     state=initial();
-    render();
+    try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+    render(false);
   });
 
-  render();
+  render(false);
 })();
