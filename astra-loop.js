@@ -37,8 +37,8 @@
   const safeList=(x,max)=>Array.isArray(x)&&x.length<=max&&x.every(safeText);
   const validSaved=s=>s&&typeof s==='object'
     &&Number.isSafeInteger(s.turn)&&s.turn>=0&&s.turn<=999
-    &&['ready','await-result','result-ready','review'].includes(s.phase)
-    &&(s.phase!=='review'||s.turn>=2)
+    &&['ready','await-result','result-ready','review','history-checked'].includes(s.phase)
+    &&(!['review','history-checked'].includes(s.phase)||s.turn>=2)
     &&(s.pending===null||['stable','oscillating'].includes(s.pending))
     &&(s.phase==='result-ready')===(s.pending!==null)
     &&['position','candidate','probe','reason'].every(k=>safeText(s[k]))
@@ -87,7 +87,8 @@
     runBtn.disabled=state.phase!=='ready';
     resultStable.disabled=state.phase!=='await-result';
     resultOsc.disabled=state.phase!=='await-result';
-    reenterBtn.disabled=state.phase!=='result-ready';
+    reenterBtn.disabled=!['result-ready','review'].includes(state.phase);
+    reenterBtn.textContent=state.phase==='review'?'READ SAVED TRACE':'RE-ENTER STATE';
 
     beacon.className='astra-beacon';
     if(state.phase==='await-result')beacon.classList.add('pulsing');
@@ -101,7 +102,8 @@
     }
     if(state.phase==='await-result')worldStatus.textContent='Current lab probe: '+state.probe+'. Choose a result; no external measurement is performed.';
     if(state.phase==='result-ready')worldStatus.textContent='Lab result selected for '+state.probe+'. Re-enter to update the current position.';
-    if(state.phase==='review')worldStatus.textContent='Two-turn lab complete. The next probe is still unknown; reset to compare another path.';
+    if(state.phase==='review')worldStatus.textContent='Two lab choices saved. Read the last trace to select one external check; no measurement has been made.';
+    if(state.phase==='history-checked')worldStatus.textContent='Saved trace consulted. The proposed check has not been performed in the real world.';
     if(restored){
       worldStatus.textContent+=' / このブラウザの試行履歴から再開しました。';
       restored=false;
@@ -130,6 +132,29 @@
   resultOsc.addEventListener('click',()=>observeResult('oscillating'));
 
   reenterBtn.addEventListener('click',()=>{
+    if(state.phase==='review'){
+      // The current decision surface is shared across both routes.
+      // Only the browser-local lab trace distinguishes the next check.
+      const last=state.history[state.history.length-1]||'';
+      const fallback=last.startsWith('Context S1: VERIFY FALLBACK / REVERSIBLE → ');
+      const threshold=last.startsWith('Context S1: LOWER PULSE / THRESHOLD → ');
+      if(fallback!==threshold){
+        state.candidate=fallback
+          ?'Check actual fallback integrity'
+          :'Check actual lower-pulse threshold';
+        state.probe=fallback
+          ?'EXTERNAL CHECK / FALLBACK'
+          :'EXTERNAL CHECK / PULSE THRESHOLD';
+        state.reason='直近のブラウザ内操作履歴を参照して選択。実世界の結果は未観測。';
+      }else{
+        state.candidate='No reliable lab trace to select a check';
+        state.probe='UNDECIDED / TRACE NOT RECOGNIZED';
+        state.reason='履歴を参照したが識別できないため、次の確認先は未決定。';
+      }
+      state.phase='history-checked';
+      render();
+      return;
+    }
     if(state.phase!=='result-ready')return;
     const completedProbe=state.probe;
     const outcome=state.pending;
@@ -156,13 +181,11 @@
       // Second-turn outcomes are recorded against their actual probe.
       // No third-step rule has been evidenced: stop rather than invent one.
       state.position='STATE '+state.turn+' / TWO-TURN REVIEW';
-      state.observed=[...state.observed,completedProbe+' → lab-selected result '+(outcome==='stable'?'A':'B')];
-      state.unknown=[completedProbe==='VERIFY FALLBACK / REVERSIBLE'
-        ?'Actual fallback behavior after relay use'
-        :'Actual safe lower-pulse threshold'];
-      state.candidate='Compare these two lab choices with a real-world observation';
-      state.probe='UNDECIDED / REVIEW TWO TURNS';
-      state.reason='画面上の二つの選択だけでは、3周目の行動を確定しない';
+      state.observed=['Two lab choices are stored in local history','No real-world measurement has been recorded'];
+      state.unknown=['Which real-world condition should be checked next?'];
+      state.candidate='Read the last saved lab probe before choosing a check';
+      state.probe='UNDECIDED / CHECK SAVED TRACE';
+      state.reason='過去の選択を現在地に混ぜず、必要な時だけ履歴を参照する';
       state.phase='review';
     }
 
