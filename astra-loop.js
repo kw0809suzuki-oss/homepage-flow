@@ -37,7 +37,8 @@
   const safeList=(x,max)=>Array.isArray(x)&&x.length<=max&&x.every(safeText);
   const validSaved=s=>s&&typeof s==='object'
     &&Number.isSafeInteger(s.turn)&&s.turn>=0&&s.turn<=999
-    &&['ready','await-result','result-ready'].includes(s.phase)
+    &&['ready','await-result','result-ready','review'].includes(s.phase)
+    &&(s.phase!=='review'||s.turn>=2)
     &&(s.pending===null||['stable','oscillating'].includes(s.pending))
     &&(s.phase==='result-ready')===(s.pending!==null)
     &&['position','candidate','probe','reason'].every(k=>safeText(s[k]))
@@ -75,6 +76,14 @@
     showList(historyEl,'li',state.history.length?state.history:['No result observed yet.']);
     turnEl.textContent='TURN '+state.turn;
 
+    // The choice labels follow the current probe, not the first probe forever.
+    const fallback=state.probe==='VERIFY FALLBACK / REVERSIBLE';
+    const lowerPulse=state.probe==='LOWER PULSE / THRESHOLD';
+    resultStable.textContent=fallback?'RESULT A / FALLBACK INTACT'
+      :lowerPulse?'RESULT A / LOWER PULSE STABLE':'RESULT A / STABILIZED';
+    resultOsc.textContent=fallback?'RESULT B / FALLBACK DISRUPTED'
+      :lowerPulse?'RESULT B / LOWER PULSE OSCILLATED':'RESULT B / OSCILLATED';
+
     runBtn.disabled=state.phase!=='ready';
     resultStable.disabled=state.phase!=='await-result';
     resultOsc.disabled=state.phase!=='await-result';
@@ -90,8 +99,9 @@
         ? 'World is waiting. Run the first probe.'
         : 'Re-entry complete. The next probe now depends on the observed result.';
     }
-    if(state.phase==='await-result')worldStatus.textContent='Probe executed. The world must return one concrete result.';
-    if(state.phase==='result-ready')worldStatus.textContent='Result observed. It is not a global rule yet. Re-enter to update the current position.';
+    if(state.phase==='await-result')worldStatus.textContent='Current lab probe: '+state.probe+'. Choose a result; no external measurement is performed.';
+    if(state.phase==='result-ready')worldStatus.textContent='Lab result selected for '+state.probe+'. Re-enter to update the current position.';
+    if(state.phase==='review')worldStatus.textContent='Two-turn lab complete. The next probe is still unknown; reset to compare another path.';
     if(restored){
       worldStatus.textContent+=' / このブラウザの試行履歴から再開しました。';
       restored=false;
@@ -110,9 +120,8 @@
     if(state.phase!=='await-result')return;
     state.pending=kind;
     state.phase='result-ready';
-    const label=kind==='stable'
-      ? 'Context S'+state.turn+': LOW PULSE / RELAY → observed: response stabilized'
-      : 'Context S'+state.turn+': LOW PULSE / RELAY → observed: response oscillated';
+    const choice=kind==='stable'?resultStable.textContent:resultOsc.textContent;
+    const label='Context S'+state.turn+': '+state.probe+' → '+choice+' (selected in lab)';
     state.history.push(label);
     render();
   };
@@ -122,26 +131,42 @@
 
   reenterBtn.addEventListener('click',()=>{
     if(state.phase!=='result-ready')return;
+    const completedProbe=state.probe;
+    const outcome=state.pending;
     state.turn+=1;
 
-    if(state.pending==='stable'){
-      state.position='STATE '+state.turn+' / STABLE RESPONSE OBSERVED';
-      state.observed=['Beacon = unstable','Relay = reachable','Low pulse response = stable','Fallback = intact'];
-      state.unknown=['Whether fallback remains intact after relay use'];
-      state.candidate='Test fallback briefly, then return';
-      state.probe='VERIFY FALLBACK / REVERSIBLE';
-      state.reason='新しいStateでGoalに残ったUnknownへ直接届き、元に戻せる';
+    if(completedProbe==='LOW PULSE / RELAY'){
+      if(outcome==='stable'){
+        state.position='STATE '+state.turn+' / STABLE RESPONSE SELECTED';
+        state.observed=['Beacon = unstable','Relay = reachable','Lab-selected low pulse response = stable','Fallback = intact'];
+        state.unknown=['Whether fallback remains intact after relay use'];
+        state.candidate='Test fallback briefly, then return';
+        state.probe='VERIFY FALLBACK / REVERSIBLE';
+        state.reason='新しいStateでGoalに残ったUnknownへ直接届き、元に戻せる';
+      }else{
+        state.position='STATE '+state.turn+' / OSCILLATION SELECTED';
+        state.observed=['Beacon = unstable','Relay = reachable','Lab-selected low pulse response = oscillating','Fallback = intact'];
+        state.unknown=['Where the lower safe pulse threshold begins'];
+        state.candidate='Reduce pulse strength and test the threshold';
+        state.probe='LOWER PULSE / THRESHOLD';
+        state.reason='直前Resultで生まれたUnknownへ届き、同じ強さを繰り返さない';
+      }
+      state.phase='ready';
     }else{
-      state.position='STATE '+state.turn+' / OSCILLATION OBSERVED';
-      state.observed=['Beacon = unstable','Relay = reachable','Low pulse response = oscillating','Fallback = intact'];
-      state.unknown=['Where the lower safe pulse threshold begins'];
-      state.candidate='Reduce pulse strength and test the threshold';
-      state.probe='LOWER PULSE / THRESHOLD';
-      state.reason='直前Resultで生まれたUnknownへ届き、同じ強さを繰り返さない';
+      // Second-turn outcomes are recorded against their actual probe.
+      // No third-step rule has been evidenced: stop rather than invent one.
+      state.position='STATE '+state.turn+' / TWO-TURN REVIEW';
+      state.observed=[...state.observed,completedProbe+' → lab-selected result '+(outcome==='stable'?'A':'B')];
+      state.unknown=[completedProbe==='VERIFY FALLBACK / REVERSIBLE'
+        ?'Actual fallback behavior after relay use'
+        :'Actual safe lower-pulse threshold'];
+      state.candidate='Compare these two lab choices with a real-world observation';
+      state.probe='UNDECIDED / REVIEW TWO TURNS';
+      state.reason='画面上の二つの選択だけでは、3周目の行動を確定しない';
+      state.phase='review';
     }
 
     state.pending=null;
-    state.phase='ready';
     render();
   });
 
