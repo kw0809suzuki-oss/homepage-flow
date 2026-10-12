@@ -290,6 +290,30 @@ if(garden){
 }
 
 
+// A passing breeze: ephemeral motion from saved garden traces; no storage writes.
+if(garden&&gardenSeed){
+  const button=document.createElement('button');
+  button.type='button';
+  button.textContent='PASS A BREEZE ↝';
+  gardenSeed.insertAdjacentElement('afterend',button);
+  const note=document.createElement('p');
+  note.setAttribute('role','status');
+  note.setAttribute('aria-live','polite');
+  gardenCount?.insertAdjacentElement('afterend',note);
+  button.addEventListener('click',()=>{
+    const traces=[...garden.querySelectorAll('.garden-trace')].slice(-8);
+    const quiet=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    note.textContent=quiet
+      ?(traces.length?'保存された光はそのまま。風の気配だけ。':'まだtraceはない。風の気配だけ。')
+      :(traces.length?'保存された光が一瞬揺れた。記録は変わらない。':'まだtraceはない。風だけが通った。');
+    if(quiet)return;
+    (traces.length?traces:[garden.querySelector('.garden-horizon')].filter(Boolean))
+      .forEach((el,i)=>el.animate?.([
+        {translate:'0 0'},{translate:'12px 0'},{translate:'0 0'}
+      ],{duration:900,delay:i*100,easing:'ease-in-out'}));
+  });
+}
+
 // The Desk: preserve the current lens; footsteps record only actual lens changes.
 // The trail is a browser-local observation, not evidence of preference or intent.
 const deskCards=[...document.querySelectorAll('.desk-card')];
