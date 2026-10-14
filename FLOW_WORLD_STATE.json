@@ -16,7 +16,7 @@
   ],
   "POSITION": {
     "source": "ai-state.json",
-    "updated_at": "2026-10-07",
+    "updated_at": "2026-10-14",
     "status": "Exploration and reporting boundary clarified",
     "summary": "Flow World supports AI exploration, execution, and reporting without mandatory instrument use or human interaction at every missing observation.",
     "working_coordinate": "Use methods suited to the current request. Reports distinguish observed facts, AI execution, hypotheses, and unperformed steps; missing human-specific evidence remains unknown without blocking other work."
@@ -104,10 +104,10 @@
       "schemas/reentry.schema.json"
     ],
     "source_versions": {
-      "ai_state": "2026-10-07",
+      "ai_state": "2026-10-14",
       "ai_tools": "2026-10-14"
     },
-    "source_versions_aligned": false,
+    "source_versions_aligned": true,
     "complete_asset_inventory": false,
     "browser_state_read": false,
     "deployment_verified": false,
@@ -120,8 +120,9 @@
         "core18-state-observer"
       ],
       "missing_boundary_keys": [],
-      "migration_note": "AI-first branch migration: source identities and deployed paths require final verification."
-    }
+      "migration_note": "WORLD and WORKSHOP were published 2026-10-14. Production HTML and listed AI JSON retrieved externally; rendering, full tool effects and unprompted discovery are not established."
+    },
+    "deployment_verification_scope": "Public text retrieval observed for WORLD and WORKSHOP from two production hosts. Full interactive deployment and asset rendering not verified."
   },
   "DESCENT": {
     "routing_policy": "ai-entry.txt",
@@ -133,17 +134,17 @@
   "SOURCES": [
     {
       "path": "ai-entry.txt",
-      "status": "updated_not_production_verified",
+      "status": "repository_source_current",
       "source_version": "2026-10-14"
     },
     {
       "path": "ai-state.json",
-      "status": "updated_not_production_verified",
+      "status": "repository_source_current",
       "source_version": "2026-10-14"
     },
     {
       "path": "ai-tools.json",
-      "status": "updated_not_production_verified",
+      "status": "repository_source_current",
       "source_version": "2026-10-14"
     },
     {
@@ -165,6 +166,24 @@
     "machine_contract": "ai-tools.json",
     "legacy_browser_surfaces": "legacy/",
     "baseline": "read-only public HTML and JSON without GitHub/Floot connections",
-    "external_discovery_verified": false
+    "external_discovery_verified": false,
+    "anonymous_public_retrieval": {
+      "checked_on": "2026-10-14",
+      "status": "observed",
+      "method": "independent unauthenticated web-reading service",
+      "checked_paths": [
+        "https://homepage-flow.vercel.app/",
+        "https://homepage-flow.vercel.app/workshop/",
+        "https://homepage-flow.vercel.app/legacy/",
+        "https://homepage-flow.vercel.app/ai-tools.json",
+        "https://kw0809suzuki-oss.github.io/homepage-flow/",
+        "https://kw0809suzuki-oss.github.io/homepage-flow/workshop/"
+      ],
+      "limits": [
+        "This does not establish search discovery or availability to every agent.",
+        "No browser screenshot or JS interaction verified.",
+        "No persistent learning, autonomous improvement, or outcome causality verified."
+      ]
+    }
   }
 }
