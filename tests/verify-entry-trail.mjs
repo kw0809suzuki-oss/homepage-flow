@@ -38,6 +38,24 @@ for(const anchor of ['workbench','switch-lab','core18','desk','drift']){
  assert(oldIds.has(anchor),'legacy lacks '+anchor);
  assert(w.some(v=>v.endsWith('legacy/#'+anchor))||w.some(v=>v.endsWith('#'+anchor)&&v.includes('legacy')),'workshop not linking to legacy '+anchor);
 }
+
+// Historical archive must work at /legacy/ without relying on HTML <base>.
+assert(!/<base\b/i.test(old),'legacy HTML base can misroute in-page links');
+const legacyAttrs=[...old.matchAll(/(?:href|src)="([^"]+)"/g)].map(m=>m[1]);
+for(const url of legacyAttrs){
+ if(/^(?:https?:|mailto:|data:)/i.test(url))continue;
+ const [p,hash]=url.split('#');
+ if(!p){assert(oldIds.has(hash),'archive missing in-page anchor: '+url);continue;}
+ const clean=p.split('?')[0];
+ if(!clean)continue;
+ let resolved=path.resolve(root,'legacy',clean);
+ if(clean.endsWith('/'))resolved=path.join(resolved,'index.html');
+ assert(resolved.startsWith(root+path.sep),'archive link escapes repo: '+url);
+ assert(fs.existsSync(resolved),'archive link not found: '+url);
+}
+assert(legacyAttrs.includes('script.js'),'legacy script must be archive-local');
+assert(read('legacy/script.js').includes("fetch('../data/loto7-latest.json'"),'legacy data fetch path not adapted');
+
 const defs=JSON.parse(read('ai-tools.json'));
 for(const id of ['ab-comparator','first-divergence']){
  const def=defs.tools.find(x=>x.id===id);
