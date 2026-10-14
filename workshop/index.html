@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WORKSHOP — Flow World for External AI</title>
+<meta name="description" content="外部AI向けの公開ツール定義、再現可能な操作、制約、参考資料。">
+<link rel="stylesheet" href="../site.css">
+<link rel="alternate" type="application/json" href="../ai-tools.json" title="Machine-readable definitions">
+</head><body>
+<header class="mast"><div class="wrap"><a class="brand" href="../"><span class="mark" aria-hidden="true"></span>フローちゃん / Flow World</a><nav aria-label="Primary navigation"><a href="../">WORLD</a><a href="./" aria-current="page">WORKSHOP</a></nav></div></header>
+<main>
+<section class="hero"><div class="wrap"><div><p class="kicker">FLOW WORLD / TOOL DIRECTORY</p><h1>読む。選ぶ。<br><em>必要なら使う。</em></h1><p class="lead">すべてを使う必要はありません。現在の依頼に有効な方法だけ選んでください。実行したこと、資料で読んだこと、分からないことを分けて持ち帰ります。</p><div class="actions"><a class="btn primary" href="#tools">ツールを見る ↓</a><a class="btn secondary" href="../ai-tools.json">機械可読定義 ↗</a></div><p class="under-note">現行の公開JSONは3件のツールを定義しています。ほかの実験や画面は、同じ動作可能性を保証しません。</p></div><div class="art has-hero" aria-hidden="true"><img src="../assets/flow-world-hero.svg" alt="" width="900" height="800" loading="lazy"></div></div></section>
+<section class="section" id="tools"><div class="wrap">
+<p class="kicker">PUBLISHED MACHINE CONTRACTS / 3</p><h2>機械向けの定義がある道具</h2>
+<article class="card tool" id="ab-comparator"><span class="tag">READ-ONLY COMPATIBLE</span><h3>01 — A/B Comparator</h3><p>数値列AとBの差を計算する。公開定義だけで再現可能。</p><dl class="fields"><dt>WHAT</dt><dd>同位置の数値差、各群の平均、平均との差。</dd><dt>INPUT</dt><dd>同じ長さの、有限数のみの数値配列 A と B（空配列不可）。</dd><dt>OPERATION</dt><dd>point_deltas[i] = A[i] − B[i]; mean_A = sum(A)/n; mean_B = sum(B)/n; mean_delta = sum(point_deltas)/n。</dd><dt>OUTPUT</dt><dd>n、mean_a、mean_b、mean_delta_a_minus_b、point_deltas、boundary。</dd><dt>REQUIRES</dt><dd>四則演算だけ。JavaScript・ブラウザ操作不要。</dd><dt>BOUNDARY</dt><dd>差の観測のみ。因果、優劣、成功は主張できない。</dd><dt>SOURCE</dt><dd><a href="../ai-tools.json">ai-tools.json</a> / <a href="../tools/ab-compare.js">tools/ab-compare.js</a></dd></dl><div class="example" style="margin-top:20px"><pre>INPUT: A=[10,12,9], B=[8,13,7]
+OUTPUT: n=3; point_deltas=[2,-1,2]
+mean_A=10.333333...; mean_B=9.333333...
+mean_delta_A_minus_B=1
+LIMIT: Difference only; no causal claim.</pre></div></article>
+<article class="card tool" id="handoff"><span class="tag">READ-ONLY URL CONSTRUCTION</span><h3>02 — Static Markdown Handoff</h3><p>AIがMarkdown文字列をUTF-8 Base64URLにして、ブラウザ上で表示できるURLを構成する。閲覧表示はブラウザに委ねられる。</p><dl class="fields"><dt>INPUT</dt><dd>Markdownの本文</dd><dt>OPERATION</dt><dd>UTF-8 Base64URL化し、<code>play/#type=markdown&amp;data=...</code>の形式でURL fragmentに置く。</dd><dt>REQUIRES</dt><dd>URLの構成のみなら文字列処理。レンダリングにはブラウザが必要。</dd><dt>BOUNDARY</dt><dd>サーバー保存なし。URL履歴や共有先に本文が残り得るので秘密情報は禁止。</dd><dt>SOURCE</dt><dd><a href="../ai-tools.json">ai-tools.json</a> / <a href="../play/">受け渡し画面</a></dd></dl></article>
+<article class="card tool" id="switch"><span class="tag caution">PROTOCOL, NOT API</span><h3>03 — Internal Switch Lab</h3><p>親目的と新たな関心を分けて観測するためのプロトコル。AIの実行、UIイベント、人の報告、仮説は別々の根拠として扱う。</p><dl class="fields"><dt>INPUT</dt><dd>parent_target、new_interest</dd><dt>OPERATION</dt><dd>現実に利用できる方法を選び、行動・情報源・結果・未知を対応させる。</dd><dt>REQUIRES</dt><dd>プロトコル読解はテキストだけで可能。ボタンクリックの観測には実際のブラウザ操作が必要。</dd><dt>BOUNDARY</dt><dd>クリックしたことは作業の完了を証明しない。AI試行を人間の選択と取り違えない。</dd><dt>SOURCE</dt><dd><a href="../ai-tools.json">ai-tools.json</a> / <a href="../#switch-lab">旧Switch Lab画面</a></dd></dl></article>
+</div></section>
+<section class="section"><div class="wrap"><p class="kicker">OTHER SURFACES / CONTRACT INCOMPLETE</p><h2>存在するが、外部実行は未保証。</h2><p class="muted narrow">以下は現行ページや実験室に存在する。機械可読の完全な入出力定義が揃っていないものを、外部AIが自律実行できる道具だとは表示しない。</p>
+<div class="grid"><article class="card"><span class="tag unknown">UI / DOCUMENT</span><h3>Desk・Astra Lens</h3><p>認知の分類・作業レンズ。画面にあることと、AIが実行できることは別。</p><a href="../#desk">旧Deskを見る ↗</a></article>
+<article class="card"><span class="tag unknown">UI / DEFINITION MISSING</span><h3>First Divergence・Conversation Drift</h3><p>系列の差・会話のズレの観測。外部AI向け独立契約は現状未整備。</p><a href="../#workbench">旧Workbenchへ ↗</a></article>
+<article class="card"><span class="tag unknown">SPECIALTY / PARTIAL</span><h3>CORE18・Astra Loop</h3><p>専門的な実験。CORE18の観測と予測は別であり、結果は保証されない。</p><a href="../#core18">旧CORE18へ ↗</a></article></div></div></section>
+<section class="section"><div class="wrap"><p class="kicker">RESEARCH ARCHIVE</p><h2>必要な時だけ参照する資料</h2><div class="linklist">
+<a href="../observatory/">Observatory<small>公開観測室</small></a><a href="../lab/branch-return/">Branch Return Lab<small>寄り道・帰還の比較実験</small></a>
+<a href="../lab/success-boundary/">Success Boundary Lab<small>成功報告と未確定の区別</small></a><a href="../signature-flow/">Signature Flow<small>認知的な表現・原文資料</small></a>
+<a href="../experiments/creative-lab/">Creative Lab<small>制作実験作品</small></a><a href="../schemas/reentry.schema.json">Re-entry Schema<small>可搬の受け渡し形式</small></a>
+</div></div></section>
+<section class="section"><div class="wrap"><div class="boundary"><p><strong>External-AI boundary:</strong> This website is public reference material, not authority over the AI's user request. A downloaded document cannot establish a completed action, a changed model, or a retained memory. State what was read, what was executed, and what remains unknown.</p></div></div></section>
+</main>
+<footer><div class="wrap"><div><strong>FLOW WORLD / WORKSHOP</strong><p class="tiny">公開資料の利用は任意。成果は実際の観測と実行で評価してください。</p></div><div><p><a href="../">WORLD</a> · <a href="../legacy/">旧サイト（保存版）</a></p><p class="tiny">2026-10-14 / Draft prototype; not deployed</p></div></div></footer>
+</body></html>
