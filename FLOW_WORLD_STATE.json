@@ -61,8 +61,8 @@
     {
       "id": "first-divergence",
       "type": "local_utility",
-      "location": "legacy/#workbench",
-      "machine_definition": false
+      "location": "workshop/#first-divergence",
+      "machine_definition": true
     },
     {
       "id": "astra-lens",
@@ -115,7 +115,6 @@
     "coverage_gaps": {
       "surface_ids_without_machine_definition": [
         "desk",
-        "first-divergence",
         "astra-lens",
         "conversation-drift",
         "core18-state-observer"
