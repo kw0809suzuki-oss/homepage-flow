@@ -28,3 +28,4 @@ jobs:
         with:
           node-version: '22'
       - run: node tests/verify-ai-first.mjs
+      - run: node tests/verify-entry-trail.mjs
