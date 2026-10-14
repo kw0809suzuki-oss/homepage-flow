@@ -47,6 +47,10 @@ for(const id of ['ab-comparator','first-divergence']){
 }
 const source=read('ai.txt');
 assert(source.includes('index.html')&&source.includes('workshop/'),'static AI entry does not recognize public HTML');
+assert(w.includes('../reference/return-to-purpose.md'),'workshop lacks optional goal-return reference');
+const reference=read('reference/return-to-purpose.md');
+assert(reference.includes('Local observation') || reference.includes('A local observation'),'goal-return reference not found');
+assert(reference.includes('remaining unknown') || reference.includes('Remaining unknown'),'reference must distinguish missing evidence');
 const sitemap=read('sitemap.xml');
 assert(sitemap.includes('/homepage-flow/workshop/'),'workshop missing from sitemap');
 assert(home.includes('rel="canonical"')&&workshop.includes('rel="canonical"'),'canonical URLs absent');
