@@ -1,48 +1,39 @@
-# Flow World AI-first renewal — implementation record
+# Flow World — AI-first implementation record v0.3
 
 Date: 2026-10-14  
-Branch: `ai-first-redesign-v01`  
-Public site: **unchanged** (`main` not modified).
+Development branch: `ai-first-redesign-v01`  
+Draft review: https://github.com/kw0809suzuki-oss/homepage-flow/pull/15  
+Live `main`: **unchanged**. No production publication approved or performed.
 
-## Files created
+## Implemented on branch
 
-| Path | Purpose |
-|---|---|
-| `docs/AI_FIRST_REDESIGN_V02.md` | Two-page design, migration map, boundary and acceptance criteria |
-| `preview/index.html` | WORLD: text-first public entry for outside AIs |
-| `preview/workshop/index.html` | WORKSHOP: actual definitions and compatibility limits |
-| `preview/site.css` | Responsive visual system |
-| `preview/assets/flow-world-hero.svg` | Decorative spherical world illustration, with no operational facts hidden in it |
-| `legacy/index.html` | Source-preserving archived home page; root-relative file paths resolved using HTML base and same-page hash links rewritten |
+- `index.html` — WORLD: root-level, static HTML, no client JavaScript necessary to read the entry.
+- `workshop/index.html` — WORKSHOP: text-first tool directory and access boundaries.
+- `site.css`, `assets/flow-world-hero.svg` — responsive UI and decorative visual that contains no exclusive operational facts.
+- `legacy/index.html` — historical multi-section homepage preserved; root resource references handled with an HTML base element, in-page anchors adjusted.
+- `ai.txt`, `ai-entry.txt`, `ai-state.json`, `FLOW_WORLD_STATE.json`, `ai-tools.json` — route declarations aligned with WORLD and WORKSHOP; external verification stays explicitly false.
+- `tools/first-divergence.js` — extract deterministic first observed difference into a browser-independent definition.
+- `ai-tools.json` now documents four tools: A/B comparator, First Divergence, Static Handoff, Internal Switch Lab. Only the first two are standalone deterministic operations; Static Handoff requires a browser to render, and Switch Lab is a protocol, not an external API.
+- `sitemap.xml` — lists the intended GitHub Pages root and WORKSHOP paths. This is not an indexing guarantee. GitHub Pages project sites are subpaths and a robots.txt located there would not act as origin-root robots policy.
+- `preview/` — earlier copies retained; no production dependency on them.
+- `tests/verify-ai-first.mjs` and `.github/workflows/ai-first-static.yml` — checks for local HTML link targets, two primary navigation routes, JSON contract validity, and deterministic example results.
 
-## Repository-level evidence checked
+## Grounded verification
 
-- Preview pages contain normal HTML text and native anchors; they do not require JavaScript for the entry text.
-- There are exactly **two primary navigation items** on both preview pages: WORLD and WORKSHOP.
-- The machine-readable tool list on current `main` declares **three** items: `ab-comparator`, `static-handoff-play`, `internal-switch-lab`. This preview does not pretend every visible tool is a machine API.
-- Shared A/B code was read: `tools/ab-compare.js`; numeric example corresponds to its definition.
-- All in-page `#fragment` anchors in the two preview pages and legacy copy were checked against HTML IDs; no missing local anchors found.
-- The new `preview/assets/flow-world-hero.svg`, `legacy/index.html`, and original hero/room/states image assets were confirmed to exist on the draft branch.
-- Earlier repository link review confirmed core TXT/JSON contracts and old lab directories. This is **repository existence**, not a claim that the public deployment currently serves them.
-- Legacy HTML retained existing content and root resource loading via `<base href="../">`. Its inline source contained literal `\\n` between some tags; the archive copy cleans that whitespace without altering functionality intentionally.
+- GitHub Actions checks for commit `7acd943456204b292c0a5b66a360f8612ef7ee5e`: both *Flow World Integrity Check* and *AI-first static integrity* completed successfully (run IDs 38532837735 and 38532837751).
+- The first full branch-root static preview deployment for that commit is Vercel `dpl_GsD2ENH7B7U3Ck1Li4vBstpfZvsf`, READY.
+- Latest sitemap / metadata changes occurred **after** that green test commit, and should receive fresh checks.
+- Vercel project has preview SSO protection enabled. External ordinary web fetch could not open preview pages. READY therefore does **not** prove external-AI access, screenshot fidelity, JavaScript behavior or anonymous navigation.
+- The user's original public GitHub Pages main branch has not been replaced.
 
-## Open boundaries (do not claim complete)
+## Unverified before production release
 
-- No browser render/screenshots for the new pages. Responsive display and SVG appearance have not been visually verified.
-- No external user or external AI has been measured discovering, reading, and using this draft.
-- No public hosting from this branch is assumed; a GitHub source link is not a deployed preview URL.
-- This draft is at `preview/`, so the links would require path adjustment before promoting the pages to repository root and `/workshop/`.
-- No new machine contracts or APIs have been added. The three existing definitions remain canonical.
-- Existing site functionality in `legacy/` is preserved at source level but browser execution and cross-page JS fetch behavior have not been validated.
-- No search indexing or model-learning improvement is claimed.
+1. Browser screenshots of `/` and `/workshop/` from final branch at both desktop and mobile sizes.
+2. Unauthenticated external HTTP response and clickable links from chosen public production host, including ordinary AI text retrieval.
+3. Legacy browser behavior when served under `/legacy/`, particularly relative JS fetches and image assets.
+4. Search indexing or actual discovery without being supplied a URL.
+5. Any change to visitor model knowledge, autonomous capability, completion rate or long-term objective retention.
 
-## Before public cutover
+## Release boundary
 
-1. Make the intended root versions by adjusting preview-relative file links; do not blindly move HTML.
-2. Confirm browser rendering with JavaScript disabled and mobile viewport.
-3. Validate legacy route, especially script loading and relative JSON fetches.
-4. Check external unauthenticated HTTP responses for `/`, `/workshop/`, `/ai-tools.json`, and `/FLOW_WORLD_STATE.json`.
-5. Update machine state metadata only after final routes are coherent; verify source freshness and make no unsupported deployment assertions.
-6. Keep a reversible rollback path to old root from `legacy/`.
-
-Current outcome: **AI-first draft, assets, and legacy preservation completed on a separate branch; publication and external-access behavior remain unverified.**
+Do not merge PR #15 solely because code checks and Vercel compilation pass. The user's primary objective is an AI-accessible public web entry. Keep the PR draft until public-access and browser checks justify release. Production deployment may be triggered automatically when the base branch changes.
