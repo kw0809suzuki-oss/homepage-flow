@@ -26,8 +26,7 @@
     "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
     "How Recent History, Similar Transitions, and CORE18 candidate generation should be connected without inventing unsupported fixed rules.",
-    "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run.",
-    "Whether the newly prepared AI-first root layout is readable through unauthenticated public production hosting after cutover."
+    "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run."
   ],
   "available_tools": [
     {
@@ -151,6 +150,7 @@
     "Evidence boundaries limit claims, not authorized exploration or execution. Instruments and human interaction are not mandatory prerequisites for reports; ask only when missing human-specific evidence is essential."
   ],
   "recent_changes": [
+    "2026-10-14: AI-first WORLD/WORKSHOP published on main and externally retrieved on GitHub Pages and Vercel. Legacy link double-path fixed by removing HTML base and using archive-local JS.",
     "Published the First Divergence read-only machine contract and standalone shared JavaScript implementation.",
     "AI-first website draft: WORLD at index.html, WORKSHOP at workshop/, old homepage at legacy/. No external AI-discovery or browser validation claim.",
     "Added in-visit persistent LAST PLACE return trace.",
@@ -190,5 +190,20 @@
     "legacy": "legacy/",
     "machine_contract": "ai-tools.json",
     "published_source": "https://github.com/kw0809suzuki-oss/homepage-flow"
+  },
+  "publication": {
+    "date": "2026-10-14",
+    "git_pr": "https://github.com/kw0809suzuki-oss/homepage-flow/pull/15",
+    "status": "published",
+    "public_hosts": [
+      "https://homepage-flow.vercel.app/",
+      "https://kw0809suzuki-oss.github.io/homepage-flow/"
+    ],
+    "observed": "An unauthenticated external web reader retrieved WORLD and WORKSHOP text from both hosts, and retrieved archived legacy links and ai-tools.json from Vercel.",
+    "not_established": [
+      "Cross-browser visual fidelity and runtime interaction",
+      "Unprompted external-AI discovery",
+      "Persistent learning or behavior improvement"
+    ]
   }
 }
