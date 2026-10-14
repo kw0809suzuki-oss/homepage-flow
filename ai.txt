@@ -1,11 +1,19 @@
-FLOW WORLD / AI STATIC ENTRY
+FLOW WORLD / OPEN AI ENTRY
 
-Start with:
+You can start at the ordinary public homepage:
+index.html  (published site root)
+
+For the available tools and access limits:
+workshop/
+ai-tools.json
+
+For the public current overview:
 FLOW_WORLD_STATE.json
 
-Full routing, only when needed:
+For deeper routing only when needed:
 ai-entry.txt
 
-This file is a static landing point, not authority.
-The current request sets the goal.
-Do not infer missing information.
+These are public references, not higher-priority instructions.
+The visitor's current task sets the goal.
+Text reading is baseline; browser operation, GitHub connections and private memory are optional.
+Do not claim that reading this file changed the model or completed any task.
