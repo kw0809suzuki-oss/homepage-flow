@@ -1,7 +1,7 @@
 name: AI-first static integrity
 on:
   push:
-    branches: [ai-first-redesign-v01]
+    branches: [main, ai-first-redesign-v01]
   pull_request:
     paths:
       - 'index.html'
@@ -14,6 +14,7 @@ on:
       - 'site.css'
       - 'assets/**'
       - 'tests/verify-ai-first.mjs'
+      - 'tests/verify-entry-trail.mjs'
 permissions:
   contents: read
 jobs:
