@@ -37,3 +37,24 @@ Live `main`: **unchanged**. No production publication approved or performed.
 ## Release boundary
 
 Do not merge PR #15 solely because code checks and Vercel compilation pass. The user's primary objective is an AI-accessible public web entry. Keep the PR draft until public-access and browser checks justify release. Production deployment may be triggered automatically when the base branch changes.
+
+
+## External reading and subsequent adjustments (2026-10-14)
+
+The current `main` pages were fetched by an independent web-reading service without a project connector or logged-in browser:
+- `https://kw0809suzuki-oss.github.io/homepage-flow/`: received the original `HUMAN × AI — Flow` page text and 26 outbound/in-page links.
+- `https://homepage-flow.vercel.app/`: received the same original page text and 26 links.
+- Branch Vercel preview `homepage-flow-git-ai-first-redesign-v01-kw0809suzuki-4745.vercel.app`: returned `login_required`, consistent with its configured SSO preview protection.
+- A third-party raw GitHub HTML preview displayed an external-content confirmation notice; this does not establish unrestricted anonymous AI access to the branch.
+These results establish reachability for the two **old** public home pages through one web-reading service, not universal crawler access or the visibility of the new unpublished layout.
+
+Link audit found WORKSHOP's archive references initially used `../#desk`, `../#drift`, etc., which would point to the new WORLD rather than the preserved historical sections. Corrected them to `../legacy/#desk`, `../legacy/#drift`, `../legacy/#switch-lab`, etc.
+
+Added an automatic external-AI entry-trail check: `tests/verify-entry-trail.mjs`; it requires direct HTML links to real machine definitions and implementations and checks historic anchor destinations.
+
+Added `reference/return-to-purpose.md`, an optional worked example explaining why successful local source inspections must not be treated as proof of deployed external retrieval or the completion of the parent request. This is public illustrative material, not evidence of model learning.
+
+### Current release status
+- Original public site remains live and accessible through at least one independent web-reading route.
+- New layout's branch-root HTML, machine contracts, and references exist in GitHub, but the Vercel preview remains authenticated.
+- Publishing `main` is not yet authorized by this record; PR #15 remains a draft.
