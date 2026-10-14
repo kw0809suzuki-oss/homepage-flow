@@ -51,10 +51,12 @@
     {
       "id": "first-divergence",
       "type": "local_utility",
-      "location": "legacy/#workbench",
+      "location": "workshop/#first-divergence",
       "input": "two sequences",
       "output": "first observed differing position",
-      "boundary": "cause remains unknown."
+      "boundary": "cause remains unknown.",
+      "machine_definition": "ai-tools.json",
+      "implementation": "tools/first-divergence.js"
     },
     {
       "id": "astra-lens",
@@ -149,6 +151,7 @@
     "Evidence boundaries limit claims, not authorized exploration or execution. Instruments and human interaction are not mandatory prerequisites for reports; ask only when missing human-specific evidence is essential."
   ],
   "recent_changes": [
+    "Published the First Divergence read-only machine contract and standalone shared JavaScript implementation.",
     "AI-first website draft: WORLD at index.html, WORKSHOP at workshop/, old homepage at legacy/. No external AI-discovery or browser validation claim.",
     "Added in-visit persistent LAST PLACE return trace.",
     "Added Flow-chan CORE18 State Observation room.",
