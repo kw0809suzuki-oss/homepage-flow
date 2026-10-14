@@ -1,7 +1,7 @@
 {
   "schema": "flow-world-ai-entry-v0",
   "world": "Flow World",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-14",
   "purpose": "Give an AI a compact re-entry surface for the current public Flow World without requiring it to infer state from the full page.",
   "current_position": {
     "status": "Exploration and reporting boundary clarified",
@@ -26,13 +26,14 @@
     "How to keep Flow World's public current position fresh enough for real re-entry without turning it into a private activity log or requiring constant manual updates.",
     "Whether an external AI will reliably discover and use this entry without being explicitly directed to it.",
     "How Recent History, Similar Transitions, and CORE18 candidate generation should be connected without inventing unsupported fixed rules.",
-    "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run."
+    "Whether the scheduled Rakuten-to-JSON workflow has completed a successful live run.",
+    "Whether the newly prepared AI-first root layout is readable through unauthenticated public production hosting after cutover."
   ],
   "available_tools": [
     {
       "id": "desk",
       "type": "principle_surface",
-      "location": "#desk",
+      "location": "legacy/#desk",
       "input": "current task context",
       "output": "selected cognitive lens",
       "boundary": "guidance only; it does not decide."
@@ -40,7 +41,7 @@
     {
       "id": "ab-comparator",
       "type": "local_utility",
-      "location": "#workbench",
+      "location": "workshop/#ab-comparator",
       "input": "two equal-length numeric lists",
       "output": "means, point deltas, mean delta",
       "boundary": "difference only; no causal claim; no server API required.",
@@ -50,15 +51,17 @@
     {
       "id": "first-divergence",
       "type": "local_utility",
-      "location": "#workbench",
+      "location": "workshop/#first-divergence",
       "input": "two sequences",
       "output": "first observed differing position",
-      "boundary": "cause remains unknown."
+      "boundary": "cause remains unknown.",
+      "machine_definition": "ai-tools.json",
+      "implementation": "tools/first-divergence.js"
     },
     {
       "id": "astra-lens",
       "type": "local_utility",
-      "location": "#workbench",
+      "location": "legacy/#workbench",
       "input": "observation, interpretation, boundary, missing",
       "output": "separated fields",
       "boundary": "does not generate the next probe."
@@ -66,7 +69,7 @@
     {
       "id": "conversation-drift",
       "type": "local_observer",
-      "location": "#drift",
+      "location": "legacy/#drift",
       "input": "conversation text",
       "output": "candidate corrections, unresolved questions, topic movement",
       "boundary": "candidate detection only; no causal judgment."
@@ -74,7 +77,7 @@
     {
       "id": "core18-state-observer",
       "type": "state_observer",
-      "location": "#core18",
+      "location": "legacy/#core18",
       "input": "Previous and Current LOTO7 states, usually auto-loaded",
       "output": "centroid, variance, range, maxGap, gapCv, observed movement",
       "boundary": "not a predictor; Recent History, Similar Transitions, and CORE18 generation remain unconnected."
@@ -90,7 +93,7 @@
     {
       "id": "internal-switch-lab",
       "type": "observation_surface",
-      "location": "#switch-lab",
+      "location": "legacy/#switch-lab",
       "input": "a currently held parent question and a newly attractive interest",
       "output": "Available observations and labeled AI trials, hypotheses, or unperformed steps; human choices remain unknown unless supplied.",
       "boundary": "Identify actor and source. AI trials are not human choices; UI clicks and reports are not independent verification of real-world task changes. Missing evidence does not block other useful exploration.",
@@ -148,6 +151,8 @@
     "Evidence boundaries limit claims, not authorized exploration or execution. Instruments and human interaction are not mandatory prerequisites for reports; ask only when missing human-specific evidence is essential."
   ],
   "recent_changes": [
+    "Published the First Divergence read-only machine contract and standalone shared JavaScript implementation.",
+    "AI-first website draft: WORLD at index.html, WORKSHOP at workshop/, old homepage at legacy/. No external AI-discovery or browser validation claim.",
     "Added in-visit persistent LAST PLACE return trace.",
     "Added Flow-chan CORE18 State Observation room.",
     "Added CSV fallback for loading latest two LOTO7 states.",
@@ -178,5 +183,12 @@
       "render URL-fragment handoff pages"
     ],
     "rule": "Do not require optional browser capabilities when a tool can be reproduced from static data and deterministic instructions."
+  },
+  "site_navigation": {
+    "world": "index.html",
+    "workshop": "workshop/",
+    "legacy": "legacy/",
+    "machine_contract": "ai-tools.json",
+    "published_source": "https://github.com/kw0809suzuki-oss/homepage-flow"
   }
 }

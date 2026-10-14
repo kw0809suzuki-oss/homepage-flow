@@ -49,37 +49,37 @@
     {
       "id": "desk",
       "type": "principle_surface",
-      "location": "#desk",
+      "location": "legacy/#desk",
       "machine_definition": false
     },
     {
       "id": "ab-comparator",
       "type": "local_utility",
-      "location": "#workbench",
+      "location": "workshop/#ab-comparator",
       "machine_definition": true
     },
     {
       "id": "first-divergence",
       "type": "local_utility",
-      "location": "#workbench",
-      "machine_definition": false
+      "location": "workshop/#first-divergence",
+      "machine_definition": true
     },
     {
       "id": "astra-lens",
       "type": "local_utility",
-      "location": "#workbench",
+      "location": "legacy/#workbench",
       "machine_definition": false
     },
     {
       "id": "conversation-drift",
       "type": "local_observer",
-      "location": "#drift",
+      "location": "legacy/#drift",
       "machine_definition": false
     },
     {
       "id": "core18-state-observer",
       "type": "state_observer",
-      "location": "#core18",
+      "location": "legacy/#core18",
       "machine_definition": false
     },
     {
@@ -91,7 +91,7 @@
     {
       "id": "internal-switch-lab",
       "type": "observation_surface",
-      "location": "#switch-lab",
+      "location": "legacy/#switch-lab",
       "machine_definition": true
     }
   ],
@@ -105,9 +105,9 @@
     ],
     "source_versions": {
       "ai_state": "2026-10-07",
-      "ai_tools": "2026-10-07"
+      "ai_tools": "2026-10-14"
     },
-    "source_versions_aligned": true,
+    "source_versions_aligned": false,
     "complete_asset_inventory": false,
     "browser_state_read": false,
     "deployment_verified": false,
@@ -115,12 +115,12 @@
     "coverage_gaps": {
       "surface_ids_without_machine_definition": [
         "desk",
-        "first-divergence",
         "astra-lens",
         "conversation-drift",
         "core18-state-observer"
       ],
-      "missing_boundary_keys": []
+      "missing_boundary_keys": [],
+      "migration_note": "AI-first branch migration: source identities and deployed paths require final verification."
     }
   },
   "DESCENT": {
@@ -133,21 +133,18 @@
   "SOURCES": [
     {
       "path": "ai-entry.txt",
-      "status": "read",
-      "git_blob_sha": "d77d747637f523494df209995fb0238d3aa7cd54",
-      "source_version": null
+      "status": "updated_not_production_verified",
+      "source_version": "2026-10-14"
     },
     {
       "path": "ai-state.json",
-      "status": "read",
-      "git_blob_sha": "aff30ee8e560978403d519306608e5c611b2fd55",
-      "source_version": "2026-10-07"
+      "status": "updated_not_production_verified",
+      "source_version": "2026-10-14"
     },
     {
       "path": "ai-tools.json",
-      "status": "read",
-      "git_blob_sha": "6e41224936c65e211def71f47ab722fcd7b2db6a",
-      "source_version": "2026-10-07"
+      "status": "updated_not_production_verified",
+      "source_version": "2026-10-14"
     },
     {
       "path": "reference/flow-memory-relationship.txt",
@@ -161,5 +158,13 @@
       "git_blob_sha": "6a9f9cb0a49992d7fc632985f2837edee7cd597f",
       "source_version": "https://kw0809suzuki-oss.github.io/homepage-flow/schemas/reentry.schema.json"
     }
-  ]
+  ],
+  "PUBLIC_ENTRY": {
+    "ordinary_html": "index.html",
+    "tool_directory": "workshop/",
+    "machine_contract": "ai-tools.json",
+    "legacy_browser_surfaces": "legacy/",
+    "baseline": "read-only public HTML and JSON without GitHub/Floot connections",
+    "external_discovery_verified": false
+  }
 }

@@ -1,6 +1,6 @@
 {
   "schema": "flow-world-ai-tools-v0",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-14",
   "purpose": "Machine-readable definitions for public Flow World tools that an AI can understand and reproduce without a server API.",
   "tools": [
     {
@@ -8,7 +8,7 @@
       "version": "v0",
       "status": "available",
       "implementation": "tools/ab-compare.js",
-      "human_ui": "#workbench",
+      "human_ui": "workshop/#ab-comparator",
       "input": {
         "a": {
           "type": "number[]",
@@ -82,6 +82,80 @@
       }
     },
     {
+      "id": "first-divergence",
+      "version": "v0",
+      "status": "available",
+      "implementation": "tools/first-divergence.js",
+      "human_ui": "workshop/#first-divergence",
+      "input": {
+        "a": {
+          "type": "string[]",
+          "required": true,
+          "description": "Non-empty observed sequence."
+        },
+        "b": {
+          "type": "string[]",
+          "required": true,
+          "description": "Non-empty observed sequence."
+        }
+      },
+      "preconditions": [
+        "A and B are arrays of strings",
+        "Both arrays are non-empty"
+      ],
+      "operation": {
+        "compare": "A[i] !== B[i] starting at i=0 up to max length",
+        "unequal_lengths": "A missing index differs from B present index and vice versa",
+        "indexing": "zero-based"
+      },
+      "output": {
+        "ok": "boolean",
+        "diverged": "boolean when ok",
+        "index_zero_based": "integer only when diverged",
+        "a_present": "boolean only when diverged",
+        "b_present": "boolean only when diverged",
+        "a_value": "string or null",
+        "b_value": "string or null",
+        "compared_positions": "integer only when no divergence",
+        "boundary": "string",
+        "error": "string when not ok"
+      },
+      "boundary": [
+        "Reports the first differing supplied position only.",
+        "It does not infer any cause or missing unobserved actions.",
+        "No difference in the supplied series does not establish future equality."
+      ],
+      "example": {
+        "input": {
+          "a": [
+            "plant",
+            "water",
+            "sell"
+          ],
+          "b": [
+            "plant",
+            "wait",
+            "sell"
+          ]
+        },
+        "output": {
+          "ok": true,
+          "diverged": true,
+          "index_zero_based": 1,
+          "a_present": true,
+          "b_present": true,
+          "a_value": "water",
+          "b_value": "wait",
+          "boundary": "first observed difference only; cause unknown."
+        }
+      },
+      "compatibility": {
+        "read_only_ai": "supported: reproduce from operation definition",
+        "javascript_ai": "supported: execute tools/first-divergence.js",
+        "browser_operator": "optional; legacy UI at legacy/#workbench"
+      }
+    },
+    {
       "id": "static-handoff-play",
       "version": "v0",
       "status": "available",
@@ -135,7 +209,7 @@
       "version": "v0",
       "status": "available",
       "implementation": "internal-switch.js",
-      "human_ui": "#switch-lab",
+      "human_ui": "legacy/#switch-lab",
       "mechanism": "AI-readable exploration and observation protocol; UI is optional and does not provide browser access by itself.",
       "input": {
         "parent_target": "current task or question",
@@ -223,5 +297,7 @@
         ]
       }
     }
-  ]
+  ],
+  "public_entry": "index.html",
+  "tool_directory": "workshop/"
 }
