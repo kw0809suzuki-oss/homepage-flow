@@ -22,7 +22,7 @@ DETAIL SOURCES
 - workshop/ : AI-first directory; read-only compatible tools first, UI-specific surfaces labeled
 - legacy/ : preserved older multi-section homepage and browser experiments (not a default AI entry)
 - ai-state.json  : fuller public position, confirmed items, unknowns, boundaries, recent changes
-- ai-tools.json  : machine-readable tool definitions and reproducible operations
+- ai-tools.json  : machine-readable tool definitions and reproducible operations, including First Divergence
 - lab/branch-return/ : opt-in manual experiment for AI-generated expressions, distracting branches, return prompts, and scored receiver outputs; it does not call an AI itself
   - lab/branch-return/counterfactual.html : optional same-expression, separate-chat cue/neutral branch test; compare observed continuation without inferring internal intention
 - lab/success-boundary/ : Success Boundary v0 paired A/B lab; same graph task and scoring, compare ordinary success reports versus SUCCESS/UNKNOWN/UNTESTED/RESIDUE, external receiver results must be pasted; no AI API or causal claim.
